@@ -1,0 +1,47 @@
+[project]
+name = "orca-lift"
+version = "0.1.0"
+description = "AI-Powered Liftosaur Program Generator using the Orca framework"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "orca",
+    "click>=8.0",
+    "aiosqlite>=0.20.0",
+    "questionary>=2.1.0",
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23.0",
+    "pyperclip>=1.8.0",
+]
+
+[project.scripts]
+orca-lift = "orca_lift.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+orca = { git = "ssh://git@github.com/geojakes/orca" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests", "integration_tests"]

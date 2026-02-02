@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}orca-lift{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+        .htmx-request.htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-indigo-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-xl font-bold">orca-lift</a>
+                <div class="flex space-x-4">
+                    <a href="/programs" class="hover:text-indigo-200">Programs</a>
+                    <a href="/equipment" class="hover:text-indigo-200">Equipment</a>
+                    <a href="/profile" class="hover:text-indigo-200">Profile</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-100 border-t mt-auto py-4">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            orca-lift - AI-Powered Liftosaur Program Generator
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

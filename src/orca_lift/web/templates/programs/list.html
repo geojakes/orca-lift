@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Programs - orca-lift{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Programs</h1>
+    <a href="/programs/new"
+       class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+        Generate New Program
+    </a>
+</div>
+
+{% if not programs %}
+<div class="bg-white shadow rounded-lg p-8 text-center">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+    </svg>
+    <h3 class="mt-2 text-lg font-medium text-gray-900">No programs yet</h3>
+    <p class="mt-1 text-gray-500">Get started by generating your first program.</p>
+    <div class="mt-6">
+        <a href="/programs/new"
+           class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+            Generate Program
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="grid gap-4">
+    {% for item in programs %}
+    <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900">
+                    <a href="/programs/{{ item.program.id }}" class="hover:text-indigo-600">
+                        {{ item.program.name }}
+                    </a>
+                </h2>
+                <p class="text-gray-600 mt-1">{{ item.program.description[:100] }}{% if item.program.description|length > 100 %}...{% endif %}</p>
+                <div class="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                    <span>{{ item.program.total_weeks }} weeks</span>
+                    <span>{{ item.program.days_per_week }} days/week</span>
+                    {% if item.program.created_at %}
+                    <span>Created {{ item.program.created_at.strftime('%Y-%m-%d') }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex flex-col items-end space-y-2">
+                {% if item.progress %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {{ item.progress.get_status_display() }}
+                </span>
+                <span class="text-sm text-gray-500">{{ item.progress.get_position_display() }}</span>
+                {% else %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Not Started
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4 flex space-x-2">
+            <a href="/programs/{{ item.program.id }}"
+               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                View
+            </a>
+            <span class="text-gray-300">|</span>
+            <a href="/progress/{{ item.program.id }}"
+               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                Progress
+            </a>
+            <span class="text-gray-300">|</span>
+            <button onclick="copyLiftoscript({{ item.program.id }})"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                Copy Liftoscript
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+async function copyLiftoscript(programId) {
+    try {
+        const response = await fetch(`/programs/${programId}/liftoscript`);
+        const data = await response.json();
+        await navigator.clipboard.writeText(data.liftoscript);
+        alert('Liftoscript copied to clipboard!');
+    } catch (err) {
+        alert('Failed to copy: ' + err.message);
+    }
+}
+</script>
+{% endblock %}

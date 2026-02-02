@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(uv sync:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run:*)",
+      "WebFetch(domain:www.liftosaur.com)",
+      "Bash(dir /B \"C:\\\\Users\\\\georg\\\\Desktop\\\\code\\\\orca\")",
+      "Bash(uv pip show:*)"
+    ]
+  }
+}

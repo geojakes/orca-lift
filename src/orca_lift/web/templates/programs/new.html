@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Program - orca-lift{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Generate New Program</h1>
+
+    {% if not profile %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <p class="text-yellow-800">
+            No user profile found. Please <a href="/profile" class="text-indigo-600 hover:text-indigo-800 font-medium underline">create your profile</a> first.
+        </p>
+    </div>
+    {% else %}
+
+    <div id="form-container">
+        <form id="generate-form" class="space-y-6 bg-white shadow rounded-lg p-6">
+            <div>
+                <label for="goals" class="block text-sm font-medium text-gray-700 mb-2">
+                    What are your goals?
+                </label>
+                <textarea id="goals" name="goals" rows="4"
+                          placeholder="e.g., Build strength and muscle, 4 days per week, focus on compound lifts with some isolation work"
+                          class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+
+            <div>
+                <label for="weeks" class="block text-sm font-medium text-gray-700 mb-2">
+                    Program Length
+                </label>
+                <select id="weeks" name="weeks"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="2">2 weeks</option>
+                    <option value="3">3 weeks</option>
+                    <option value="4" selected>4 weeks</option>
+                    <option value="5">5 weeks</option>
+                    <option value="6">6 weeks</option>
+                </select>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit"
+                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium">
+                    Generate Program
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="progress-container" class="hidden bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Generating Program</h2>
+        <div id="progress-log" class="space-y-2 text-sm text-gray-600">
+        </div>
+        <div class="mt-4">
+            <div class="animate-pulse flex space-x-2 items-center" id="loading-indicator">
+                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+<!-- Modal for full specialist reasoning -->
+<div id="specialist-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b">
+            <h3 id="modal-title" class="text-lg font-semibold text-gray-900"></h3>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-4 overflow-y-auto flex-1">
+            <div id="modal-aligned" class="mb-3"></div>
+            <div id="modal-content" class="text-gray-700 whitespace-pre-wrap"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function showModal(name, content, aligned) {
+    document.getElementById('modal-title').textContent = name;
+    document.getElementById('modal-content').textContent = content;
+
+    const alignedDiv = document.getElementById('modal-aligned');
+    if (aligned !== null && aligned !== undefined) {
+        alignedDiv.innerHTML = aligned
+            ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-700"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Aligned with current proposal</span>'
+            : '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-700"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>Proposing changes</span>';
+    } else {
+        alignedDiv.innerHTML = '';
+    }
+
+    document.getElementById('specialist-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('specialist-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+
+// Close modal on backdrop click
+document.getElementById('specialist-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'specialist-modal') closeModal();
+});
+
+document.getElementById('generate-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formContainer = document.getElementById('form-container');
+    const progressContainer = document.getElementById('progress-container');
+    const progressLog = document.getElementById('progress-log');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    formContainer.classList.add('hidden');
+    progressContainer.classList.remove('hidden');
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('/programs/generate', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+
+            const text = decoder.decode(value);
+            const lines = text.split('\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.slice(6));
+
+                        if (data.type === 'status') {
+                            const entry = document.createElement('div');
+                            entry.className = 'flex items-center space-x-2';
+                            entry.innerHTML = `
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>${data.message}</span>
+                            `;
+                            progressLog.appendChild(entry);
+                        } else if (data.type === 'specialist') {
+                            const entry = document.createElement('div');
+                            const alignedClass = data.aligned === true ? 'border-green-400' : data.aligned === false ? 'border-orange-400' : 'border-indigo-400';
+                            entry.className = `ml-6 p-3 bg-gray-50 rounded-lg border-l-4 ${alignedClass} cursor-pointer hover:bg-gray-100 transition`;
+                            entry.innerHTML = `
+                                <div class="flex items-center justify-between">
+                                    <div class="font-medium text-indigo-700">${data.name}</div>
+                                    ${data.aligned !== null ? `<span class="text-xs px-2 py-1 rounded ${data.aligned ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${data.aligned ? 'Aligned' : 'Not Aligned'}</span>` : ''}
+                                </div>
+                                <div class="text-sm text-gray-600 mt-1">${data.preview}</div>
+                                <div class="text-xs text-indigo-500 mt-2">Click to read full reasoning</div>
+                            `;
+                            entry.onclick = () => showModal(data.name, data.full, data.aligned);
+                            progressLog.appendChild(entry);
+                        } else if (data.type === 'complete') {
+                            loadingIndicator.classList.add('hidden');
+                            const entry = document.createElement('div');
+                            entry.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
+                            entry.innerHTML = `
+                                <p class="text-green-800 font-medium">Program generated: ${data.name}</p>
+                                <a href="/programs/${data.program_id}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                                    View Program &rarr;
+                                </a>
+                            `;
+                            progressLog.appendChild(entry);
+                        } else if (data.type === 'error') {
+                            loadingIndicator.classList.add('hidden');
+                            const entry = document.createElement('div');
+                            entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                            entry.innerHTML = `
+                                <p class="text-red-800">Error: ${data.message}</p>
+                            `;
+                            progressLog.appendChild(entry);
+                        }
+                    } catch (parseError) {
+                        // Skip invalid JSON
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        loadingIndicator.classList.add('hidden');
+        const entry = document.createElement('div');
+        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+        entry.innerHTML = `<p class="text-red-800">Error: ${err.message}</p>`;
+        progressLog.appendChild(entry);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1914 @@
+{
+  "version": "1.0",
+  "description": "Liftosaur-compatible exercise library with exact naming conventions",
+  "exercises": [
+    {
+      "name": "Bench Press",
+      "liftosaur_id": "benchPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Flat Bench Press", "Barbell Bench Press", "BB Bench"],
+      "is_compound": true
+    },
+    {
+      "name": "Incline Bench Press",
+      "liftosaur_id": "inclineBenchPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Incline Press", "Incline BB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Decline Bench Press",
+      "liftosaur_id": "declineBenchPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Decline Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Close Grip Bench Press",
+      "liftosaur_id": "closeGripBenchPress",
+      "muscle_groups": ["triceps", "chest", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["CGBP", "Close Grip Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Bench Press",
+      "liftosaur_id": "dumbbellBenchPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Bench Press", "Flat DB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Incline Dumbbell Bench Press",
+      "liftosaur_id": "inclineDumbbellBenchPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["Incline DB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Decline Dumbbell Bench Press",
+      "liftosaur_id": "declineDumbbellBenchPress",
+      "muscle_groups": ["chest", "triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["Decline DB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Fly",
+      "liftosaur_id": "dumbbellFly",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Chest Fly", "DB Fly", "Pec Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Incline Dumbbell Fly",
+      "liftosaur_id": "inclineDumbbellFly",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Incline Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Fly",
+      "liftosaur_id": "cableFly",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Crossover", "Cable Chest Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Low Cable Fly",
+      "liftosaur_id": "lowCableFly",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Low to High Cable Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "High Cable Fly",
+      "liftosaur_id": "highCableFly",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["High to Low Cable Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Push Up",
+      "liftosaur_id": "pushUp",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Pushup", "Press-up"],
+      "is_compound": true
+    },
+    {
+      "name": "Diamond Push Up",
+      "liftosaur_id": "diamondPushUp",
+      "muscle_groups": ["triceps", "chest"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Close Grip Push Up"],
+      "is_compound": true
+    },
+    {
+      "name": "Chest Dip",
+      "liftosaur_id": "chestDip",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Dip", "Parallel Bar Dip"],
+      "is_compound": true
+    },
+    {
+      "name": "Machine Chest Press",
+      "liftosaur_id": "machineChestPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["machine"],
+      "aliases": ["Chest Press Machine"],
+      "is_compound": true
+    },
+    {
+      "name": "Pec Deck",
+      "liftosaur_id": "pecDeck",
+      "muscle_groups": ["chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Pec Deck Fly", "Machine Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Overhead Press",
+      "liftosaur_id": "overheadPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["barbell"],
+      "aliases": ["OHP", "Shoulder Press", "Military Press", "Standing Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Seated Overhead Press",
+      "liftosaur_id": "seatedOverheadPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["barbell"],
+      "aliases": ["Seated Press", "Seated Military Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Push Press",
+      "liftosaur_id": "pushPress",
+      "muscle_groups": ["shoulders", "triceps", "quads"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Shoulder Press",
+      "liftosaur_id": "dumbbellShoulderPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Shoulder Press", "Seated DB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Arnold Press",
+      "liftosaur_id": "arnoldPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["dumbbell"],
+      "aliases": ["Arnold Dumbbell Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Lateral Raise",
+      "liftosaur_id": "lateralRaise",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Side Raise", "DB Lateral Raise", "Side Lateral Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Lateral Raise",
+      "liftosaur_id": "cableLateralRaise",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Side Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Lateral Raise",
+      "liftosaur_id": "machineLateralRaise",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Front Raise",
+      "liftosaur_id": "frontRaise",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Front Raise", "Anterior Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Rear Delt Fly",
+      "liftosaur_id": "rearDeltFly",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Reverse Fly", "Bent Over Reverse Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Rear Delt Fly",
+      "liftosaur_id": "cableRearDeltFly",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Reverse Fly"],
+      "is_compound": false
+    },
+    {
+      "name": "Face Pull",
+      "liftosaur_id": "facePull",
+      "muscle_groups": ["shoulders", "traps"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["cable"],
+      "aliases": ["Cable Face Pull", "Rear Delt Face Pull"],
+      "is_compound": false
+    },
+    {
+      "name": "Upright Row",
+      "liftosaur_id": "uprightRow",
+      "muscle_groups": ["shoulders", "traps"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Upright Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Upright Row",
+      "liftosaur_id": "dumbbellUprightRow",
+      "muscle_groups": ["shoulders", "traps"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Upright Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Machine Shoulder Press",
+      "liftosaur_id": "machineShoulderPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["machine"],
+      "aliases": ["Shoulder Press Machine"],
+      "is_compound": true
+    },
+    {
+      "name": "Barbell Row",
+      "liftosaur_id": "barbellRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Bent Over Row", "BB Row", "Pendlay Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Pendlay Row",
+      "liftosaur_id": "pendlayRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Strict Barbell Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Row",
+      "liftosaur_id": "dumbbellRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Row", "One Arm Row", "Single Arm DB Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Chest Supported Row",
+      "liftosaur_id": "chestSupportedRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["Incline DB Row", "Seal Row"],
+      "is_compound": true
+    },
+    {
+      "name": "T-Bar Row",
+      "liftosaur_id": "tBarRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Landmine Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Cable Row",
+      "liftosaur_id": "cableRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["cable"],
+      "aliases": ["Seated Cable Row", "Low Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Machine Row",
+      "liftosaur_id": "machineRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["machine"],
+      "aliases": ["Seated Row Machine"],
+      "is_compound": true
+    },
+    {
+      "name": "Pull Up",
+      "liftosaur_id": "pullUp",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": ["Pullup", "Wide Grip Pull-up"],
+      "is_compound": true
+    },
+    {
+      "name": "Chin Up",
+      "liftosaur_id": "chinUp",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": ["Chinup", "Underhand Pull-up"],
+      "is_compound": true
+    },
+    {
+      "name": "Neutral Grip Pull Up",
+      "liftosaur_id": "neutralGripPullUp",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": ["Hammer Grip Pull Up"],
+      "is_compound": true
+    },
+    {
+      "name": "Lat Pulldown",
+      "liftosaur_id": "latPulldown",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["cable"],
+      "aliases": ["Cable Pulldown", "Wide Grip Pulldown"],
+      "is_compound": true
+    },
+    {
+      "name": "Close Grip Lat Pulldown",
+      "liftosaur_id": "closeGripLatPulldown",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["cable"],
+      "aliases": ["Neutral Grip Pulldown"],
+      "is_compound": true
+    },
+    {
+      "name": "Straight Arm Pulldown",
+      "liftosaur_id": "straightArmPulldown",
+      "muscle_groups": ["lats"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Straight Arm Lat Pulldown"],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Pulldown",
+      "liftosaur_id": "machinePulldown",
+      "muscle_groups": ["lats", "biceps", "back"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["machine"],
+      "aliases": ["Pulldown Machine"],
+      "is_compound": true
+    },
+    {
+      "name": "Shrug",
+      "liftosaur_id": "shrug",
+      "muscle_groups": ["traps"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Shrug", "Trap Shrug"],
+      "is_compound": false
+    },
+    {
+      "name": "Dumbbell Shrug",
+      "liftosaur_id": "dumbbellShrug",
+      "muscle_groups": ["traps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Shrug"],
+      "is_compound": false
+    },
+    {
+      "name": "Rack Pull",
+      "liftosaur_id": "rackPull",
+      "muscle_groups": ["back", "traps", "hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Block Pull"],
+      "is_compound": true
+    },
+    {
+      "name": "Squat",
+      "liftosaur_id": "squat",
+      "muscle_groups": ["quads", "glutes", "hamstrings"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["Back Squat", "Barbell Squat", "BB Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Front Squat",
+      "liftosaur_id": "frontSquat",
+      "muscle_groups": ["quads", "glutes", "abs"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Front Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Pause Squat",
+      "liftosaur_id": "pauseSquat",
+      "muscle_groups": ["quads", "glutes", "hamstrings"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["Paused Back Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Box Squat",
+      "liftosaur_id": "boxSquat",
+      "muscle_groups": ["quads", "glutes", "hamstrings"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Safety Bar Squat",
+      "liftosaur_id": "safetyBarSquat",
+      "muscle_groups": ["quads", "glutes", "hamstrings"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["SSB Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Goblet Squat",
+      "liftosaur_id": "gobletSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["dumbbell", "kettlebell"],
+      "aliases": ["DB Goblet Squat", "KB Goblet Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Squat",
+      "liftosaur_id": "dumbbellSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Leg Press",
+      "liftosaur_id": "legPress",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["machine"],
+      "aliases": ["Machine Leg Press", "45 Degree Leg Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Hack Squat",
+      "liftosaur_id": "hackSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["machine"],
+      "aliases": ["Machine Hack Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Smith Machine Squat",
+      "liftosaur_id": "smithMachineSquat",
+      "muscle_groups": ["quads", "glutes", "hamstrings"],
+      "movement_pattern": "squat",
+      "equipment": ["smith_machine"],
+      "aliases": ["Smith Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Deadlift",
+      "liftosaur_id": "deadlift",
+      "muscle_groups": ["hamstrings", "glutes", "lower_back", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Conventional Deadlift", "BB Deadlift"],
+      "is_compound": true
+    },
+    {
+      "name": "Sumo Deadlift",
+      "liftosaur_id": "sumoDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "quads", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Romanian Deadlift",
+      "liftosaur_id": "romanianDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "lower_back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["RDL", "Stiff Leg Deadlift", "Romanian DL"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Romanian Deadlift",
+      "liftosaur_id": "dumbbellRomanianDeadlift",
+      "muscle_groups": ["hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB RDL", "Dumbbell RDL"],
+      "is_compound": true
+    },
+    {
+      "name": "Single Leg Romanian Deadlift",
+      "liftosaur_id": "singleLegRomanianDeadlift",
+      "muscle_groups": ["hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["dumbbell"],
+      "aliases": ["Single Leg RDL", "One Leg RDL"],
+      "is_compound": true
+    },
+    {
+      "name": "Trap Bar Deadlift",
+      "liftosaur_id": "trapBarDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "quads", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["trap_bar"],
+      "aliases": ["Hex Bar Deadlift"],
+      "is_compound": true
+    },
+    {
+      "name": "Deficit Deadlift",
+      "liftosaur_id": "deficitDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "lower_back", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Stiff Leg Deadlift",
+      "liftosaur_id": "stiffLegDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "lower_back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["SLDL"],
+      "is_compound": true
+    },
+    {
+      "name": "Good Morning",
+      "liftosaur_id": "goodMorning",
+      "muscle_groups": ["hamstrings", "glutes", "lower_back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Good Morning"],
+      "is_compound": true
+    },
+    {
+      "name": "Hip Thrust",
+      "liftosaur_id": "hipThrust",
+      "muscle_groups": ["glutes", "hamstrings"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Hip Thrust", "Glute Bridge"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Hip Thrust",
+      "liftosaur_id": "dumbbellHipThrust",
+      "muscle_groups": ["glutes", "hamstrings"],
+      "movement_pattern": "hinge",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Hip Thrust"],
+      "is_compound": true
+    },
+    {
+      "name": "Cable Pull Through",
+      "liftosaur_id": "cablePullThrough",
+      "muscle_groups": ["glutes", "hamstrings"],
+      "movement_pattern": "hinge",
+      "equipment": ["cable"],
+      "aliases": ["Pull Through"],
+      "is_compound": true
+    },
+    {
+      "name": "Glute Bridge",
+      "liftosaur_id": "gluteBridge",
+      "muscle_groups": ["glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight"],
+      "aliases": ["Bodyweight Glute Bridge"],
+      "is_compound": false
+    },
+    {
+      "name": "Kettlebell Swing",
+      "liftosaur_id": "kettlebellSwing",
+      "muscle_groups": ["glutes", "hamstrings", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["kettlebell"],
+      "aliases": ["KB Swing"],
+      "is_compound": true
+    },
+    {
+      "name": "Lunge",
+      "liftosaur_id": "lunge",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": ["Walking Lunge", "Forward Lunge", "DB Lunge"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Lunge",
+      "liftosaur_id": "dumbbellLunge",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Lunge", "Walking DB Lunge"],
+      "is_compound": true
+    },
+    {
+      "name": "Barbell Lunge",
+      "liftosaur_id": "barbellLunge",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["barbell"],
+      "aliases": ["BB Lunge"],
+      "is_compound": true
+    },
+    {
+      "name": "Reverse Lunge",
+      "liftosaur_id": "reverseLunge",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": ["Backward Lunge"],
+      "is_compound": true
+    },
+    {
+      "name": "Bulgarian Split Squat",
+      "liftosaur_id": "bulgarianSplitSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["dumbbell", "bodyweight"],
+      "aliases": ["BSS", "Rear Foot Elevated Split Squat", "RFESS"],
+      "is_compound": true
+    },
+    {
+      "name": "Split Squat",
+      "liftosaur_id": "splitSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": ["Static Lunge"],
+      "is_compound": true
+    },
+    {
+      "name": "Step Up",
+      "liftosaur_id": "stepUp",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "lunge",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": ["Box Step Up", "DB Step Up"],
+      "is_compound": true
+    },
+    {
+      "name": "Leg Extension",
+      "liftosaur_id": "legExtension",
+      "muscle_groups": ["quads"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Quad Extension", "Machine Leg Extension"],
+      "is_compound": false
+    },
+    {
+      "name": "Leg Curl",
+      "liftosaur_id": "legCurl",
+      "muscle_groups": ["hamstrings"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Hamstring Curl", "Lying Leg Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Seated Leg Curl",
+      "liftosaur_id": "seatedLegCurl",
+      "muscle_groups": ["hamstrings"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Seated Hamstring Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Nordic Hamstring Curl",
+      "liftosaur_id": "nordicHamstringCurl",
+      "muscle_groups": ["hamstrings"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Nordic Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Glute Ham Raise",
+      "liftosaur_id": "gluteHamRaise",
+      "muscle_groups": ["hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["machine"],
+      "aliases": ["GHR"],
+      "is_compound": true
+    },
+    {
+      "name": "Hip Adduction",
+      "liftosaur_id": "hipAdduction",
+      "muscle_groups": ["quads"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Adductor Machine", "Inner Thigh Machine"],
+      "is_compound": false
+    },
+    {
+      "name": "Hip Abduction",
+      "liftosaur_id": "hipAbduction",
+      "muscle_groups": ["glutes"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Abductor Machine", "Outer Thigh Machine"],
+      "is_compound": false
+    },
+    {
+      "name": "Standing Calf Raise",
+      "liftosaur_id": "standingCalfRaise",
+      "muscle_groups": ["calves"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Calf Raise", "Machine Calf Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Seated Calf Raise",
+      "liftosaur_id": "seatedCalfRaise",
+      "muscle_groups": ["calves"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Seated Calf"],
+      "is_compound": false
+    },
+    {
+      "name": "Dumbbell Calf Raise",
+      "liftosaur_id": "dumbbellCalfRaise",
+      "muscle_groups": ["calves"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Calf Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Leg Press Calf Raise",
+      "liftosaur_id": "legPressCalfRaise",
+      "muscle_groups": ["calves"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Calf Press"],
+      "is_compound": false
+    },
+    {
+      "name": "Barbell Curl",
+      "liftosaur_id": "barbellCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell"],
+      "aliases": ["BB Curl", "Standing Barbell Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "EZ Bar Curl",
+      "liftosaur_id": "ezBarCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["ez_bar"],
+      "aliases": ["EZ Curl", "Curl Bar Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Dumbbell Curl",
+      "liftosaur_id": "dumbbellCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Curl", "Bicep Curl", "Standing DB Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Alternating Dumbbell Curl",
+      "liftosaur_id": "alternatingDumbbellCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Alternating Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Hammer Curl",
+      "liftosaur_id": "hammerCurl",
+      "muscle_groups": ["biceps", "forearms"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Hammer Curl", "Neutral Grip Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Incline Dumbbell Curl",
+      "liftosaur_id": "inclineDumbbellCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Incline Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Preacher Curl",
+      "liftosaur_id": "preacherCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell", "ez_bar"],
+      "aliases": ["Scott Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Dumbbell Preacher Curl",
+      "liftosaur_id": "dumbbellPreacherCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Preacher Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Concentration Curl",
+      "liftosaur_id": "concentrationCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Concentration Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Curl",
+      "liftosaur_id": "cableCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Bicep Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Hammer Curl",
+      "liftosaur_id": "cableHammerCurl",
+      "muscle_groups": ["biceps", "forearms"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Rope Hammer Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Curl",
+      "liftosaur_id": "machineCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Bicep Curl Machine"],
+      "is_compound": false
+    },
+    {
+      "name": "Spider Curl",
+      "liftosaur_id": "spiderCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell", "ez_bar"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Tricep Pushdown",
+      "liftosaur_id": "tricepPushdown",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Pushdown", "Rope Pushdown", "Tricep Extension"],
+      "is_compound": false
+    },
+    {
+      "name": "Rope Tricep Pushdown",
+      "liftosaur_id": "ropeTricepPushdown",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Rope Pushdown"],
+      "is_compound": false
+    },
+    {
+      "name": "Overhead Tricep Extension",
+      "liftosaur_id": "overheadTricepExtension",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell", "cable"],
+      "aliases": ["Tricep Overhead Extension", "DB Overhead Extension"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Overhead Tricep Extension",
+      "liftosaur_id": "cableOverheadTricepExtension",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Overhead Cable Extension"],
+      "is_compound": false
+    },
+    {
+      "name": "Skull Crusher",
+      "liftosaur_id": "skullCrusher",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell", "ez_bar"],
+      "aliases": ["Lying Tricep Extension", "French Press"],
+      "is_compound": false
+    },
+    {
+      "name": "Dumbbell Skull Crusher",
+      "liftosaur_id": "dumbbellSkullCrusher",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Skull Crusher"],
+      "is_compound": false
+    },
+    {
+      "name": "Tricep Kickback",
+      "liftosaur_id": "tricepKickback",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Kickback", "Dumbbell Kickback"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Kickback",
+      "liftosaur_id": "cableKickback",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Tricep Kickback"],
+      "is_compound": false
+    },
+    {
+      "name": "Tricep Dip",
+      "liftosaur_id": "tricepDip",
+      "muscle_groups": ["triceps", "chest", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Dip", "Parallel Bar Dip"],
+      "is_compound": true
+    },
+    {
+      "name": "Bench Dip",
+      "liftosaur_id": "benchDip",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Tricep Bench Dip"],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Tricep Extension",
+      "liftosaur_id": "machineTricepExtension",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Tricep Extension Machine"],
+      "is_compound": false
+    },
+    {
+      "name": "JM Press",
+      "liftosaur_id": "jmPress",
+      "muscle_groups": ["triceps", "chest"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Wrist Curl",
+      "liftosaur_id": "wristCurl",
+      "muscle_groups": ["forearms"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell", "dumbbell"],
+      "aliases": ["Forearm Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Reverse Wrist Curl",
+      "liftosaur_id": "reverseWristCurl",
+      "muscle_groups": ["forearms"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell", "dumbbell"],
+      "aliases": ["Wrist Extension"],
+      "is_compound": false
+    },
+    {
+      "name": "Reverse Curl",
+      "liftosaur_id": "reverseCurl",
+      "muscle_groups": ["forearms", "biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["barbell", "ez_bar"],
+      "aliases": ["Overhand Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Farmer Walk",
+      "liftosaur_id": "farmerWalk",
+      "muscle_groups": ["forearms", "traps", "abs"],
+      "movement_pattern": "carry",
+      "equipment": ["dumbbell", "kettlebell"],
+      "aliases": ["Farmer Carry", "Farmer's Walk"],
+      "is_compound": true
+    },
+    {
+      "name": "Crunch",
+      "liftosaur_id": "crunch",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Ab Crunch", "Abdominal Crunch"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Crunch",
+      "liftosaur_id": "cableCrunch",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Kneeling Cable Crunch", "Rope Crunch"],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Crunch",
+      "liftosaur_id": "machineCrunch",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Ab Machine"],
+      "is_compound": false
+    },
+    {
+      "name": "Decline Crunch",
+      "liftosaur_id": "declineCrunch",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Decline Sit Up"],
+      "is_compound": false
+    },
+    {
+      "name": "Sit Up",
+      "liftosaur_id": "sitUp",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Hanging Leg Raise",
+      "liftosaur_id": "hangingLegRaise",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Leg Raise", "Hanging Knee Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Lying Leg Raise",
+      "liftosaur_id": "lyingLegRaise",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Flat Leg Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Captain's Chair Leg Raise",
+      "liftosaur_id": "captainsChairLegRaise",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Vertical Leg Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Plank",
+      "liftosaur_id": "plank",
+      "muscle_groups": ["abs", "obliques"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Front Plank", "Forearm Plank"],
+      "is_compound": false
+    },
+    {
+      "name": "Side Plank",
+      "liftosaur_id": "sidePlank",
+      "muscle_groups": ["obliques", "abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Ab Wheel Rollout",
+      "liftosaur_id": "abWheelRollout",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Ab Rollout", "Wheel Rollout"],
+      "is_compound": false
+    },
+    {
+      "name": "Mountain Climber",
+      "liftosaur_id": "mountainClimber",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Dead Bug",
+      "liftosaur_id": "deadBug",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Russian Twist",
+      "liftosaur_id": "russianTwist",
+      "muscle_groups": ["obliques", "abs"],
+      "movement_pattern": "rotation",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Bicycle Crunch",
+      "liftosaur_id": "bicycleCrunch",
+      "muscle_groups": ["abs", "obliques"],
+      "movement_pattern": "rotation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Bicycle"],
+      "is_compound": false
+    },
+    {
+      "name": "Pallof Press",
+      "liftosaur_id": "pallofPress",
+      "muscle_groups": ["abs", "obliques"],
+      "movement_pattern": "rotation",
+      "equipment": ["cable", "bands"],
+      "aliases": ["Anti-Rotation Press"],
+      "is_compound": false
+    },
+    {
+      "name": "Wood Chop",
+      "liftosaur_id": "woodChop",
+      "muscle_groups": ["obliques", "abs"],
+      "movement_pattern": "rotation",
+      "equipment": ["cable"],
+      "aliases": ["Cable Wood Chop"],
+      "is_compound": false
+    },
+    {
+      "name": "Landmine Rotation",
+      "liftosaur_id": "landmineRotation",
+      "muscle_groups": ["obliques", "abs"],
+      "movement_pattern": "rotation",
+      "equipment": ["barbell"],
+      "aliases": ["Landmine Twist"],
+      "is_compound": false
+    },
+    {
+      "name": "Back Extension",
+      "liftosaur_id": "backExtension",
+      "muscle_groups": ["lower_back", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight"],
+      "aliases": ["Hyperextension", "Hyper"],
+      "is_compound": false
+    },
+    {
+      "name": "Weighted Back Extension",
+      "liftosaur_id": "weightedBackExtension",
+      "muscle_groups": ["lower_back", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight", "dumbbell"],
+      "aliases": ["Weighted Hyperextension"],
+      "is_compound": false
+    },
+    {
+      "name": "Reverse Hyper",
+      "liftosaur_id": "reverseHyper",
+      "muscle_groups": ["glutes", "hamstrings", "lower_back"],
+      "movement_pattern": "hinge",
+      "equipment": ["machine"],
+      "aliases": ["Reverse Hyperextension"],
+      "is_compound": false
+    },
+    {
+      "name": "Superman",
+      "liftosaur_id": "superman",
+      "muscle_groups": ["lower_back", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight"],
+      "aliases": ["Back Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "Bird Dog",
+      "liftosaur_id": "birdDog",
+      "muscle_groups": ["lower_back", "abs", "glutes"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Clean",
+      "liftosaur_id": "clean",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back", "shoulders"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Power Clean", "Squat Clean"],
+      "is_compound": true
+    },
+    {
+      "name": "Hang Clean",
+      "liftosaur_id": "hangClean",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back", "shoulders"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Clean and Jerk",
+      "liftosaur_id": "cleanAndJerk",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back", "shoulders", "triceps"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["C&J"],
+      "is_compound": true
+    },
+    {
+      "name": "Snatch",
+      "liftosaur_id": "snatch",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back", "shoulders"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Power Snatch", "Squat Snatch"],
+      "is_compound": true
+    },
+    {
+      "name": "Hang Snatch",
+      "liftosaur_id": "hangSnatch",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back", "shoulders"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Snatch",
+      "liftosaur_id": "dumbbellSnatch",
+      "muscle_groups": ["shoulders", "back", "quads", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Snatch", "One Arm DB Snatch"],
+      "is_compound": true
+    },
+    {
+      "name": "Thruster",
+      "liftosaur_id": "thruster",
+      "muscle_groups": ["quads", "glutes", "shoulders", "triceps"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["Front Squat to Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Thruster",
+      "liftosaur_id": "dumbbellThruster",
+      "muscle_groups": ["quads", "glutes", "shoulders", "triceps"],
+      "movement_pattern": "squat",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Thruster"],
+      "is_compound": true
+    },
+    {
+      "name": "Wall Ball",
+      "liftosaur_id": "wallBall",
+      "muscle_groups": ["quads", "glutes", "shoulders"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Wall Ball Shot"],
+      "is_compound": true
+    },
+    {
+      "name": "Muscle Up",
+      "liftosaur_id": "muscleUp",
+      "muscle_groups": ["lats", "chest", "triceps", "biceps"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": ["Bar Muscle Up"],
+      "is_compound": true
+    },
+    {
+      "name": "Ring Muscle Up",
+      "liftosaur_id": "ringMuscleUp",
+      "muscle_groups": ["lats", "chest", "triceps", "biceps"],
+      "movement_pattern": "pull_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Ring Dip",
+      "liftosaur_id": "ringDip",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Handstand Push Up",
+      "liftosaur_id": "handstandPushUp",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": ["HSPU"],
+      "is_compound": true
+    },
+    {
+      "name": "Pike Push Up",
+      "liftosaur_id": "pikePushUp",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Inverted Row",
+      "liftosaur_id": "invertedRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": ["Body Row", "Australian Pull Up"],
+      "is_compound": true
+    },
+    {
+      "name": "TRX Row",
+      "liftosaur_id": "trxRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["bands"],
+      "aliases": ["Suspension Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Pistol Squat",
+      "liftosaur_id": "pistolSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Single Leg Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Box Jump",
+      "liftosaur_id": "boxJump",
+      "muscle_groups": ["quads", "glutes", "calves"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Broad Jump",
+      "liftosaur_id": "broadJump",
+      "muscle_groups": ["quads", "glutes", "calves"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Standing Long Jump"],
+      "is_compound": true
+    },
+    {
+      "name": "Jump Squat",
+      "liftosaur_id": "jumpSquat",
+      "muscle_groups": ["quads", "glutes", "calves"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Squat Jump"],
+      "is_compound": true
+    },
+    {
+      "name": "Burpee",
+      "liftosaur_id": "burpee",
+      "muscle_groups": ["chest", "quads", "abs"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Battle Rope",
+      "liftosaur_id": "battleRope",
+      "muscle_groups": ["shoulders", "abs", "back"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Battle Ropes", "Rope Slam"],
+      "is_compound": false
+    },
+    {
+      "name": "Sled Push",
+      "liftosaur_id": "sledPush",
+      "muscle_groups": ["quads", "glutes", "calves"],
+      "movement_pattern": "squat",
+      "equipment": ["machine"],
+      "aliases": ["Prowler Push"],
+      "is_compound": true
+    },
+    {
+      "name": "Sled Pull",
+      "liftosaur_id": "sledPull",
+      "muscle_groups": ["back", "hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["machine"],
+      "aliases": ["Prowler Pull"],
+      "is_compound": true
+    },
+    {
+      "name": "Tire Flip",
+      "liftosaur_id": "tireFlip",
+      "muscle_groups": ["quads", "glutes", "back", "shoulders"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Landmine Press",
+      "liftosaur_id": "landminePress",
+      "muscle_groups": ["shoulders", "chest", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["barbell"],
+      "aliases": ["Angled Barbell Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Landmine Row",
+      "liftosaur_id": "landmineRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Meadows Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Meadows Row",
+      "liftosaur_id": "meadowsRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["One Arm Landmine Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Z Press",
+      "liftosaur_id": "zPress",
+      "muscle_groups": ["shoulders", "triceps", "abs"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["barbell"],
+      "aliases": ["Seated Floor Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Floor Press",
+      "liftosaur_id": "floorPress",
+      "muscle_groups": ["chest", "triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Floor Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Dumbbell Floor Press",
+      "liftosaur_id": "dumbbellFloorPress",
+      "muscle_groups": ["chest", "triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["DB Floor Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Pin Press",
+      "liftosaur_id": "pinPress",
+      "muscle_groups": ["chest", "triceps", "shoulders"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Dead Bench", "Bench Press from Pins"],
+      "is_compound": true
+    },
+    {
+      "name": "Spoto Press",
+      "liftosaur_id": "spotoPress",
+      "muscle_groups": ["chest", "triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Pause Bench"],
+      "is_compound": true
+    },
+    {
+      "name": "Larsen Press",
+      "liftosaur_id": "larsenPress",
+      "muscle_groups": ["chest", "triceps"],
+      "movement_pattern": "push_horizontal",
+      "equipment": ["barbell"],
+      "aliases": ["Legs Up Bench"],
+      "is_compound": true
+    },
+    {
+      "name": "Band Pull Apart",
+      "liftosaur_id": "bandPullApart",
+      "muscle_groups": ["shoulders", "back"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Pull Apart"],
+      "is_compound": false
+    },
+    {
+      "name": "Band Face Pull",
+      "liftosaur_id": "bandFacePull",
+      "muscle_groups": ["shoulders", "traps"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Face Pull"],
+      "is_compound": false
+    },
+    {
+      "name": "Band Curl",
+      "liftosaur_id": "bandCurl",
+      "muscle_groups": ["biceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Curl"],
+      "is_compound": false
+    },
+    {
+      "name": "Band Tricep Extension",
+      "liftosaur_id": "bandTricepExtension",
+      "muscle_groups": ["triceps"],
+      "movement_pattern": "isolation",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Pushdown"],
+      "is_compound": false
+    },
+    {
+      "name": "Band Squat",
+      "liftosaur_id": "bandSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Band Deadlift",
+      "liftosaur_id": "bandDeadlift",
+      "muscle_groups": ["hamstrings", "glutes", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["bands"],
+      "aliases": ["Resistance Band Deadlift"],
+      "is_compound": true
+    },
+    {
+      "name": "Kettlebell Clean",
+      "liftosaur_id": "kettlebellClean",
+      "muscle_groups": ["shoulders", "back", "quads", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["kettlebell"],
+      "aliases": ["KB Clean"],
+      "is_compound": true
+    },
+    {
+      "name": "Kettlebell Snatch",
+      "liftosaur_id": "kettlebellSnatch",
+      "muscle_groups": ["shoulders", "back", "quads", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["kettlebell"],
+      "aliases": ["KB Snatch"],
+      "is_compound": true
+    },
+    {
+      "name": "Kettlebell Press",
+      "liftosaur_id": "kettlebellPress",
+      "muscle_groups": ["shoulders", "triceps"],
+      "movement_pattern": "push_vertical",
+      "equipment": ["kettlebell"],
+      "aliases": ["KB Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Kettlebell Row",
+      "liftosaur_id": "kettlebellRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["kettlebell"],
+      "aliases": ["KB Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Turkish Get Up",
+      "liftosaur_id": "turkishGetUp",
+      "muscle_groups": ["shoulders", "abs", "glutes", "quads"],
+      "movement_pattern": "carry",
+      "equipment": ["kettlebell", "dumbbell"],
+      "aliases": ["TGU"],
+      "is_compound": true
+    },
+    {
+      "name": "Zercher Squat",
+      "liftosaur_id": "zercherSquat",
+      "muscle_groups": ["quads", "glutes", "abs", "biceps"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": [],
+      "is_compound": true
+    },
+    {
+      "name": "Jefferson Deadlift",
+      "liftosaur_id": "jeffersonDeadlift",
+      "muscle_groups": ["quads", "glutes", "hamstrings", "back"],
+      "movement_pattern": "hinge",
+      "equipment": ["barbell"],
+      "aliases": ["Jefferson Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Hack Lift",
+      "liftosaur_id": "hackLift",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["barbell"],
+      "aliases": ["Barbell Hack Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Hip Hinge",
+      "liftosaur_id": "hipHinge",
+      "muscle_groups": ["hamstrings", "glutes"],
+      "movement_pattern": "hinge",
+      "equipment": ["bodyweight"],
+      "aliases": ["Hip Hinge Pattern"],
+      "is_compound": false
+    },
+    {
+      "name": "Glute Kickback",
+      "liftosaur_id": "gluteKickback",
+      "muscle_groups": ["glutes"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable", "machine"],
+      "aliases": ["Cable Glute Kickback", "Donkey Kick"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Crunch",
+      "liftosaur_id": "cableCrunchKneeling",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": ["Kneeling Cable Crunch"],
+      "is_compound": false
+    },
+    {
+      "name": "Single Arm Dumbbell Row",
+      "liftosaur_id": "singleArmDumbbellRow",
+      "muscle_groups": ["back", "biceps", "lats"],
+      "movement_pattern": "pull_horizontal",
+      "equipment": ["dumbbell"],
+      "aliases": ["One Arm DB Row", "Single Arm Row"],
+      "is_compound": true
+    },
+    {
+      "name": "Pullover",
+      "liftosaur_id": "pullover",
+      "muscle_groups": ["lats", "chest"],
+      "movement_pattern": "isolation",
+      "equipment": ["dumbbell"],
+      "aliases": ["Dumbbell Pullover"],
+      "is_compound": false
+    },
+    {
+      "name": "Cable Pullover",
+      "liftosaur_id": "cablePullover",
+      "muscle_groups": ["lats"],
+      "movement_pattern": "isolation",
+      "equipment": ["cable"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Machine Pullover",
+      "liftosaur_id": "machinePullover",
+      "muscle_groups": ["lats"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Nautilus Pullover"],
+      "is_compound": false
+    },
+    {
+      "name": "Rear Delt Machine",
+      "liftosaur_id": "rearDeltMachine",
+      "muscle_groups": ["shoulders"],
+      "movement_pattern": "isolation",
+      "equipment": ["machine"],
+      "aliases": ["Reverse Pec Deck"],
+      "is_compound": false
+    },
+    {
+      "name": "Single Leg Press",
+      "liftosaur_id": "singleLegPress",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["machine"],
+      "aliases": ["One Leg Press"],
+      "is_compound": true
+    },
+    {
+      "name": "Sissy Squat",
+      "liftosaur_id": "sissySquat",
+      "muscle_groups": ["quads"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Bodyweight Squat",
+      "liftosaur_id": "bodyweightSquat",
+      "muscle_groups": ["quads", "glutes"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Air Squat"],
+      "is_compound": true
+    },
+    {
+      "name": "Wall Sit",
+      "liftosaur_id": "wallSit",
+      "muscle_groups": ["quads"],
+      "movement_pattern": "squat",
+      "equipment": ["bodyweight"],
+      "aliases": ["Wall Squat"],
+      "is_compound": false
+    },
+    {
+      "name": "Leg Raise",
+      "liftosaur_id": "legRaise",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Lying Leg Raise"],
+      "is_compound": false
+    },
+    {
+      "name": "V-Up",
+      "liftosaur_id": "vUp",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["V-Sit Up", "Jackknife"],
+      "is_compound": false
+    },
+    {
+      "name": "Toe Touch",
+      "liftosaur_id": "toeTouch",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Toe Touch Crunch"],
+      "is_compound": false
+    },
+    {
+      "name": "Flutter Kick",
+      "liftosaur_id": "flutterKick",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Scissor Kick"],
+      "is_compound": false
+    },
+    {
+      "name": "Hollow Hold",
+      "liftosaur_id": "hollowHold",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["Hollow Body Hold"],
+      "is_compound": false
+    },
+    {
+      "name": "L-Sit",
+      "liftosaur_id": "lSit",
+      "muscle_groups": ["abs", "quads"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["L Sit Hold"],
+      "is_compound": false
+    },
+    {
+      "name": "Dragon Flag",
+      "liftosaur_id": "dragonFlag",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": [],
+      "is_compound": false
+    },
+    {
+      "name": "Toes to Bar",
+      "liftosaur_id": "toesToBar",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["T2B", "TTB"],
+      "is_compound": false
+    },
+    {
+      "name": "Knees to Elbows",
+      "liftosaur_id": "kneesToElbows",
+      "muscle_groups": ["abs"],
+      "movement_pattern": "isolation",
+      "equipment": ["bodyweight"],
+      "aliases": ["K2E"],
+      "is_compound": false
+    }
+  ]
+}

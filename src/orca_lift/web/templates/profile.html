@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - orca-lift{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Your Profile</h1>
+
+    {% if request.query_params.get('saved') %}
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <p class="text-green-800">Profile saved successfully!</p>
+    </div>
+    {% endif %}
+
+    {% if request.query_params.get('synced') %}
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <p class="text-green-800">Health Connect data synced! {{ request.query_params.get('workouts', '0') }} workout sessions imported.</p>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/profile" class="space-y-6 bg-white shadow rounded-lg p-6">
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+            <input type="text" id="name" name="name" required
+                   value="{{ profile.name if profile else '' }}"
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label for="experience_level" class="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+            <select id="experience_level" name="experience_level" required
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                {% for level in experience_levels %}
+                <option value="{{ level }}" {{ 'selected' if profile and profile.experience_level.value == level else '' }}>
+                    {{ level.replace('_', ' ').title() }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fitness Goals</label>
+            <div class="grid grid-cols-2 gap-2">
+                {% for goal in fitness_goals %}
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="goals" value="{{ goal }}"
+                           {{ 'checked' if goal in selected_goals else '' }}
+                           class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-sm text-gray-700">{{ goal.replace('_', ' ').title() }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Available Equipment</label>
+            <div class="grid grid-cols-2 gap-2">
+                {% for equip in equipment_types %}
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="equipment" value="{{ equip }}"
+                           {{ 'checked' if equip in selected_equipment else '' }}
+                           class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-sm text-gray-700">{{ equip.replace('_', ' ').title() }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="schedule_days" class="block text-sm font-medium text-gray-700 mb-2">Training Days/Week</label>
+                <select id="schedule_days" name="schedule_days" required
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    {% for days in range(2, 7) %}
+                    <option value="{{ days }}" {{ 'selected' if profile and profile.schedule_days == days else ('selected' if not profile and days == 4 else '') }}>
+                        {{ days }} days
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="session_duration" class="block text-sm font-medium text-gray-700 mb-2">Session Duration</label>
+                <select id="session_duration" name="session_duration"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="30" {{ 'selected' if profile and profile.session_duration == 30 else '' }}>30 min</option>
+                    <option value="45" {{ 'selected' if profile and profile.session_duration == 45 else '' }}>45 min</option>
+                    <option value="60" {{ 'selected' if profile and profile.session_duration == 60 else '' }}>60 min</option>
+                    <option value="75" {{ 'selected' if profile and profile.session_duration == 75 else '' }}>75 min</option>
+                    <option value="90" {{ 'selected' if profile and profile.session_duration == 90 else '' }}>90 min</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age (optional)</label>
+                <input type="number" id="age" name="age" min="13" max="100"
+                       value="{{ profile.age if profile and profile.age else '' }}"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="body_weight" class="block text-sm font-medium text-gray-700 mb-2">Body Weight kg (optional)</label>
+                <input type="number" id="body_weight" name="body_weight" step="0.1" min="30" max="300"
+                       value="{{ profile.body_weight if profile and profile.body_weight else '' }}"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+        </div>
+
+        <div>
+            <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes (optional)</label>
+            <textarea id="notes" name="notes" rows="3"
+                      placeholder="Any injuries, preferences, or other details..."
+                      class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">{{ profile.notes if profile else '' }}</textarea>
+        </div>
+
+        <div class="pt-4">
+            <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium">
+                Save Profile
+            </button>
+        </div>
+    </form>
+
+    <!-- Health Connect Sync Section -->
+    <div class="mt-8 bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Import Fitness Data</h2>
+        <p class="text-sm text-gray-600 mb-4">
+            Upload a Health Connect backup to import your workout history. This helps generate better personalized programs.
+        </p>
+
+        <form id="sync-form" enctype="multipart/form-data" class="space-y-4">
+            <div id="drop-zone"
+                 class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition cursor-pointer">
+                <input type="file" id="backup-file" name="backup" accept=".zip" class="hidden">
+                <div id="drop-content">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600">
+                        <span class="text-indigo-600 font-medium">Click to upload</span> or drag and drop
+                    </p>
+                    <p class="mt-1 text-xs text-gray-500">Health Connect backup (.zip)</p>
+                </div>
+                <div id="file-selected" class="hidden">
+                    <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600" id="file-name"></p>
+                </div>
+            </div>
+
+            <button type="submit" id="sync-button" disabled
+                    class="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-lg cursor-not-allowed transition font-medium">
+                Import Data
+            </button>
+        </form>
+
+        <div id="sync-progress" class="hidden mt-4">
+            <div class="flex items-center space-x-2">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                <span class="text-sm text-gray-600">Processing backup...</span>
+            </div>
+        </div>
+
+        <div id="sync-result" class="hidden mt-4"></div>
+    </div>
+</div>
+
+<script>
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('backup-file');
+const dropContent = document.getElementById('drop-content');
+const fileSelected = document.getElementById('file-selected');
+const fileName = document.getElementById('file-name');
+const syncButton = document.getElementById('sync-button');
+const syncForm = document.getElementById('sync-form');
+const syncProgress = document.getElementById('sync-progress');
+const syncResult = document.getElementById('sync-result');
+
+// Click to open file picker
+dropZone.addEventListener('click', () => fileInput.click());
+
+// File selection handler
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        showFileSelected(e.target.files[0]);
+    }
+});
+
+// Drag and drop handlers
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].name.endsWith('.zip')) {
+        fileInput.files = files;
+        showFileSelected(files[0]);
+    }
+});
+
+function showFileSelected(file) {
+    dropContent.classList.add('hidden');
+    fileSelected.classList.remove('hidden');
+    fileName.textContent = file.name;
+    syncButton.disabled = false;
+    syncButton.className = 'w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition font-medium';
+}
+
+// Form submission
+syncForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!fileInput.files.length) return;
+
+    syncButton.disabled = true;
+    syncProgress.classList.remove('hidden');
+    syncResult.classList.add('hidden');
+
+    const formData = new FormData();
+    formData.append('backup', fileInput.files[0]);
+
+    try {
+        const response = await fetch('/profile/sync', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        syncProgress.classList.add('hidden');
+        syncResult.classList.remove('hidden');
+
+        if (data.error) {
+            syncResult.innerHTML = `
+                <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p class="text-red-800">Error: ${data.error}</p>
+                </div>
+            `;
+        } else {
+            syncResult.innerHTML = `
+                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p class="text-green-800 font-medium">Data imported successfully!</p>
+                    <p class="text-green-700 text-sm mt-1">${data.workouts_imported} workout sessions found</p>
+                    ${data.strength_levels ? `<p class="text-green-700 text-sm">${data.strength_levels} strength records updated</p>` : ''}
+                </div>
+            `;
+        }
+    } catch (err) {
+        syncProgress.classList.add('hidden');
+        syncResult.classList.remove('hidden');
+        syncResult.innerHTML = `
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-800">Error: ${err.message}</p>
+            </div>
+        `;
+    }
+
+    // Reset for another upload
+    syncButton.disabled = false;
+});
+</script>
+{% endblock %}

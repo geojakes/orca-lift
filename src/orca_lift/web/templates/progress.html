@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Progress - {{ program.name }} - orca-lift{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Progress Tracking</h1>
+            <p class="text-gray-600 mt-1">{{ program.name }}</p>
+        </div>
+        <a href="/programs/{{ program.id }}"
+           class="text-indigo-600 hover:text-indigo-800">
+            &larr; Back to Program
+        </a>
+    </div>
+
+    {% if not progress %}
+    <div class="bg-white shadow rounded-lg p-6 text-center">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Program Not Started</h2>
+        <p class="text-gray-600 mb-6">Start tracking your progress to mark workouts as complete.</p>
+        <button id="start-btn"
+                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition">
+            Start Program
+        </button>
+    </div>
+    {% else %}
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900">Current Position</h2>
+                <p class="text-2xl font-bold text-indigo-600 mt-2">
+                    {{ progress.get_position_display() }}
+                </p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                         {% if progress.status.value == 'active' %}bg-green-100 text-green-800
+                         {% elif progress.status.value == 'completed' %}bg-blue-100 text-blue-800
+                         {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ progress.get_status_display() }}
+            </span>
+        </div>
+
+        {% if progress.last_workout_at %}
+        <p class="text-sm text-gray-500">
+            Last workout: {{ progress.last_workout_at.strftime('%Y-%m-%d %H:%M') }}
+        </p>
+        {% endif %}
+
+        <!-- Progress bar -->
+        {% set total_workouts = program.total_weeks * program.days_per_week %}
+        {% set completed = (progress.current_week - 1) * program.days_per_week + (progress.current_day - 1) %}
+        {% set pct = (completed / total_workouts * 100) | int %}
+        <div class="mt-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Progress</span>
+                <span>{{ completed }}/{{ total_workouts }} workouts ({{ pct }}%)</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                     style="width: {{ pct }}%"></div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex space-x-3">
+            <button id="complete-btn"
+                    class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                Mark Day Complete
+            </button>
+            <button id="set-position-btn"
+                    class="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition">
+                Set Position
+            </button>
+        </div>
+    </div>
+
+    <!-- Week Overview -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-900">Week Overview</h2>
+        </div>
+        <div class="divide-y">
+            {% for week in program.weeks %}
+            <div class="px-6 py-4 {% if week.week_number == progress.current_week %}bg-indigo-50{% endif %}">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium text-gray-900">
+                        Week {{ week.week_number }}
+                        {% if week.deload %}<span class="text-yellow-600 text-sm">(Deload)</span>{% endif %}
+                    </span>
+                    {% if week.week_number < progress.current_week %}
+                    <span class="text-green-600 text-sm">Completed</span>
+                    {% elif week.week_number == progress.current_week %}
+                    <span class="text-indigo-600 text-sm font-medium">In Progress</span>
+                    {% endif %}
+                </div>
+                <div class="flex space-x-2">
+                    {% for day in week.days %}
+                    {% set day_completed = week.week_number < progress.current_week or (week.week_number == progress.current_week and loop.index < progress.current_day) %}
+                    {% set is_current = week.week_number == progress.current_week and loop.index == progress.current_day %}
+                    <div class="flex-1 p-2 rounded text-center text-sm
+                                {% if day_completed %}bg-green-100 text-green-800
+                                {% elif is_current %}bg-indigo-600 text-white
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                        {{ day.name[:10] }}{% if day.name|length > 10 %}...{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Health Connect Sync -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mt-6">
+        <div class="px-6 py-4 border-b bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-900">Sync from Health Connect</h2>
+            <p class="text-sm text-gray-500 mt-1">
+                Upload your Health Connect backup to auto-detect completed workouts
+            </p>
+        </div>
+        <div class="p-6">
+            <form id="sync-form" enctype="multipart/form-data" class="space-y-4">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition"
+                     id="drop-zone">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600">
+                        <label for="backup-file" class="text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium">
+                            Upload a file
+                        </label>
+                        or drag and drop
+                    </p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Health Connect backup (.zip) or SQLite database (.db)
+                    </p>
+                    <input type="file" id="backup-file" name="backup" accept=".zip,.db,.sqlite"
+                           class="hidden">
+                    <p id="selected-file" class="mt-2 text-sm text-indigo-600 hidden"></p>
+                </div>
+
+                <div id="sync-result" class="hidden"></div>
+
+                <button type="submit" id="sync-btn"
+                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                    <span id="sync-btn-text">Sync Progress</span>
+                    <span id="sync-btn-loading" class="hidden">
+                        <svg class="animate-spin inline-block w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Syncing...
+                    </span>
+                </button>
+            </form>
+
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <h4 class="text-sm font-medium text-blue-900">How to export from Health Connect:</h4>
+                <ol class="mt-2 text-sm text-blue-800 list-decimal list-inside space-y-1">
+                    <li>Open Health Connect app on your Android device</li>
+                    <li>Go to Settings (gear icon)</li>
+                    <li>Tap "Export all data"</li>
+                    <li>Save the .zip file and upload it here</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- Set Position Modal -->
+    <div id="position-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Set Position</h3>
+            <form id="position-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Week</label>
+                    <select name="week" class="w-full border rounded-lg px-3 py-2">
+                        {% for week in program.weeks %}
+                        <option value="{{ week.week_number }}"
+                                {% if progress and week.week_number == progress.current_week %}selected{% endif %}>
+                            Week {{ week.week_number }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Day</label>
+                    <select name="day" class="w-full border rounded-lg px-3 py-2">
+                        {% for i in range(1, (program.weeks[0].days|length) + 1) %}
+                        <option value="{{ i }}"
+                                {% if progress and i == progress.current_day %}selected{% endif %}>
+                            Day {{ i }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <button type="button" id="cancel-modal"
+                            class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700">
+                        Set
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const programId = {{ program.id }};
+
+document.getElementById('start-btn')?.addEventListener('click', async function() {
+    try {
+        const response = await fetch(`/progress/${programId}/start`, { method: 'POST' });
+        const data = await response.json();
+        if (data.status === 'started') {
+            location.reload();
+        }
+    } catch (err) {
+        alert('Failed to start: ' + err.message);
+    }
+});
+
+document.getElementById('complete-btn')?.addEventListener('click', async function() {
+    try {
+        const response = await fetch(`/progress/${programId}/advance`, { method: 'POST' });
+        const data = await response.json();
+        location.reload();
+    } catch (err) {
+        alert('Failed to advance: ' + err.message);
+    }
+});
+
+document.getElementById('set-position-btn')?.addEventListener('click', function() {
+    document.getElementById('position-modal').classList.remove('hidden');
+});
+
+document.getElementById('cancel-modal')?.addEventListener('click', function() {
+    document.getElementById('position-modal').classList.add('hidden');
+});
+
+document.getElementById('position-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch(`/progress/${programId}/set`, {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await response.json();
+        if (data.status === 'set') {
+            location.reload();
+        }
+    } catch (err) {
+        alert('Failed to set position: ' + err.message);
+    }
+});
+
+// Close modal on background click
+document.getElementById('position-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+    }
+});
+
+// Health Connect sync file upload
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('backup-file');
+const selectedFile = document.getElementById('selected-file');
+const syncBtn = document.getElementById('sync-btn');
+const syncForm = document.getElementById('sync-form');
+const syncResult = document.getElementById('sync-result');
+
+// File input change
+fileInput?.addEventListener('change', function() {
+    if (this.files.length > 0) {
+        showSelectedFile(this.files[0]);
+    }
+});
+
+// Drag and drop
+dropZone?.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.classList.add('border-indigo-400', 'bg-indigo-50');
+});
+
+dropZone?.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-indigo-400', 'bg-indigo-50');
+});
+
+dropZone?.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-indigo-400', 'bg-indigo-50');
+
+    if (e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        if (file.name.endsWith('.zip') || file.name.endsWith('.db') || file.name.endsWith('.sqlite')) {
+            fileInput.files = e.dataTransfer.files;
+            showSelectedFile(file);
+        } else {
+            alert('Please upload a .zip, .db, or .sqlite file');
+        }
+    }
+});
+
+// Click to upload
+dropZone?.addEventListener('click', function() {
+    fileInput?.click();
+});
+
+function showSelectedFile(file) {
+    selectedFile.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+    selectedFile.classList.remove('hidden');
+    syncBtn.disabled = false;
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// Sync form submit
+syncForm?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const file = fileInput.files[0];
+    if (!file) {
+        alert('Please select a file first');
+        return;
+    }
+
+    // Show loading state
+    syncBtn.disabled = true;
+    document.getElementById('sync-btn-text').classList.add('hidden');
+    document.getElementById('sync-btn-loading').classList.remove('hidden');
+    syncResult.classList.add('hidden');
+
+    const formData = new FormData();
+    formData.append('backup', file);
+
+    try {
+        const response = await fetch(`/progress/${programId}/sync`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            showSyncResult('error', data.error);
+        } else if (data.completed_workouts === 0) {
+            showSyncResult('info', 'No completed workouts detected in the backup file.');
+        } else {
+            showSyncResult('success',
+                `Found ${data.completed_workouts} completed workout(s)! Progress updated to Week ${data.current_week}, Day ${data.current_day}.`
+            );
+            // Reload after a short delay to show the result
+            setTimeout(() => location.reload(), 2000);
+        }
+    } catch (err) {
+        showSyncResult('error', 'Sync failed: ' + err.message);
+    } finally {
+        // Reset button state
+        syncBtn.disabled = false;
+        document.getElementById('sync-btn-text').classList.remove('hidden');
+        document.getElementById('sync-btn-loading').classList.add('hidden');
+    }
+});
+
+function showSyncResult(type, message) {
+    syncResult.classList.remove('hidden');
+
+    const colors = {
+        success: 'bg-green-50 border-green-200 text-green-800',
+        error: 'bg-red-50 border-red-200 text-red-800',
+        info: 'bg-blue-50 border-blue-200 text-blue-800',
+    };
+
+    const icons = {
+        success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>',
+        error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>',
+        info: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
+    };
+
+    syncResult.className = `p-4 rounded-lg border ${colors[type]}`;
+    syncResult.innerHTML = `
+        <div class="flex items-start">
+            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${icons[type]}
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

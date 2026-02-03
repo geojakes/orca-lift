@@ -75,6 +75,11 @@
                     class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
                 Copy Liftoscript
             </button>
+            <span class="text-gray-300">|</span>
+            <button onclick="deleteProgram({{ item.program.id }}, '{{ item.program.name|e }}')"
+                    class="text-red-600 hover:text-red-800 text-sm font-medium">
+                Delete
+            </button>
         </div>
     </div>
     {% endfor %}
@@ -90,6 +95,25 @@ async function copyLiftoscript(programId) {
         alert('Liftoscript copied to clipboard!');
     } catch (err) {
         alert('Failed to copy: ' + err.message);
+    }
+}
+
+async function deleteProgram(programId, programName) {
+    if (!confirm(`Are you sure you want to delete "${programName}"? This cannot be undone.`)) {
+        return;
+    }
+    try {
+        const response = await fetch(`/programs/${programId}`, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert('Failed to delete: ' + (data.detail || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Failed to delete: ' + err.message);
     }
 }
 </script>

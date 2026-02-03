@@ -92,6 +92,7 @@
                 </svg>
                 <h3 id="question-modal-title" class="text-lg font-semibold text-gray-900">Specialist Question</h3>
             </div>
+            <span id="question-queue-badge" class="hidden px-2 py-1 text-xs font-medium bg-indigo-600 text-white rounded-full"></span>
         </div>
         <form id="question-form" class="p-4">
             <input type="hidden" id="question-id" name="question_id" value="">
@@ -135,8 +136,31 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
+// Question queue system for handling multiple back-to-back questions
+const questionQueue = [];
+let questionModalOpen = false;
+
 // Question modal functions
+function updateQueueBadge() {
+    const badge = document.getElementById('question-queue-badge');
+    if (questionQueue.length > 0) {
+        badge.textContent = '+' + questionQueue.length + ' more';
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
 function showQuestionModal(questionId, specialist, question) {
+    // If modal is already open, queue this question
+    if (questionModalOpen) {
+        questionQueue.push({ questionId, specialist, question });
+        console.log('Question queued:', questionId, '- Queue length:', questionQueue.length);
+        updateQueueBadge();
+        return;
+    }
+
+    questionModalOpen = true;
     document.getElementById('question-modal-title').textContent = specialist + ' asks:';
     document.getElementById('question-text').textContent = question;
     document.getElementById('question-id').value = questionId;
@@ -144,11 +168,23 @@ function showQuestionModal(questionId, specialist, question) {
     document.getElementById('question-modal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.getElementById('question-answer').focus();
+    updateQueueBadge();
 }
 
 function closeQuestionModal() {
     document.getElementById('question-modal').classList.add('hidden');
     document.body.style.overflow = '';
+    questionModalOpen = false;
+
+    // Check if there are queued questions
+    if (questionQueue.length > 0) {
+        const next = questionQueue.shift();
+        console.log('Showing next queued question:', next.questionId);
+        // Small delay to allow the modal close animation to complete
+        setTimeout(() => {
+            showQuestionModal(next.questionId, next.specialist, next.question);
+        }, 100);
+    }
 }
 
 async function submitQuestionAnswer(questionId, answer) {

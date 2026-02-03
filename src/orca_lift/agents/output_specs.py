@@ -103,6 +103,55 @@ program_framework_specs = [
     ),
 ]
 
+# Exercise spec for nested structure
+_exercise_spec = OutputSpec(
+    name="exercise",
+    type="object",
+    description="Exercise configuration",
+    source=[
+        OutputSpec(name="name", type="string", description="Exercise name"),
+        OutputSpec(name="sets", type="int", description="Number of sets"),
+        OutputSpec(name="reps_min", type="int", description="Minimum reps per set"),
+        OutputSpec(name="reps_max", type="int", description="Maximum reps per set"),
+        OutputSpec(name="progression", type="string", description="Progression type: lp, dp, or sum"),
+        OutputSpec(name="increment", type="float", description="Weight increment in lbs"),
+    ],
+)
+
+# Day spec for nested structure
+_day_spec = OutputSpec(
+    name="day",
+    type="object",
+    description="Training day configuration",
+    source=[
+        OutputSpec(name="name", type="string", description="Day name (e.g., Monday, Day 1)"),
+        OutputSpec(name="focus", type="string", description="Day focus (e.g., Upper, Lower, Push)"),
+        OutputSpec(
+            name="exercises",
+            type="list",
+            description="List of exercises for this day",
+            source=_exercise_spec,
+        ),
+    ],
+)
+
+# Week spec for nested structure
+_week_spec = OutputSpec(
+    name="week",
+    type="object",
+    description="Training week configuration",
+    source=[
+        OutputSpec(name="week_number", type="int", description="Week number (1, 2, 3, etc.)"),
+        OutputSpec(name="is_deload", type="bool", description="Whether this is a deload week"),
+        OutputSpec(
+            name="days",
+            type="list",
+            description="List of training days in this week",
+            source=_day_spec,
+        ),
+    ],
+)
+
 # Final program structure output (for mediator)
 final_program_specs = [
     OutputSpec(
@@ -122,8 +171,9 @@ final_program_specs = [
     ),
     OutputSpec(
         name="weeks",
-        type="list[object]",
-        description="List of weeks, each containing days with exercises. Format: [{week_number: int, is_deload: bool, days: [{name: string, focus: string, exercises: [{name: string, sets: int, reps_min: int, reps_max: int, progression: string, increment: float}]}]}]",
+        type="list",
+        description="List of training weeks",
+        source=_week_spec,
     ),
     OutputSpec(
         name="rationale",

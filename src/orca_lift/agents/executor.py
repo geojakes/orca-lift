@@ -138,6 +138,7 @@ class ProgramGenerator:
             # Use streaming to emit real-time specialist events
             congregation_result = None
             deliberation_log = []
+            captured_mediator_output = None  # Capture from MEDIATOR_SYNTHESIS event
 
             # Set up question callback for ask_human tool
             async def question_callback(question_id: str, specialist: str, question: str):
@@ -200,21 +201,79 @@ class ProgramGenerator:
                         # Results are returned to specialists - could show them if desired
                         pass
 
+                    elif event.type == CongregationEventType.CONVERGENCE:
+                        await notify("debug", f"[DEBUG] CONVERGENCE event.data: {event.data}")
+
+                    elif event.type == CongregationEventType.MEDIATOR_START:
+                        await notify("debug", f"[DEBUG] MEDIATOR_START event.data: {event.data}")
+
                     elif event.type == CongregationEventType.MEDIATOR_SYNTHESIS:
                         await notify("phase", "Mediator synthesizing final program...")
+                        # DEBUG: Log all event.data keys
+                        await notify("debug", f"[DEBUG] MEDIATOR_SYNTHESIS event.data keys: {list(event.data.keys())}")
+                        await notify("debug", f"[DEBUG] MEDIATOR_SYNTHESIS event.data: {str(event.data)[:800]}")
+                        # Capture structured output from mediator synthesis
+                        captured_mediator_output = event.data.get("output")
+                        if captured_mediator_output:
+                            await notify("debug", f"[DEBUG] MEDIATOR_SYNTHESIS output: {str(captured_mediator_output)[:500]}")
 
                     elif event.type == CongregationEventType.COMPLETED:
+                        await notify("debug", f"[DEBUG] COMPLETED event.data keys: {list(event.data.keys())}")
                         result = event.data.get("result")
                         if result:
+                            await notify("debug", f"[DEBUG] result type: {type(result)}")
+                            await notify("debug", f"[DEBUG] result attrs: {[a for a in dir(result) if not a.startswith('_')]}")
+                            # DEBUG: Check all relevant result fields
+                            await notify("debug", f"[DEBUG] final_answer type: {type(result.final_answer)}")
+                            if result.final_answer:
+                                await notify("debug", f"[DEBUG] final_answer preview: {str(result.final_answer)[:500]}")
+                            if result.final_thesis:
+                                # Check if there's JSON in the thesis
+                                has_json_block = "```json" in result.final_thesis or "```" in result.final_thesis
+                                has_brace = "{" in result.final_thesis
+                                await notify("debug", f"[DEBUG] final_thesis has_json_block: {has_json_block}, has_brace: {has_brace}")
+                                await notify("debug", f"[DEBUG] final_thesis length: {len(result.final_thesis)}")
+                                await notify("debug", f"[DEBUG] final_thesis (full first 3000 chars): {result.final_thesis[:3000]}")
+                            await notify("debug", f"[DEBUG] mediated: {result.mediated}")
+                            await notify("debug", f"[DEBUG] converged: {result.converged}")
+                            await notify("debug", f"[DEBUG] turns_taken: {result.turns_taken}")
+                            await notify("debug", f"[DEBUG] message_history length: {len(result.message_history)}")
+
+                            # IMPORTANT: If converged early without mediation, final_output will be None
+                            # because orca skips mediator when specialists align early
+                            if not result.mediated and result.converged:
+                                await notify("debug", f"[DEBUG] WARNING: Early convergence without mediation - output_spec was not applied!")
+                            # DEBUG: Log raw final_output
+                            await notify("debug", f"[DEBUG] final_output type: {type(result.final_output)}")
+                            await notify("debug", f"[DEBUG] final_output is None: {result.final_output is None}")
+                            if result.final_output:
+                                await notify("debug", f"[DEBUG] final_output preview: {str(result.final_output)[:500]}")
+                            await notify("debug", f"[DEBUG] final_thesis preview: {result.final_thesis[:300] if result.final_thesis else 'None'}...")
+
                             # Build our CongregationResult from orca's result
+                            # Use captured_mediator_output if result.final_output is None
+                            raw_output = result.final_output or captured_mediator_output or {}
+                            await notify("debug", f"[DEBUG] Using captured_mediator_output: {result.final_output is None and captured_mediator_output is not None}")
+
                             # Handle case where final_output is a string (JSON) instead of dict
-                            final_program = result.final_output if result.final_output else {}
+                            final_program = raw_output
                             if isinstance(final_program, str):
                                 import json
                                 try:
                                     final_program = json.loads(final_program)
-                                except json.JSONDecodeError:
+                                    await notify("debug", f"[DEBUG] Parsed JSON successfully, keys: {list(final_program.keys()) if isinstance(final_program, dict) else 'not a dict'}")
+                                except json.JSONDecodeError as e:
+                                    await notify("debug", f"[DEBUG] JSON parse failed: {e}")
                                     final_program = {}
+
+                            # DEBUG: Log parsed program
+                            if isinstance(final_program, dict):
+                                await notify("debug", f"[DEBUG] final_program keys: {list(final_program.keys())}")
+                                weeks = final_program.get("weeks", [])
+                                await notify("debug", f"[DEBUG] weeks count: {len(weeks)}")
+                                if weeks:
+                                    await notify("debug", f"[DEBUG] first week keys: {list(weeks[0].keys()) if isinstance(weeks[0], dict) else 'not a dict'}")
+
                             congregation_result = CongregationResult(
                                 final_program=final_program,
                                 final_thesis=result.final_thesis,
@@ -233,6 +292,15 @@ class ProgramGenerator:
                 equipment_constraints=equipment_constraints,
                 profile_id=user_profile.id,
             )
+
+            # DEBUG: Log congregation result in non-streaming mode
+            await notify("debug", f"[DEBUG non-stream] final_program type: {type(congregation_result.final_program)}")
+            await notify("debug", f"[DEBUG non-stream] final_program keys: {list(congregation_result.final_program.keys()) if isinstance(congregation_result.final_program, dict) else 'N/A'}")
+            if isinstance(congregation_result.final_program, dict):
+                weeks = congregation_result.final_program.get("weeks", [])
+                await notify("debug", f"[DEBUG non-stream] weeks count: {len(weeks)}")
+                if weeks and len(weeks) > 0:
+                    await notify("debug", f"[DEBUG non-stream] first week: {weeks[0]}")
 
             # Stream specialist contributions after the fact (for backward compat)
             for entry in congregation_result.deliberation_log:
@@ -296,13 +364,25 @@ class ProgramGenerator:
         """Convert AI output to Program model."""
         weeks = []
 
+        # DEBUG: Always print program_data info
+        print(f"\n[DEBUG _build_program] program_data type: {type(program_data)}")
+        print(f"[DEBUG _build_program] program_data keys: {list(program_data.keys()) if isinstance(program_data, dict) else 'N/A'}")
+        if isinstance(program_data, dict):
+            print(f"[DEBUG _build_program] program_name: {program_data.get('program_name', 'MISSING')}")
+            print(f"[DEBUG _build_program] weeks type: {type(program_data.get('weeks'))}")
+            print(f"[DEBUG _build_program] weeks length: {len(program_data.get('weeks', []))}")
+            if program_data.get('weeks'):
+                print(f"[DEBUG _build_program] first week: {program_data['weeks'][0] if program_data['weeks'] else 'empty'}")
+
         # Ensure program_data is a dict
         if not isinstance(program_data, dict):
             program_data = {}
 
         # Handle case where program_data might be empty or missing weeks
         weeks_data = program_data.get("weeks", [])
+        print(f"[DEBUG _build_program] weeks_data empty: {not weeks_data}")
         if not weeks_data:
+            print("[DEBUG _build_program] FALLBACK: Using _parse_thesis_to_weeks")
             # Create a default structure from final_thesis if structured output failed
             weeks_data = self._parse_thesis_to_weeks(final_thesis)
 

@@ -78,7 +78,7 @@ def create_specialist_clients(
                 persona_name=name,
                 persona_prompt=prompt,
                 agent_client=agent_client,
-                model_type=ModelType.SONNET,
+                model_type=ModelType.HAIKU,  # TODO: Change back to SONNET
                 web=True,
             )
         )
@@ -90,7 +90,7 @@ def create_mediator_config() -> MediatorConfig:
     """Create the mediator configuration."""
     return MediatorConfig(
         persona_prompt=MEDIATOR_SYSTEM,
-        model_type=ModelType.OPUS,
+        model_type=ModelType.HAIKU,  # TODO: Change back to OPUS
         output_spec=final_program_specs,
     )
 

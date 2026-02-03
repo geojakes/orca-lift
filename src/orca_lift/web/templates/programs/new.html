@@ -82,6 +82,35 @@
     </div>
 </div>
 
+<!-- Modal for human questions from specialists -->
+<div id="question-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div class="flex items-center justify-between p-4 border-b bg-indigo-50">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 id="question-modal-title" class="text-lg font-semibold text-gray-900">Specialist Question</h3>
+            </div>
+        </div>
+        <form id="question-form" class="p-4">
+            <input type="hidden" id="question-id" name="question_id" value="">
+            <p id="question-text" class="text-gray-700 mb-4"></p>
+            <textarea id="question-answer" name="answer" rows="3"
+                      placeholder="Type your answer here..."
+                      class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 mb-4"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="skipQuestion()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                    Skip
+                </button>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    Submit Answer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 // Modal functions
 function showModal(name, content, aligned) {
@@ -106,14 +135,228 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
+// Question modal functions
+function showQuestionModal(questionId, specialist, question) {
+    document.getElementById('question-modal-title').textContent = specialist + ' asks:';
+    document.getElementById('question-text').textContent = question;
+    document.getElementById('question-id').value = questionId;
+    document.getElementById('question-answer').value = '';
+    document.getElementById('question-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('question-answer').focus();
+}
+
+function closeQuestionModal() {
+    document.getElementById('question-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+async function submitQuestionAnswer(questionId, answer) {
+    const formData = new FormData();
+    formData.append('question_id', questionId);
+    formData.append('answer', answer);
+
+    try {
+        await fetch('/programs/answer', {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (e) {
+        console.error('Failed to submit answer:', e);
+    }
+
+    closeQuestionModal();
+}
+
+function skipQuestion() {
+    const questionId = document.getElementById('question-id').value;
+    submitQuestionAnswer(questionId, 'No preference / skip this question');
+}
+
+// Question form submission
+document.getElementById('question-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const questionId = document.getElementById('question-id').value;
+    const answer = document.getElementById('question-answer').value.trim();
+    if (answer) {
+        await submitQuestionAnswer(questionId, answer);
+    }
+});
+
 // Close modal on escape key
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+        closeModal();
+        // Don't close question modal on escape - user should explicitly skip or answer
+    }
 });
 
 // Close modal on backdrop click
 document.getElementById('specialist-modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'specialist-modal') closeModal();
+});
+
+// Store current job ID for reconnection
+let currentJobId = null;
+
+// Check for active jobs on page load
+async function checkActiveJobs() {
+    try {
+        const response = await fetch('/programs/jobs');
+        const data = await response.json();
+        const runningJobs = data.jobs.filter(j => j.status === 'running');
+
+        if (runningJobs.length > 0) {
+            const job = runningJobs[0];
+            if (confirm(`You have an active program generation in progress (${job.goals.substring(0, 50)}...). Would you like to reconnect?`)) {
+                reconnectToJob(job.id);
+            }
+        }
+    } catch (e) {
+        console.error('Failed to check active jobs:', e);
+    }
+}
+
+// Reconnect to an existing job
+async function reconnectToJob(jobId) {
+    currentJobId = jobId;
+
+    const formContainer = document.getElementById('form-container');
+    const progressContainer = document.getElementById('progress-container');
+    const progressLog = document.getElementById('progress-log');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    formContainer.classList.add('hidden');
+    progressContainer.classList.remove('hidden');
+    progressLog.innerHTML = '<div class="text-sm text-gray-500 mb-2">Reconnecting to job ' + jobId + '...</div>';
+
+    try {
+        const response = await fetch('/programs/jobs/' + jobId + '/stream');
+        await processEventStream(response, progressLog, loadingIndicator);
+    } catch (err) {
+        loadingIndicator.classList.add('hidden');
+        const entry = document.createElement('div');
+        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+        entry.innerHTML = `<p class="text-red-800">Error reconnecting: ${err.message}</p>`;
+        progressLog.appendChild(entry);
+    }
+}
+
+// Process SSE event stream
+async function processEventStream(response, progressLog, loadingIndicator) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const text = decoder.decode(value);
+        const lines = text.split('\n');
+
+        for (const line of lines) {
+            if (line.startsWith('data: ')) {
+                try {
+                    const data = JSON.parse(line.slice(6));
+                    handleEvent(data, progressLog, loadingIndicator);
+                } catch (parseError) {
+                    // Skip invalid JSON
+                }
+            }
+        }
+    }
+}
+
+// Handle a single event
+function handleEvent(data, progressLog, loadingIndicator) {
+    if (data.type === 'job_started') {
+        currentJobId = data.job_id;
+        // Store in sessionStorage for page refresh recovery
+        sessionStorage.setItem('activeJobId', data.job_id);
+    } else if (data.type === 'status') {
+        const entry = document.createElement('div');
+        entry.className = 'flex items-center space-x-2';
+        entry.innerHTML = `
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>${data.message}</span>
+        `;
+        progressLog.appendChild(entry);
+    } else if (data.type === 'info_request') {
+        const entry = document.createElement('div');
+        entry.className = 'ml-6 p-2 bg-blue-50 rounded-lg border-l-4 border-blue-400 text-sm';
+        const funcs = data.functions || [];
+        entry.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-blue-700"><strong>${data.name}</strong> querying: ${funcs.join(', ')}</span>
+            </div>
+        `;
+        progressLog.appendChild(entry);
+    } else if (data.type === 'specialist') {
+        const preview = data.preview || data.content || 'Processing...';
+        const full = data.full || data.content || preview;
+        const aligned = data.aligned;
+        const entry = document.createElement('div');
+        const alignedClass = aligned === true ? 'border-green-400' : aligned === false ? 'border-orange-400' : 'border-indigo-400';
+        entry.className = `ml-6 p-3 bg-gray-50 rounded-lg border-l-4 ${alignedClass} cursor-pointer hover:bg-gray-100 transition`;
+        entry.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div class="font-medium text-indigo-700">${data.name}</div>
+                ${aligned === true || aligned === false ? `<span class="text-xs px-2 py-1 rounded ${aligned ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${aligned ? 'Aligned' : 'Not Aligned'}</span>` : ''}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">${preview}</div>
+            <div class="text-xs text-indigo-500 mt-2">Click to read full reasoning</div>
+        `;
+        entry.onclick = () => showModal(data.name, full, aligned);
+        progressLog.appendChild(entry);
+    } else if (data.type === 'complete') {
+        loadingIndicator.classList.add('hidden');
+        sessionStorage.removeItem('activeJobId');
+        const entry = document.createElement('div');
+        entry.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
+        entry.innerHTML = `
+            <p class="text-green-800 font-medium">Program generated: ${data.name}</p>
+            <a href="/programs/${data.program_id}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                View Program &rarr;
+            </a>
+        `;
+        progressLog.appendChild(entry);
+    } else if (data.type === 'human_question') {
+        // Show question modal for user input
+        const entry = document.createElement('div');
+        entry.className = 'ml-6 p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-400';
+        entry.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-indigo-700"><strong>${data.name}</strong> is asking you a question...</span>
+            </div>
+        `;
+        progressLog.appendChild(entry);
+        showQuestionModal(data.question_id, data.name, data.question);
+    } else if (data.type === 'error') {
+        loadingIndicator.classList.add('hidden');
+        sessionStorage.removeItem('activeJobId');
+        const entry = document.createElement('div');
+        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+        entry.innerHTML = `<p class="text-red-800">Error: ${data.message}</p>`;
+        progressLog.appendChild(entry);
+    }
+}
+
+// Check for saved job on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const savedJobId = sessionStorage.getItem('activeJobId');
+    if (savedJobId) {
+        reconnectToJob(savedJobId);
+    } else {
+        checkActiveJobs();
+    }
 });
 
 document.getElementById('generate-form')?.addEventListener('submit', async function(e) {
@@ -126,6 +369,7 @@ document.getElementById('generate-form')?.addEventListener('submit', async funct
 
     formContainer.classList.add('hidden');
     progressContainer.classList.remove('hidden');
+    progressLog.innerHTML = ''; // Clear previous content
 
     const formData = new FormData(this);
 
@@ -135,73 +379,10 @@ document.getElementById('generate-form')?.addEventListener('submit', async funct
             body: formData,
         });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-
-            const text = decoder.decode(value);
-            const lines = text.split('\n');
-
-            for (const line of lines) {
-                if (line.startsWith('data: ')) {
-                    try {
-                        const data = JSON.parse(line.slice(6));
-
-                        if (data.type === 'status') {
-                            const entry = document.createElement('div');
-                            entry.className = 'flex items-center space-x-2';
-                            entry.innerHTML = `
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>${data.message}</span>
-                            `;
-                            progressLog.appendChild(entry);
-                        } else if (data.type === 'specialist') {
-                            const entry = document.createElement('div');
-                            const alignedClass = data.aligned === true ? 'border-green-400' : data.aligned === false ? 'border-orange-400' : 'border-indigo-400';
-                            entry.className = `ml-6 p-3 bg-gray-50 rounded-lg border-l-4 ${alignedClass} cursor-pointer hover:bg-gray-100 transition`;
-                            entry.innerHTML = `
-                                <div class="flex items-center justify-between">
-                                    <div class="font-medium text-indigo-700">${data.name}</div>
-                                    ${data.aligned !== null ? `<span class="text-xs px-2 py-1 rounded ${data.aligned ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${data.aligned ? 'Aligned' : 'Not Aligned'}</span>` : ''}
-                                </div>
-                                <div class="text-sm text-gray-600 mt-1">${data.preview}</div>
-                                <div class="text-xs text-indigo-500 mt-2">Click to read full reasoning</div>
-                            `;
-                            entry.onclick = () => showModal(data.name, data.full, data.aligned);
-                            progressLog.appendChild(entry);
-                        } else if (data.type === 'complete') {
-                            loadingIndicator.classList.add('hidden');
-                            const entry = document.createElement('div');
-                            entry.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
-                            entry.innerHTML = `
-                                <p class="text-green-800 font-medium">Program generated: ${data.name}</p>
-                                <a href="/programs/${data.program_id}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
-                                    View Program &rarr;
-                                </a>
-                            `;
-                            progressLog.appendChild(entry);
-                        } else if (data.type === 'error') {
-                            loadingIndicator.classList.add('hidden');
-                            const entry = document.createElement('div');
-                            entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
-                            entry.innerHTML = `
-                                <p class="text-red-800">Error: ${data.message}</p>
-                            `;
-                            progressLog.appendChild(entry);
-                        }
-                    } catch (parseError) {
-                        // Skip invalid JSON
-                    }
-                }
-            }
-        }
+        await processEventStream(response, progressLog, loadingIndicator);
     } catch (err) {
         loadingIndicator.classList.add('hidden');
+        sessionStorage.removeItem('activeJobId');
         const entry = document.createElement('div');
         entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
         entry.innerHTML = `<p class="text-red-800">Error: ${err.message}</p>`;

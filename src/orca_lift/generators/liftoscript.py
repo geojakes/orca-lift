@@ -8,7 +8,6 @@ Liftoscript Format Reference:
 - Programs consist of weeks and days
 - Each day has exercises with sets, reps, and weight configurations
 - Progression is defined using functions like lp(), dp(), sum()
-- Comments start with //
 
 Example:
 ```
@@ -35,7 +34,7 @@ class GeneratorConfig:
     include_rest_times: bool = False
     weight_unit: str = "lb"  # "lb" or "kg"
     include_week_headers: bool = True
-    include_comments: bool = True
+    include_comments: bool = False  # Liftosaur doesn't support // comments
     equipment_config: EquipmentConfig | None = None  # For weight rounding
 
 

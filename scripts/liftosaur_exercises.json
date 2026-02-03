@@ -1,0 +1,3886 @@
+{
+  "source": "https://github.com/astashov/liftosaur",
+  "exercises": [
+    {
+      "id": "abWheel",
+      "name": "Ab Wheel",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "arnoldPress",
+      "name": "Arnold Press",
+      "equipment": [
+        "dumbbell",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Dumbbell",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "aroundTheWorld",
+      "name": "Around The World",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Pectoralis Major Clavicular Head",
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "backExtension",
+      "name": "Back Extension",
+      "equipment": [
+        "bodyweight",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "ballSlams",
+      "name": "Ball Slams",
+      "equipment": [
+        "medicineball"
+      ],
+      "equipment_display": [
+        "Medicine Ball"
+      ],
+      "target_muscles": [
+        "Infraspinatus",
+        "Latissimus Dorsi",
+        "Teres Major",
+        "Teres Minor",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "battleRopes",
+      "name": "Battle Ropes",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "behindTheNeckPress",
+      "name": "Behind The Neck Press",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "benchDip",
+      "name": "Bench Dip",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "benchPress",
+      "name": "Bench Press",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "smith",
+        "band",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Smith Machine",
+        "Band",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "benchPressCloseGrip",
+      "name": "Bench Press Close Grip",
+      "equipment": [
+        "barbell",
+        "ezbar",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "EZ Bar",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "benchPressWideGrip",
+      "name": "Bench Press Wide Grip",
+      "equipment": [
+        "barbell",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "bentOverOneArmRow",
+      "name": "Bent Over One Arm Row",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "bentOverRow",
+      "name": "Bent Over Row",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "band",
+        "leverageMachine",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Band",
+        "Leverage Machine",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Middle Fibers",
+        "Trapezius Upper Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "bicepCurl",
+      "name": "Bicep Curl",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "band",
+        "leverageMachine",
+        "cable",
+        "ezbar"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Band",
+        "Leverage Machine",
+        "Cable",
+        "EZ Bar"
+      ],
+      "target_muscles": [
+        "Biceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "bicycleCrunch",
+      "name": "Bicycle Crunch",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Obliques",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "boxJump",
+      "name": "Box Jump",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Gluteus Maximus",
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "boxSquat",
+      "name": "Box Squat",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "bulgarianSplitSquat",
+      "name": "Bulgarian Split Squat",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "burpee",
+      "name": "Burpee",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Gluteus Maximus",
+        "Pectoralis Major Clavicular Head",
+        "Pectoralis Major Sternal Head",
+        "Triceps Brachii",
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Chest",
+        "Shoulders",
+        "Upper Arms",
+        "Waist",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "cableCrossover",
+      "name": "Cable Crossover",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head",
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "cableCrunch",
+      "name": "Cable Crunch",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "cableKickback",
+      "name": "Cable Kickback",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "cablePullThrough",
+      "name": "Cable Pull Through",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "cableTwist",
+      "name": "Cable Twist",
+      "equipment": [
+        "barbell",
+        "bodyweight",
+        "cable",
+        "leverageMachine",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Bodyweight",
+        "Cable",
+        "Leverage Machine",
+        "Band"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "calfPressOnLegPress",
+      "name": "Calf Press on Leg Press",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gastrocnemius"
+      ],
+      "body_parts": [
+        "Calves"
+      ]
+    },
+    {
+      "id": "calfPressOnSeatedLegPress",
+      "name": "Calf Press on Seated Leg Press",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gastrocnemius",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Calves"
+      ]
+    },
+    {
+      "id": "chestDip",
+      "name": "Chest Dip",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "chestFly",
+      "name": "Chest Fly",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head",
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "chestPress",
+      "name": "Chest Press",
+      "equipment": [
+        "leverageMachine",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Band"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "chestSupportedRow",
+      "name": "Chest-Supported Row",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Middle Fibers",
+        "Trapezius Upper Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "chinUp",
+      "name": "Chin Up",
+      "equipment": [
+        "leverageMachine",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "clean",
+      "name": "Clean",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Hamstrings",
+        "Quadriceps",
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Deltoid Anterior",
+        "Deltoid Lateral"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs",
+        "Back",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "cleanandJerk",
+      "name": "Clean and Jerk",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Hamstrings",
+        "Quadriceps",
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Deltoid Anterior",
+        "Deltoid Lateral"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs",
+        "Back",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "concentrationCurl",
+      "name": "Concentration Curl",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "band",
+        "cable"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Band",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Brachialis"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "crossBodyCrunch",
+      "name": "Cross Body Crunch",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Obliques",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "crunch",
+      "name": "Crunch",
+      "equipment": [
+        "cable",
+        "bodyweight",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Bodyweight",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "cycling",
+      "name": "Cycling",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Gluteus Maximus",
+        "Gastrocnemius",
+        "Soleus",
+        "Tibialis Anterior"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs",
+        "Calves",
+        "Shins",
+        "Back",
+        "Waist"
+      ]
+    },
+    {
+      "id": "deadlift",
+      "name": "Deadlift",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "leverageMachine",
+        "smith",
+        "band",
+        "kettlebell",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Leverage Machine",
+        "Smith Machine",
+        "Band",
+        "Kettlebell",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Erector Spinae",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "deadliftHighPull",
+      "name": "Deadlift High Pull",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Lateral",
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "declineBenchPress",
+      "name": "Decline Bench Press",
+      "equipment": [
+        "dumbbell",
+        "smith"
+      ],
+      "equipment_display": [
+        "Dumbbell",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "declineCrunch",
+      "name": "Decline Crunch",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "deficitDeadlift",
+      "name": "Deficit Deadlift",
+      "equipment": [
+        "barbell",
+        "trapbar"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Trap Bar"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "ellipticalMachine",
+      "name": "Elliptical Machine",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [],
+      "body_parts": [
+        "Hips",
+        "Thighs",
+        "Back",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "facePull",
+      "name": "Face Pull",
+      "equipment": [
+        "band"
+      ],
+      "equipment_display": [
+        "Band"
+      ],
+      "target_muscles": [
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "flatKneeRaise",
+      "name": "Flat Knee Raise",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "flatLegRaise",
+      "name": "Flat Leg Raise",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Hips",
+        "Waist"
+      ]
+    },
+    {
+      "id": "frontRaise",
+      "name": "Front Raise",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "bodyweight",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Bodyweight",
+        "Band"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "gluteBridge",
+      "name": "Glute Bridge",
+      "equipment": [
+        "band",
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Band",
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "gluteBridgeMarch",
+      "name": "Glute Bridge March",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "gluteKickback",
+      "name": "Glute Kickback",
+      "equipment": [
+        "leverageMachine",
+        "bodyweight",
+        "cable",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Bodyweight",
+        "Cable",
+        "Band"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Gluteus Medius"
+      ],
+      "body_parts": [
+        "Glute"
+      ]
+    },
+    {
+      "id": "frontSquat",
+      "name": "Front Squat",
+      "equipment": [
+        "barbell",
+        "kettlebell",
+        "dumbbell",
+        "cable",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Kettlebell",
+        "Dumbbell",
+        "Cable",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "gobletSquat",
+      "name": "Goblet Squat",
+      "equipment": [
+        "kettlebell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Kettlebell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "goodMorning",
+      "name": "Good Morning",
+      "equipment": [
+        "barbell",
+        "smith",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Smith Machine",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "hackSquat",
+      "name": "Hack Squat",
+      "equipment": [
+        "barbell",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "hammerCurl",
+      "name": "Hammer Curl",
+      "equipment": [
+        "cable",
+        "dumbbell",
+        "band"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Dumbbell",
+        "Band"
+      ],
+      "target_muscles": [
+        "Brachioradialis",
+        "Biceps Brachii",
+        "Brachialis"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "handstandPushUp",
+      "name": "Handstand Push Up",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "hangClean",
+      "name": "Hang Clean",
+      "equipment": [
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Biceps Brachii",
+        "Brachialis",
+        "Brachioradialis"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "hangSnatch",
+      "name": "Hang Snatch",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers",
+        "Trapezius Upper Fibers",
+        "Quadriceps",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Thighs",
+        "Back",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "hangingLegRaise",
+      "name": "Hanging Leg Raise",
+      "equipment": [
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "highKneeSkips",
+      "name": "High Knee Skips",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Thighs",
+        "Hips"
+      ]
+    },
+    {
+      "id": "highRow",
+      "name": "High Row",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "hipAbductor",
+      "name": "Hip Abductor",
+      "equipment": [
+        "leverageMachine",
+        "bodyweight",
+        "cable",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Bodyweight",
+        "Cable",
+        "Band"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Gluteus Medius"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "hipAdductor",
+      "name": "Hip Adductor",
+      "equipment": [
+        "leverageMachine",
+        "cable",
+        "band",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Cable",
+        "Band",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Adductor Magnus",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "hipThrust",
+      "name": "Hip Thrust",
+      "equipment": [
+        "barbell",
+        "leverageMachine",
+        "band",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Leverage Machine",
+        "Band",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "inclineBenchPress",
+      "name": "Incline Bench Press",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "inclineBenchPressWideGrip",
+      "name": "Incline Bench Press Wide Grip",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "inclineChestFly",
+      "name": "Incline Chest Fly",
+      "equipment": [
+        "cable",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "inclineChestPress",
+      "name": "Incline Chest Press",
+      "equipment": [
+        "leverageMachine",
+        "band",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Band",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "inclineCurl",
+      "name": "Incline Curl",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Biceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "inclineRow",
+      "name": "Incline Row",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Middle Fibers",
+        "Trapezius Upper Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "invertedRow",
+      "name": "Inverted Row",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "isoLateralChestPress",
+      "name": "Iso-Lateral Chest Press",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Clavicular Head",
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "isoLateralRow",
+      "name": "Iso-Lateral Row",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "jackknifeSitUp",
+      "name": "Jackknife Sit Up",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "jumpRope",
+      "name": "Jump Rope",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Soleus",
+        "Gastrocnemius",
+        "Quadriceps",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs",
+        "Calves"
+      ]
+    },
+    {
+      "id": "jumpSquat",
+      "name": "Jump Squat",
+      "equipment": [
+        "barbell",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "jumpingJack",
+      "name": "Jumping Jack",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps",
+        "Adductor Brevis",
+        "Adductor Longus",
+        "Adductor Magnus",
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "kettlebellSwing",
+      "name": "Kettlebell Swing",
+      "equipment": [
+        "dumbbell",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Dumbbell",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "kettlebellTurkishGetUp",
+      "name": "Kettlebell Turkish Get Up",
+      "equipment": [
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior",
+        "Quadriceps",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips",
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "kippingPullUp",
+      "name": "Kipping Pull Up",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Brachialis",
+        "Biceps Brachii",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "kneeRaise",
+      "name": "Knee Raise",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis",
+        "Iliopsoas"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "kneelingPulldown",
+      "name": "Kneeling Pulldown",
+      "equipment": [
+        "band"
+      ],
+      "equipment_display": [
+        "Band"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "kneestoElbows",
+      "name": "Knees to Elbows",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "latPulldown",
+      "name": "Lat Pulldown",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "lateralBoxJump",
+      "name": "Lateral Box Jump",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "lateralRaise",
+      "name": "Lateral Raise",
+      "equipment": [
+        "cable",
+        "dumbbell",
+        "leverageMachine",
+        "band",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Dumbbell",
+        "Leverage Machine",
+        "Band",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Deltoid Lateral"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "legsUpBenchPress",
+      "name": "Legs Up Bench Press",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "legCurl",
+      "name": "Leg Curl",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "legExtension",
+      "name": "Leg Extension",
+      "equipment": [
+        "leverageMachine",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Band"
+      ],
+      "target_muscles": [
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "legPress",
+      "name": "Leg Press",
+      "equipment": [
+        "smith",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Smith Machine",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "lunge",
+      "name": "Lunge",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "lyingBicepCurl",
+      "name": "Lying Bicep Curl",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "band",
+        "leverageMachine",
+        "cable",
+        "ezbar"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Band",
+        "Leverage Machine",
+        "Cable",
+        "EZ Bar"
+      ],
+      "target_muscles": [
+        "Biceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "lyingLegCurl",
+      "name": "Lying Leg Curl",
+      "equipment": [
+        "leverageMachine",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Band"
+      ],
+      "target_muscles": [
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "mountainClimber",
+      "name": "Mountain Climber",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis",
+        "Iliopsoas",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "muscleUp",
+      "name": "Muscle Up",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Biceps Brachii",
+        "Brachialis",
+        "Brachioradialis",
+        "Deltoid Posterior",
+        "Infraspinatus",
+        "Latissimus Dorsi",
+        "Pectoralis Major Sternal Head",
+        "Teres Major",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers",
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "obliqueCrunch",
+      "name": "Oblique Crunch",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "overheadPress",
+      "name": "Overhead Press",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "ezbar"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "EZ Bar"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "overheadSquat",
+      "name": "Overhead Squat",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "pecDeck",
+      "name": "Pec Deck",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "pendlayRow",
+      "name": "Pendlay Row",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "pistolSquat",
+      "name": "Pistol Squat",
+      "equipment": [
+        "kettlebell",
+        "leverageMachine",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Kettlebell",
+        "Leverage Machine",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "plank",
+      "name": "Plank",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "powerClean",
+      "name": "Power Clean",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Gluteus Maximus",
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "powerSnatch",
+      "name": "Power Snatch",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Gluteus Maximus",
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "preacherCurl",
+      "name": "Preacher Curl",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "ezbar",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "EZ Bar",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Brachialis"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "pressUnder",
+      "name": "Press Under",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Deltoid Anterior",
+        "Deltoid Lateral",
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "pullUp",
+      "name": "Pull Up",
+      "equipment": [
+        "leverageMachine",
+        "bodyweight",
+        "band"
+      ],
+      "equipment_display": [
+        "Leverage Machine",
+        "Bodyweight",
+        "Band"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "pullover",
+      "name": "Pullover",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "pushPress",
+      "name": "Push Press",
+      "equipment": [
+        "bodyweight",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "pushUp",
+      "name": "Push Up",
+      "equipment": [
+        "bodyweight",
+        "band"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Band"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "reverseCrunch",
+      "name": "Reverse Crunch",
+      "equipment": [
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "reverseCurl",
+      "name": "Reverse Curl",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Band"
+      ],
+      "target_muscles": [
+        "Brachioradialis"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "reverseFly",
+      "name": "Reverse Fly",
+      "equipment": [
+        "dumbbell",
+        "leverageMachine",
+        "band"
+      ],
+      "equipment_display": [
+        "Dumbbell",
+        "Leverage Machine",
+        "Band"
+      ],
+      "target_muscles": [
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "reverseGripConcentrationCurl",
+      "name": "Reverse Grip Concentration Curl",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Brachialis",
+        "Brachioradialis"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "reverseLatPulldown",
+      "name": "Reverse Lat Pulldown",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "reverseLunge",
+      "name": "Reverse Lunge",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "reverseWristCurl",
+      "name": "Reverse Wrist Curl",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Wrist Extensors"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "reversePlank",
+      "name": "Reverse Plank",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Rectus Abdominis",
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "romanianDeadlift",
+      "name": "Romanian Deadlift",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Erector Spinae",
+        "Gluteus Maximus",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "reverseHyperextension",
+      "name": "Reverse Hyperextension",
+      "equipment": [
+        "band",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Band",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "rowing",
+      "name": "Rowing",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Quadriceps",
+        "Latissimus Dorsi",
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "russianTwist",
+      "name": "Russian Twist",
+      "equipment": [
+        "bodyweight",
+        "dumbbell",
+        "cable"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Dumbbell",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "safetySquatBarSquat",
+      "name": "Safety Squat Bar Squat",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "seatedCalfRaise",
+      "name": "Seated Calf Raise",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gastrocnemius"
+      ],
+      "body_parts": [
+        "Calves"
+      ]
+    },
+    {
+      "id": "seatedFrontRaise",
+      "name": "Seated Front Raise",
+      "equipment": [
+        "barbell",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "seatedLegCurl",
+      "name": "Seated Leg Curl",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "seatedLegPress",
+      "name": "Seated Leg Press",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "seatedOverheadPress",
+      "name": "Seated Overhead Press",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "seatedPalmsUpWristCurl",
+      "name": "Seated Palms Up Wrist Curl",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Wrist Flexors"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "seatedRow",
+      "name": "Seated Row",
+      "equipment": [
+        "cable",
+        "band",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Band",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "seatedWideGripRow",
+      "name": "Seated Wide Grip Row",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "shoulderPress",
+      "name": "Shoulder Press",
+      "equipment": [
+        "cable",
+        "dumbbell",
+        "leverageMachine",
+        "band",
+        "smith"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Dumbbell",
+        "Leverage Machine",
+        "Band",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "shoulderPressParallelGrip",
+      "name": "Shoulder Press Parallel Grip",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "shrug",
+      "name": "Shrug",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "leverageMachine",
+        "band",
+        "smith"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Leverage Machine",
+        "Band",
+        "Smith Machine"
+      ],
+      "target_muscles": [
+        "Trapezius Upper Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "sideBend",
+      "name": "Side Bend",
+      "equipment": [
+        "cable",
+        "dumbbell",
+        "band"
+      ],
+      "equipment_display": [
+        "Cable",
+        "Dumbbell",
+        "Band"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "sideCrunch",
+      "name": "Side Crunch",
+      "equipment": [
+        "bodyweight",
+        "band",
+        "cable"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Band",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "sideHipAbductor",
+      "name": "Side Hip Abductor",
+      "equipment": [
+        "bodyweight",
+        "barbell",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Barbell",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Medius",
+        "Tensor Fasciae Latae"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "sideLyingClam",
+      "name": "Side Lying Clam",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Medius"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "sidePlank",
+      "name": "Side Plank",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Obliques"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "singleLegBridge",
+      "name": "Single Leg Bridge",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "singleLegCalfRaise",
+      "name": "Single Leg Calf Raise",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "leverageMachine",
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Leverage Machine",
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Gastrocnemius"
+      ],
+      "body_parts": [
+        "Calves"
+      ]
+    },
+    {
+      "id": "singleLegDeadlift",
+      "name": "Single Leg Deadlift",
+      "equipment": [
+        "dumbbell",
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Dumbbell",
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Erector Spinae",
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "singleLegGluteBridgeBench",
+      "name": "Single Leg Glute Bridge On Bench",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "singleLegGluteBridgeStraight",
+      "name": "Single Leg Glute Bridge Straight Leg",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "singleLegGluteBridgeBentKnee",
+      "name": "Single Leg Glute Bridge Bent Knee",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "singleLegHipThrust",
+      "name": "Single Leg Hip Thrust",
+      "equipment": [
+        "barbell",
+        "bodyweight",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Bodyweight",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "sissySquat",
+      "name": "Sissy Squat",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "sitUp",
+      "name": "Sit Up",
+      "equipment": [
+        "bodyweight",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "slingShotBenchPress",
+      "name": "Sling Shot Bench Press",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Pectoralis Major Sternal Head"
+      ],
+      "body_parts": [
+        "Chest"
+      ]
+    },
+    {
+      "id": "skullcrusher",
+      "name": "Skullcrusher",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "ezbar"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "EZ Bar"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "snatch",
+      "name": "Snatch",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Erector Spinae",
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips",
+        "Shoulders",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "snatchPull",
+      "name": "Snatch Pull",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Erector Spinae",
+        "Gluteus Maximus",
+        "Hamstrings",
+        "Quadriceps",
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers",
+        "Trapezius Upper Fibers"
+      ],
+      "body_parts": [
+        "Back",
+        "Hips",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "splitSquat",
+      "name": "Split Squat",
+      "equipment": [
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "splitJerk",
+      "name": "Split Jerk",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Deltoid Posterior",
+        "Deltoid Lateral",
+        "Triceps Brachii",
+        "Quadriceps",
+        "Gluteus Maximus",
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Hips",
+        "Shoulders",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "squat",
+      "name": "Squat",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "bodyweight",
+        "smith",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Bodyweight",
+        "Smith Machine",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "squatRow",
+      "name": "Squat Row",
+      "equipment": [
+        "band"
+      ],
+      "equipment_display": [
+        "Band"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "standingCalfRaise",
+      "name": "Standing Calf Raise",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "leverageMachine",
+        "bodyweight",
+        "cable"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Leverage Machine",
+        "Bodyweight",
+        "Cable"
+      ],
+      "target_muscles": [
+        "Gastrocnemius"
+      ],
+      "body_parts": [
+        "Calves"
+      ]
+    },
+    {
+      "id": "standingRow",
+      "name": "Standing Row",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "standingRowCloseGrip",
+      "name": "Standing Row Close Grip",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Upper Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "standingRowRearDeltWithRope",
+      "name": "Standing Row Rear Delt With Rope",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "standingRowRearHorizontalDeltWithRope",
+      "name": "Standing Row Rear Delt, Horizontal, With Rope",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Deltoid Posterior"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "standingRowVBar",
+      "name": "Standing Row V-Bar",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "stepUp",
+      "name": "Step up",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "bodyweight",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Bodyweight",
+        "Band"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "stiffLegDeadlift",
+      "name": "Stiff Leg Deadlift",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Band"
+      ],
+      "target_muscles": [
+        "Erector Spinae",
+        "Gluteus Maximus",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "straightLegDeadlift",
+      "name": "Straight Leg Deadlift",
+      "equipment": [
+        "barbell",
+        "dumbbell",
+        "band",
+        "kettlebell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Dumbbell",
+        "Band",
+        "Kettlebell"
+      ],
+      "target_muscles": [
+        "Erector Spinae",
+        "Hamstrings"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "sumoDeadlift",
+      "name": "Sumo Deadlift",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps",
+        "Adductor Magnus",
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    },
+    {
+      "id": "sumoDeadliftHighPull",
+      "name": "Sumo Deadlift High Pull",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Lateral",
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "superman",
+      "name": "Superman",
+      "equipment": [
+        "bodyweight",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Erector Spinae"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "tBarRow",
+      "name": "T Bar Row",
+      "equipment": [
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi",
+        "Trapezius Lower Fibers",
+        "Trapezius Middle Fibers"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "thruster",
+      "name": "Thruster",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Deltoid Anterior",
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Shoulders",
+        "Thighs"
+      ]
+    },
+    {
+      "id": "toesToBar",
+      "name": "Toes To Bar",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "torsoRotation",
+      "name": "Torso Rotation",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Obliques",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "trapBarDeadlift",
+      "name": "Trap Bar Deadlift",
+      "equipment": [
+        "trapbar"
+      ],
+      "equipment_display": [
+        "Trap Bar"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Thighs"
+      ]
+    },
+    {
+      "id": "tricepsDip",
+      "name": "Triceps Dip",
+      "equipment": [
+        "bodyweight",
+        "leverageMachine"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Leverage Machine"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "tricepsExtension",
+      "name": "Triceps Extension",
+      "equipment": [
+        "barbell",
+        "cable",
+        "band",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Band",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "tricepsPushdown",
+      "name": "Triceps Pushdown",
+      "equipment": [
+        "cable"
+      ],
+      "equipment_display": [
+        "Cable"
+      ],
+      "target_muscles": [
+        "Triceps Brachii"
+      ],
+      "body_parts": [
+        "Upper Arms"
+      ]
+    },
+    {
+      "id": "uprightRow",
+      "name": "Upright Row",
+      "equipment": [
+        "barbell",
+        "cable",
+        "dumbbell",
+        "band"
+      ],
+      "equipment_display": [
+        "Barbell",
+        "Cable",
+        "Dumbbell",
+        "Band"
+      ],
+      "target_muscles": [
+        "Deltoid Lateral"
+      ],
+      "body_parts": [
+        "Shoulders"
+      ]
+    },
+    {
+      "id": "vUp",
+      "name": "V Up",
+      "equipment": [
+        "bodyweight",
+        "band",
+        "dumbbell"
+      ],
+      "equipment_display": [
+        "Bodyweight",
+        "Band",
+        "Dumbbell"
+      ],
+      "target_muscles": [
+        "Iliopsoas",
+        "Rectus Abdominis"
+      ],
+      "body_parts": [
+        "Waist"
+      ]
+    },
+    {
+      "id": "widePullUp",
+      "name": "Wide Pull Up",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Latissimus Dorsi"
+      ],
+      "body_parts": [
+        "Back"
+      ]
+    },
+    {
+      "id": "wristCurl",
+      "name": "Wrist Curl",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Wrist Flexors"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "wristRoller",
+      "name": "Wrist Roller",
+      "equipment": [
+        "bodyweight"
+      ],
+      "equipment_display": [
+        "Bodyweight"
+      ],
+      "target_muscles": [
+        "Wrist Extensors",
+        "Wrist Flexors"
+      ],
+      "body_parts": [
+        "Forearms"
+      ]
+    },
+    {
+      "id": "zercherSquat",
+      "name": "Zercher Squat",
+      "equipment": [
+        "barbell"
+      ],
+      "equipment_display": [
+        "Barbell"
+      ],
+      "target_muscles": [
+        "Gluteus Maximus",
+        "Quadriceps"
+      ],
+      "body_parts": [
+        "Hips"
+      ]
+    }
+  ],
+  "valid_names": [
+    "Ab Wheel, Bodyweight",
+    "Arnold Press, Dumbbell",
+    "Arnold Press, Kettlebell",
+    "Around The World, Dumbbell",
+    "Back Extension, Bodyweight",
+    "Back Extension, Leverage Machine",
+    "Ball Slams, Medicine Ball",
+    "Battle Ropes, Bodyweight",
+    "Behind The Neck Press, Barbell",
+    "Bench Dip, Bodyweight",
+    "Bench Press Close Grip, Barbell",
+    "Bench Press Close Grip, EZ Bar",
+    "Bench Press Close Grip, Smith Machine",
+    "Bench Press Wide Grip, Barbell",
+    "Bench Press Wide Grip, Smith Machine",
+    "Bench Press, Band",
+    "Bench Press, Barbell",
+    "Bench Press, Cable",
+    "Bench Press, Dumbbell",
+    "Bench Press, Kettlebell",
+    "Bench Press, Smith Machine",
+    "Bent Over One Arm Row, Dumbbell",
+    "Bent Over Row, Band",
+    "Bent Over Row, Barbell",
+    "Bent Over Row, Cable",
+    "Bent Over Row, Dumbbell",
+    "Bent Over Row, Leverage Machine",
+    "Bent Over Row, Smith Machine",
+    "Bicep Curl, Band",
+    "Bicep Curl, Barbell",
+    "Bicep Curl, Cable",
+    "Bicep Curl, Dumbbell",
+    "Bicep Curl, EZ Bar",
+    "Bicep Curl, Leverage Machine",
+    "Bicycle Crunch, Bodyweight",
+    "Box Jump, Bodyweight",
+    "Box Squat, Barbell",
+    "Box Squat, Dumbbell",
+    "Bulgarian Split Squat, Dumbbell",
+    "Burpee, Bodyweight",
+    "Cable Crossover, Cable",
+    "Cable Crunch, Cable",
+    "Cable Kickback, Cable",
+    "Cable Pull Through, Cable",
+    "Cable Twist, Band",
+    "Cable Twist, Barbell",
+    "Cable Twist, Bodyweight",
+    "Cable Twist, Cable",
+    "Cable Twist, Leverage Machine",
+    "Calf Press on Leg Press, Leverage Machine",
+    "Calf Press on Seated Leg Press, Leverage Machine",
+    "Chest Dip, Bodyweight",
+    "Chest Fly, Barbell",
+    "Chest Fly, Cable",
+    "Chest Fly, Dumbbell",
+    "Chest Fly, Leverage Machine",
+    "Chest Press, Band",
+    "Chest Press, Leverage Machine",
+    "Chest-Supported Row, Barbell",
+    "Chest-Supported Row, Dumbbell",
+    "Chin Up, Bodyweight",
+    "Chin Up, Leverage Machine",
+    "Clean and Jerk, Barbell",
+    "Clean, Barbell",
+    "Concentration Curl, Band",
+    "Concentration Curl, Barbell",
+    "Concentration Curl, Cable",
+    "Concentration Curl, Dumbbell",
+    "Cross Body Crunch, Bodyweight",
+    "Crunch, Bodyweight",
+    "Crunch, Cable",
+    "Crunch, Leverage Machine",
+    "Cycling, Bodyweight",
+    "Deadlift High Pull, Barbell",
+    "Deadlift, Band",
+    "Deadlift, Barbell",
+    "Deadlift, Bodyweight",
+    "Deadlift, Cable",
+    "Deadlift, Dumbbell",
+    "Deadlift, Kettlebell",
+    "Deadlift, Leverage Machine",
+    "Deadlift, Smith Machine",
+    "Decline Bench Press, Dumbbell",
+    "Decline Bench Press, Smith Machine",
+    "Decline Crunch, Bodyweight",
+    "Deficit Deadlift, Barbell",
+    "Deficit Deadlift, Trap Bar",
+    "Elliptical Machine, Leverage Machine",
+    "Face Pull, Band",
+    "Flat Knee Raise, Bodyweight",
+    "Flat Leg Raise, Bodyweight",
+    "Front Raise, Band",
+    "Front Raise, Barbell",
+    "Front Raise, Bodyweight",
+    "Front Raise, Cable",
+    "Front Raise, Dumbbell",
+    "Front Squat, Barbell",
+    "Front Squat, Cable",
+    "Front Squat, Dumbbell",
+    "Front Squat, Kettlebell",
+    "Front Squat, Smith Machine",
+    "Glute Bridge March, Bodyweight",
+    "Glute Bridge, Band",
+    "Glute Bridge, Barbell",
+    "Glute Bridge, Dumbbell",
+    "Glute Kickback, Band",
+    "Glute Kickback, Bodyweight",
+    "Glute Kickback, Cable",
+    "Glute Kickback, Leverage Machine",
+    "Goblet Squat, Dumbbell",
+    "Goblet Squat, Kettlebell",
+    "Good Morning, Barbell",
+    "Good Morning, Leverage Machine",
+    "Good Morning, Smith Machine",
+    "Hack Squat, Barbell",
+    "Hack Squat, Smith Machine",
+    "Hammer Curl, Band",
+    "Hammer Curl, Cable",
+    "Hammer Curl, Dumbbell",
+    "Handstand Push Up, Bodyweight",
+    "Hang Clean, Kettlebell",
+    "Hang Snatch, Barbell",
+    "Hanging Leg Raise, Bodyweight",
+    "Hanging Leg Raise, Cable",
+    "High Knee Skips, Bodyweight",
+    "High Row, Leverage Machine",
+    "Hip Abductor, Band",
+    "Hip Abductor, Bodyweight",
+    "Hip Abductor, Cable",
+    "Hip Abductor, Leverage Machine",
+    "Hip Adductor, Band",
+    "Hip Adductor, Bodyweight",
+    "Hip Adductor, Cable",
+    "Hip Adductor, Leverage Machine",
+    "Hip Thrust, Band",
+    "Hip Thrust, Barbell",
+    "Hip Thrust, Bodyweight",
+    "Hip Thrust, Leverage Machine",
+    "Incline Bench Press Wide Grip, Barbell",
+    "Incline Bench Press, Barbell",
+    "Incline Bench Press, Cable",
+    "Incline Bench Press, Dumbbell",
+    "Incline Bench Press, Smith Machine",
+    "Incline Chest Fly, Cable",
+    "Incline Chest Fly, Dumbbell",
+    "Incline Chest Press, Band",
+    "Incline Chest Press, Dumbbell",
+    "Incline Chest Press, Leverage Machine",
+    "Incline Curl, Dumbbell",
+    "Incline Row, Barbell",
+    "Incline Row, Dumbbell",
+    "Inverted Row, Bodyweight",
+    "Iso-Lateral Chest Press, Dumbbell",
+    "Iso-Lateral Row, Dumbbell",
+    "Jackknife Sit Up, Bodyweight",
+    "Jump Rope, Bodyweight",
+    "Jump Squat, Barbell",
+    "Jump Squat, Bodyweight",
+    "Jumping Jack, Bodyweight",
+    "Kettlebell Swing, Dumbbell",
+    "Kettlebell Swing, Kettlebell",
+    "Kettlebell Turkish Get Up, Kettlebell",
+    "Kipping Pull Up, Bodyweight",
+    "Knee Raise, Bodyweight",
+    "Kneeling Pulldown, Band",
+    "Knees to Elbows, Bodyweight",
+    "Lat Pulldown, Cable",
+    "Lateral Box Jump, Bodyweight",
+    "Lateral Raise, Band",
+    "Lateral Raise, Cable",
+    "Lateral Raise, Dumbbell",
+    "Lateral Raise, Kettlebell",
+    "Lateral Raise, Leverage Machine",
+    "Leg Curl, Leverage Machine",
+    "Leg Extension, Band",
+    "Leg Extension, Leverage Machine",
+    "Leg Press, Leverage Machine",
+    "Leg Press, Smith Machine",
+    "Legs Up Bench Press, Barbell",
+    "Lunge, Barbell",
+    "Lunge, Bodyweight",
+    "Lunge, Cable",
+    "Lunge, Dumbbell",
+    "Lying Bicep Curl, Band",
+    "Lying Bicep Curl, Barbell",
+    "Lying Bicep Curl, Cable",
+    "Lying Bicep Curl, Dumbbell",
+    "Lying Bicep Curl, EZ Bar",
+    "Lying Bicep Curl, Leverage Machine",
+    "Lying Leg Curl, Band",
+    "Lying Leg Curl, Leverage Machine",
+    "Mountain Climber, Bodyweight",
+    "Muscle Up, Bodyweight",
+    "Oblique Crunch, Bodyweight",
+    "Overhead Press, Barbell",
+    "Overhead Press, Dumbbell",
+    "Overhead Press, EZ Bar",
+    "Overhead Squat, Barbell",
+    "Overhead Squat, Dumbbell",
+    "Pec Deck, Leverage Machine",
+    "Pendlay Row, Barbell",
+    "Pistol Squat, Bodyweight",
+    "Pistol Squat, Kettlebell",
+    "Pistol Squat, Leverage Machine",
+    "Plank, Bodyweight",
+    "Power Clean, Barbell",
+    "Power Snatch, Barbell",
+    "Preacher Curl, Barbell",
+    "Preacher Curl, Dumbbell",
+    "Preacher Curl, EZ Bar",
+    "Preacher Curl, Leverage Machine",
+    "Press Under, Barbell",
+    "Pull Up, Band",
+    "Pull Up, Bodyweight",
+    "Pull Up, Leverage Machine",
+    "Pullover, Barbell",
+    "Pullover, Dumbbell",
+    "Push Press, Bodyweight",
+    "Push Press, Kettlebell",
+    "Push Up, Band",
+    "Push Up, Bodyweight",
+    "Reverse Crunch, Bodyweight",
+    "Reverse Crunch, Cable",
+    "Reverse Curl, Band",
+    "Reverse Curl, Barbell",
+    "Reverse Curl, Cable",
+    "Reverse Curl, Dumbbell",
+    "Reverse Fly, Band",
+    "Reverse Fly, Dumbbell",
+    "Reverse Fly, Leverage Machine",
+    "Reverse Grip Concentration Curl, Dumbbell",
+    "Reverse Hyperextension, Band",
+    "Reverse Hyperextension, Leverage Machine",
+    "Reverse Lat Pulldown, Cable",
+    "Reverse Lunge, Barbell",
+    "Reverse Lunge, Bodyweight",
+    "Reverse Lunge, Cable",
+    "Reverse Lunge, Dumbbell",
+    "Reverse Plank, Bodyweight",
+    "Reverse Wrist Curl, Barbell",
+    "Romanian Deadlift, Barbell",
+    "Romanian Deadlift, Dumbbell",
+    "Rowing, Cable",
+    "Russian Twist, Bodyweight",
+    "Russian Twist, Cable",
+    "Russian Twist, Dumbbell",
+    "Safety Squat Bar Squat, Barbell",
+    "Seated Calf Raise, Barbell",
+    "Seated Calf Raise, Dumbbell",
+    "Seated Calf Raise, Leverage Machine",
+    "Seated Front Raise, Barbell",
+    "Seated Front Raise, Dumbbell",
+    "Seated Leg Curl, Leverage Machine",
+    "Seated Leg Press, Leverage Machine",
+    "Seated Overhead Press, Barbell",
+    "Seated Palms Up Wrist Curl, Dumbbell",
+    "Seated Row, Band",
+    "Seated Row, Cable",
+    "Seated Row, Leverage Machine",
+    "Seated Wide Grip Row, Cable",
+    "Shoulder Press Parallel Grip, Dumbbell",
+    "Shoulder Press, Band",
+    "Shoulder Press, Cable",
+    "Shoulder Press, Dumbbell",
+    "Shoulder Press, Leverage Machine",
+    "Shoulder Press, Smith Machine",
+    "Shrug, Band",
+    "Shrug, Barbell",
+    "Shrug, Cable",
+    "Shrug, Dumbbell",
+    "Shrug, Leverage Machine",
+    "Shrug, Smith Machine",
+    "Side Bend, Band",
+    "Side Bend, Cable",
+    "Side Bend, Dumbbell",
+    "Side Crunch, Band",
+    "Side Crunch, Bodyweight",
+    "Side Crunch, Cable",
+    "Side Hip Abductor, Barbell",
+    "Side Hip Abductor, Bodyweight",
+    "Side Hip Abductor, Leverage Machine",
+    "Side Lying Clam, Bodyweight",
+    "Side Plank, Bodyweight",
+    "Single Leg Bridge, Bodyweight",
+    "Single Leg Calf Raise, Barbell",
+    "Single Leg Calf Raise, Bodyweight",
+    "Single Leg Calf Raise, Cable",
+    "Single Leg Calf Raise, Dumbbell",
+    "Single Leg Calf Raise, Leverage Machine",
+    "Single Leg Deadlift, Bodyweight",
+    "Single Leg Deadlift, Dumbbell",
+    "Single Leg Glute Bridge Bent Knee, Bodyweight",
+    "Single Leg Glute Bridge On Bench, Bodyweight",
+    "Single Leg Glute Bridge Straight Leg, Bodyweight",
+    "Single Leg Hip Thrust, Barbell",
+    "Single Leg Hip Thrust, Bodyweight",
+    "Single Leg Hip Thrust, Leverage Machine",
+    "Sissy Squat, Bodyweight",
+    "Sit Up, Bodyweight",
+    "Sit Up, Kettlebell",
+    "Skullcrusher, Barbell",
+    "Skullcrusher, Cable",
+    "Skullcrusher, Dumbbell",
+    "Skullcrusher, EZ Bar",
+    "Sling Shot Bench Press, Barbell",
+    "Snatch Pull, Barbell",
+    "Snatch, Dumbbell",
+    "Split Jerk, Barbell",
+    "Split Squat, Dumbbell",
+    "Squat Row, Band",
+    "Squat, Barbell",
+    "Squat, Bodyweight",
+    "Squat, Dumbbell",
+    "Squat, Leverage Machine",
+    "Squat, Smith Machine",
+    "Standing Calf Raise, Barbell",
+    "Standing Calf Raise, Bodyweight",
+    "Standing Calf Raise, Cable",
+    "Standing Calf Raise, Dumbbell",
+    "Standing Calf Raise, Leverage Machine",
+    "Standing Row Close Grip, Cable",
+    "Standing Row Rear Delt With Rope, Cable",
+    "Standing Row Rear Delt, Horizontal, With Rope, Cable",
+    "Standing Row V-Bar, Cable",
+    "Standing Row, Cable",
+    "Step up, Band",
+    "Step up, Barbell",
+    "Step up, Bodyweight",
+    "Step up, Dumbbell",
+    "Stiff Leg Deadlift, Band",
+    "Stiff Leg Deadlift, Barbell",
+    "Stiff Leg Deadlift, Dumbbell",
+    "Straight Leg Deadlift, Band",
+    "Straight Leg Deadlift, Barbell",
+    "Straight Leg Deadlift, Dumbbell",
+    "Straight Leg Deadlift, Kettlebell",
+    "Sumo Deadlift High Pull, Barbell",
+    "Sumo Deadlift, Barbell",
+    "Superman, Bodyweight",
+    "Superman, Dumbbell",
+    "T Bar Row, Leverage Machine",
+    "Thruster, Barbell",
+    "Toes To Bar, Bodyweight",
+    "Torso Rotation, Cable",
+    "Trap Bar Deadlift, Trap Bar",
+    "Triceps Dip, Bodyweight",
+    "Triceps Dip, Leverage Machine",
+    "Triceps Extension, Band",
+    "Triceps Extension, Barbell",
+    "Triceps Extension, Cable",
+    "Triceps Extension, Dumbbell",
+    "Triceps Pushdown, Cable",
+    "Upright Row, Band",
+    "Upright Row, Barbell",
+    "Upright Row, Cable",
+    "Upright Row, Dumbbell",
+    "V Up, Band",
+    "V Up, Bodyweight",
+    "V Up, Dumbbell",
+    "Wide Pull Up, Bodyweight",
+    "Wrist Curl, Barbell",
+    "Wrist Roller, Bodyweight",
+    "Zercher Squat, Barbell"
+  ],
+  "equipment_mapping": {
+    "barbell": "Barbell",
+    "dumbbell": "Dumbbell",
+    "kettlebell": "Kettlebell",
+    "cable": "Cable",
+    "leverageMachine": "Leverage Machine",
+    "bodyweight": "Bodyweight",
+    "band": "Band",
+    "ezbar": "EZ Bar",
+    "trapbar": "Trap Bar",
+    "smith": "Smith Machine",
+    "medicineball": "Medicine Ball"
+  }
+}

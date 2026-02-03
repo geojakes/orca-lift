@@ -19,6 +19,7 @@ from orca import CongregationEvent, CongregationEventType
 
 from .congregation import CongregationResult, run_congregation, run_congregation_stream
 from .plan_builder import PlanContext, build_generation_plan
+from .tools import set_current_specialist, set_question_callback
 
 # Type for progress callback: (event_type, message, data)
 ProgressCallback = Callable[[str, str, dict | None], Awaitable[None]]
@@ -138,51 +139,91 @@ class ProgramGenerator:
             congregation_result = None
             deliberation_log = []
 
-            async for event in run_congregation_stream(
-                user_summary=context.user_profile,
-                program_framework=program_framework,
-                equipment_constraints=equipment_constraints,
-            ):
-                if event.type == CongregationEventType.CLIENT_RESPONSE:
-                    client_id = event.data.get("client_id", "")
-                    persona_name = event.data.get("persona_name", "")
-                    thoughts = event.data.get("thoughts", "")
-                    aligned = event.data.get("aligned")
+            # Set up question callback for ask_human tool
+            async def question_callback(question_id: str, specialist: str, question: str):
+                await notify("human_question", specialist, {
+                    "question_id": question_id,
+                    "question": question,
+                })
 
-                    # Record for deliberation log
-                    deliberation_log.append({
-                        "client_id": client_id,
-                        "content": thoughts,
-                        "is_aligned": aligned,
-                    })
+            set_question_callback(question_callback)
 
-                    # Emit specialist event with both preview and full content
-                    if thoughts:
-                        preview = thoughts[:200] + "..." if len(thoughts) > 200 else thoughts
-                        await notify("specialist", persona_name, {
-                            "preview": preview,
-                            "full": thoughts,
-                            "aligned": aligned,
+            try:
+                async for event in run_congregation_stream(
+                    user_summary=context.user_profile,
+                    program_framework=program_framework,
+                    equipment_constraints=equipment_constraints,
+                    profile_id=user_profile.id,
+                ):
+                    if event.type == CongregationEventType.CLIENT_START:
+                        # Track which specialist is currently active
+                        persona_name = event.data.get("persona_name", "Specialist")
+                        set_current_specialist(persona_name)
+
+                    elif event.type == CongregationEventType.CLIENT_RESPONSE:
+                        client_id = event.data.get("client_id", "")
+                        persona_name = event.data.get("persona_name", "")
+                        thoughts = event.data.get("thoughts", "")
+                        aligned = event.data.get("aligned")
+
+                        # Record for deliberation log
+                        deliberation_log.append({
+                            "client_id": client_id,
+                            "content": thoughts,
+                            "is_aligned": aligned,
                         })
 
-                elif event.type == CongregationEventType.TURN_START:
-                    turn = event.data.get("turn", 0)
-                    await notify("phase", f"Deliberation round {turn}...")
+                        # Emit specialist event with both preview and full content
+                        if thoughts:
+                            preview = thoughts[:200] + "..." if len(thoughts) > 200 else thoughts
+                            await notify("specialist", persona_name, {
+                                "preview": preview,
+                                "full": thoughts,
+                                "aligned": aligned,
+                            })
 
-                elif event.type == CongregationEventType.MEDIATOR_SYNTHESIS:
-                    await notify("phase", "Mediator synthesizing final program...")
+                    elif event.type == CongregationEventType.TURN_START:
+                        turn = event.data.get("turn", 0)
+                        await notify("phase", f"Deliberation round {turn}...")
 
-                elif event.type == CongregationEventType.COMPLETED:
-                    result = event.data.get("result")
-                    if result:
-                        # Build our CongregationResult from orca's result
-                        final_program = result.final_output if result.final_output else {}
-                        congregation_result = CongregationResult(
-                            final_program=final_program,
-                            final_thesis=result.final_thesis,
-                            deliberation_log=deliberation_log,
-                            converged=result.converged,
-                        )
+                    elif event.type == CongregationEventType.CLIENT_INFO_REQUEST:
+                        persona_name = event.data.get("persona_name", "Specialist")
+                        requests = event.data.get("requests", [])
+                        if requests:
+                            func_names = [r.get("identifier", "") for r in requests if r.get("identifier")]
+                            if func_names:
+                                await notify("info_request", persona_name, {
+                                    "functions": func_names,
+                                })
+
+                    elif event.type == CongregationEventType.CLIENT_INFO_RESULT:
+                        # Results are returned to specialists - could show them if desired
+                        pass
+
+                    elif event.type == CongregationEventType.MEDIATOR_SYNTHESIS:
+                        await notify("phase", "Mediator synthesizing final program...")
+
+                    elif event.type == CongregationEventType.COMPLETED:
+                        result = event.data.get("result")
+                        if result:
+                            # Build our CongregationResult from orca's result
+                            # Handle case where final_output is a string (JSON) instead of dict
+                            final_program = result.final_output if result.final_output else {}
+                            if isinstance(final_program, str):
+                                import json
+                                try:
+                                    final_program = json.loads(final_program)
+                                except json.JSONDecodeError:
+                                    final_program = {}
+                            congregation_result = CongregationResult(
+                                final_program=final_program,
+                                final_thesis=result.final_thesis,
+                                deliberation_log=deliberation_log,
+                                converged=result.converged,
+                            )
+            finally:
+                # Clean up question callback
+                set_question_callback(None)
         else:
             # Use non-streaming version
             congregation_result = await run_congregation(
@@ -190,6 +231,7 @@ class ProgramGenerator:
                 program_framework=program_framework,
                 verbose=self.verbose,
                 equipment_constraints=equipment_constraints,
+                profile_id=user_profile.id,
             )
 
             # Stream specialist contributions after the fact (for backward compat)
@@ -253,6 +295,10 @@ class ProgramGenerator:
     ) -> Program:
         """Convert AI output to Program model."""
         weeks = []
+
+        # Ensure program_data is a dict
+        if not isinstance(program_data, dict):
+            program_data = {}
 
         # Handle case where program_data might be empty or missing weeks
         weeks_data = program_data.get("weeks", [])

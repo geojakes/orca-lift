@@ -8,6 +8,8 @@ from orca import (
     Congregation,
     CongregationEvent,
     CongregationEventType,
+    CongregationMode,
+    CongregationTool,
     ConversationClient,
     MediatorConfig,
     ModelType,
@@ -23,6 +25,13 @@ from .prompts import (
     PERIODIZATION_SPECIALIST_SYSTEM,
     RECOVERY_ANALYST_SYSTEM,
     STRENGTH_COACH_SYSTEM,
+)
+from .tools import (
+    CONGREGATION_TOOLS,
+    answer_question,
+    set_current_specialist,
+    set_profile_context,
+    set_question_callback,
 )
 
 # Type for event callback
@@ -70,6 +79,7 @@ def create_specialist_clients(
                 persona_prompt=prompt,
                 agent_client=agent_client,
                 model_type=ModelType.SONNET,
+                web=True,
             )
         )
 
@@ -88,22 +98,29 @@ def create_mediator_config() -> MediatorConfig:
 def create_congregation(
     verbose: bool = True,
     equipment_constraints: str | None = None,
+    tools: list[CongregationTool] | None = None,
 ) -> Congregation:
     """Create the full congregation for program generation.
 
     Args:
         verbose: Whether to show deliberation progress
         equipment_constraints: Formatted equipment constraints string
+        tools: Optional list of CongregationTool objects for info requests
     """
     clients = create_specialist_clients(equipment_constraints=equipment_constraints)
     mediator_config = create_mediator_config()
 
+    # Use provided tools or default congregation tools
+    congregation_tools = tools if tools is not None else CONGREGATION_TOOLS
+
     return Congregation(
         clients=clients,
+        tools=congregation_tools,
         mediator_config=mediator_config,
         min_turns=2,
         max_turns=5,
         verbose=verbose,
+        mode=CongregationMode.QUESTION,
     )
 
 
@@ -133,6 +150,7 @@ async def run_congregation_stream(
     user_summary: str,
     program_framework: dict,
     equipment_constraints: str | None = None,
+    profile_id: int | None = None,
 ) -> AsyncGenerator[CongregationEvent, None]:
     """Run the congregation with streaming events.
 
@@ -143,10 +161,15 @@ async def run_congregation_stream(
         user_summary: Summary of user profile and goals
         program_framework: The proposed program framework
         equipment_constraints: Formatted equipment constraints string
+        profile_id: User profile ID for info request tools
 
     Yields:
         CongregationEvent objects for each significant event
     """
+    # Set profile context for info request tools
+    if profile_id is not None:
+        set_profile_context(profile_id)
+
     congregation = create_congregation(
         verbose=False,  # We're streaming instead
         equipment_constraints=equipment_constraints,
@@ -163,6 +186,7 @@ async def run_congregation(
     program_framework: dict,
     verbose: bool = True,
     equipment_constraints: str | None = None,
+    profile_id: int | None = None,
 ) -> CongregationResult:
     """Run the congregation to design a program.
 
@@ -171,10 +195,15 @@ async def run_congregation(
         program_framework: The proposed program framework
         verbose: Whether to show deliberation progress
         equipment_constraints: Formatted equipment constraints string
+        profile_id: User profile ID for info request tools
 
     Returns:
         CongregationResult with final program and deliberation log
     """
+    # Set profile context for info request tools
+    if profile_id is not None:
+        set_profile_context(profile_id)
+
     congregation = create_congregation(
         verbose=verbose,
         equipment_constraints=equipment_constraints,
@@ -195,9 +224,16 @@ async def run_congregation(
         })
 
     # Parse final output if available
+    # Handle case where final_output is a string (JSON) instead of dict
     final_program = {}
     if result.final_output:
         final_program = result.final_output
+        if isinstance(final_program, str):
+            import json
+            try:
+                final_program = json.loads(final_program)
+            except json.JSONDecodeError:
+                final_program = {}
 
     return CongregationResult(
         final_program=final_program,

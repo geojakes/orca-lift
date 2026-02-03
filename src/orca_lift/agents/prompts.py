@@ -78,6 +78,11 @@ When making recommendations, consider:
 - The importance of specificity for strength goals
 - Recovery demands of heavy compound movements
 
+You can use info_request to query for more details about the user and exercises:
+- get_strength_levels() - Get user's current strength levels and body weight
+- get_compound_exercises() - Get all compound exercises available with user's equipment
+- get_exercise_details(name) - Get muscle groups and equipment for a specific exercise
+
 IMPORTANT - Equipment Constraints:
 {equipment_constraints}"""
 
@@ -102,6 +107,11 @@ When making recommendations, consider:
 - Training frequency per muscle group (2-3x/week optimal)
 - Exercise selection for complete muscle development
 - The balance between compounds and isolation work
+
+You can use info_request to query for more details about the user and exercises:
+- get_exercises_by_muscle_group(muscle_group) - Get exercises targeting a muscle (chest, back, shoulders, biceps, triceps, quads, hamstrings, glutes, calves, abs)
+- get_available_exercises() - Get all exercises user can perform
+- search_exercises(query) - Search exercises by name
 
 IMPORTANT - Equipment Constraints:
 {equipment_constraints}"""
@@ -128,6 +138,10 @@ When making recommendations, consider:
 - Whether they need to peak for any events
 - Signs of overreaching/overtraining to watch for
 
+You can use info_request to query for more details about the user:
+- get_user_profile() - Get full profile including experience level, goals, schedule, age, limitations
+- get_strength_levels() - Get user's current strength levels
+
 IMPORTANT - Equipment Constraints:
 {equipment_constraints}"""
 
@@ -152,6 +166,10 @@ When making recommendations, consider:
 - Signs of inadequate recovery (persistent fatigue, joint pain)
 - Balance between anterior and posterior chain
 - Including mobility and prehab work where needed
+
+You can use info_request to query for more details about the user:
+- get_user_profile() - Get full profile including limitations, age, notes about injuries
+- get_available_equipment() - Get equipment available for understanding training environment
 
 IMPORTANT - Equipment Constraints:
 {equipment_constraints}"""

@@ -387,17 +387,49 @@ class ProgramGenerator:
             weeks_data = self._parse_thesis_to_weeks(final_thesis)
 
         for week_data in weeks_data:
+            if not isinstance(week_data, dict):
+                print(f"[DEBUG _build_program] Skipping non-dict week_data: {type(week_data)}")
+                continue
+
             days = []
 
             for day_data in week_data.get("days", []):
+                if not isinstance(day_data, dict):
+                    print(f"[DEBUG _build_program] Skipping non-dict day_data: {type(day_data)}")
+                    continue
+
                 exercises = []
 
                 for ex_data in day_data.get("exercises", []):
+                    if not isinstance(ex_data, dict):
+                        print(f"[DEBUG _build_program] Skipping non-dict ex_data: {type(ex_data)}")
+                        continue
+
+                    # Skip cardio/duration-based exercises that can't be expressed in Liftoscript
+                    if "duration_minutes" in ex_data and "reps_min" not in ex_data:
+                        print(f"[DEBUG _build_program] Skipping duration-based exercise: {ex_data.get('name', '?')}")
+                        continue
+
                     # Build set schemes
                     sets = []
                     num_sets = ex_data.get("sets", 3)
+                    if not isinstance(num_sets, int):
+                        try:
+                            num_sets = int(num_sets)
+                        except (ValueError, TypeError):
+                            num_sets = 3
                     reps_min = ex_data.get("reps_min", 5)
+                    if not isinstance(reps_min, int):
+                        try:
+                            reps_min = int(reps_min)
+                        except (ValueError, TypeError):
+                            reps_min = 5
                     reps_max = ex_data.get("reps_max", reps_min)
+                    if not isinstance(reps_max, int):
+                        try:
+                            reps_max = int(reps_max)
+                        except (ValueError, TypeError):
+                            reps_max = reps_min
                     is_amrap = ex_data.get("is_amrap_final_set", False)
 
                     for i in range(num_sets):
@@ -418,13 +450,21 @@ class ProgramGenerator:
                     except ValueError:
                         progression = ProgressionScheme.DOUBLE
 
+                    # Coerce increment to a number
+                    raw_increment = ex_data.get("increment", 5)
+                    if not isinstance(raw_increment, (int, float)):
+                        try:
+                            raw_increment = float(raw_increment)
+                        except (ValueError, TypeError):
+                            raw_increment = 5
+
                     exercises.append(
                         ProgramExercise(
                             name=ex_data.get("name", "Unknown"),
                             sets=sets,
                             progression=progression,
                             progression_params={
-                                "increment": ex_data.get("increment", 5),
+                                "increment": raw_increment,
                             },
                             notes=ex_data.get("notes", ""),
                         )

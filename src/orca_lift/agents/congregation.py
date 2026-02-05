@@ -92,6 +92,7 @@ def create_mediator_config() -> MediatorConfig:
         persona_prompt=MEDIATOR_SYSTEM,
         model_type=ModelType.HAIKU,  # TODO: Change back to OPUS
         output_spec=final_program_specs,
+        web=True,
     )
 
 

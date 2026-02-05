@@ -228,6 +228,13 @@ class LiftoscriptGenerator:
         If equipment config is available, rounds to the minimum achievable
         increment. Otherwise, returns the original value.
         """
+        # Ensure increment is numeric
+        if not isinstance(increment, (int, float)):
+            try:
+                increment = float(increment)
+            except (ValueError, TypeError):
+                increment = 5.0
+
         if not self.config.equipment_config:
             return increment
 

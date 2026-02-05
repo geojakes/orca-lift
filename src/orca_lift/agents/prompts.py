@@ -188,7 +188,12 @@ When synthesizing recommendations:
 - Consider practical constraints (time, equipment, schedule)
 - Ensure the program is not too complex or overwhelming
 - Include clear progression schemes that work in Liftosaur
-- Explain why certain recommendations were prioritized over others"""
+- Explain why certain recommendations were prioritized over others
+
+IMPORTANT: You have web access. Before finalizing the program, consult the official Liftosaur documentation at https://www.liftosaur.com/blog/docs/ to ensure the Liftoscript syntax, progression schemes (lp, dp, sum, etc.), and program structure are accurate and valid. Use the documentation to verify:
+- Correct Liftoscript syntax for exercises, sets, reps, and weights
+- Valid progression function signatures and parameters
+- Proper formatting for the final program output"""
 
 # Task prompts
 

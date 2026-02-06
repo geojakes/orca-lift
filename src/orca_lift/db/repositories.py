@@ -34,8 +34,9 @@ class UserProfileRepository:
                 """
                 INSERT INTO user_profiles
                 (name, experience_level, goals, available_equipment, schedule_days,
-                 session_duration, strength_levels, limitations, age, body_weight, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 session_duration, strength_levels, limitations, age, body_weight,
+                 height, one_rm_ohp, one_rm_squat, one_rm_bench_press, one_rm_deadlift, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     data["name"],
@@ -48,6 +49,11 @@ class UserProfileRepository:
                     json.dumps(data["limitations"]),
                     data["age"],
                     data["body_weight"],
+                    data["height"],
+                    data["one_rm_ohp"],
+                    data["one_rm_squat"],
+                    data["one_rm_bench_press"],
+                    data["one_rm_deadlift"],
                     data["notes"],
                 ),
             )
@@ -100,7 +106,9 @@ class UserProfileRepository:
                 UPDATE user_profiles SET
                     name = ?, experience_level = ?, goals = ?, available_equipment = ?,
                     schedule_days = ?, session_duration = ?, strength_levels = ?,
-                    limitations = ?, age = ?, body_weight = ?, notes = ?,
+                    limitations = ?, age = ?, body_weight = ?, height = ?,
+                    one_rm_ohp = ?, one_rm_squat = ?, one_rm_bench_press = ?, one_rm_deadlift = ?,
+                    notes = ?,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
                 """,
@@ -115,6 +123,11 @@ class UserProfileRepository:
                     json.dumps(data["limitations"]),
                     data["age"],
                     data["body_weight"],
+                    data["height"],
+                    data["one_rm_ohp"],
+                    data["one_rm_squat"],
+                    data["one_rm_bench_press"],
+                    data["one_rm_deadlift"],
                     data["notes"],
                     profile.id,
                 ),
@@ -140,6 +153,11 @@ class UserProfileRepository:
             "limitations": json.loads(row["limitations"]),
             "age": row["age"],
             "body_weight": row["body_weight"],
+            "height": row["height"],
+            "one_rm_ohp": row["one_rm_ohp"],
+            "one_rm_squat": row["one_rm_squat"],
+            "one_rm_bench_press": row["one_rm_bench_press"],
+            "one_rm_deadlift": row["one_rm_deadlift"],
             "notes": row["notes"],
         }
         return UserProfile.from_dict(

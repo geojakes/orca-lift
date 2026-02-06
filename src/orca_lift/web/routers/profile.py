@@ -59,6 +59,11 @@ async def save_profile(
     session_duration: int = Form(60),
     age: int | None = Form(None),
     body_weight: float | None = Form(None),
+    height: float | None = Form(None),
+    one_rm_ohp: float | None = Form(None),
+    one_rm_squat: float | None = Form(None),
+    one_rm_bench_press: float | None = Form(None),
+    one_rm_deadlift: float | None = Form(None),
     notes: str = Form(""),
 ):
     """Save or update user profile."""
@@ -71,6 +76,11 @@ async def save_profile(
         session_duration=session_duration,
         age=age if age else None,
         body_weight=body_weight if body_weight else None,
+        height=height if height else None,
+        one_rm_ohp=one_rm_ohp if one_rm_ohp else None,
+        one_rm_squat=one_rm_squat if one_rm_squat else None,
+        one_rm_bench_press=one_rm_bench_press if one_rm_bench_press else None,
+        one_rm_deadlift=one_rm_deadlift if one_rm_deadlift else None,
         notes=notes,
     )
 

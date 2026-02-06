@@ -69,6 +69,11 @@ class UserProfile:
     limitations: list[Limitation] = field(default_factory=list)
     age: int | None = None
     body_weight: float | None = None  # in kg
+    height: float | None = None  # in cm
+    one_rm_ohp: float | None = None  # 1RM overhead press in kg
+    one_rm_squat: float | None = None  # 1RM squat in kg
+    one_rm_bench_press: float | None = None  # 1RM bench press in kg
+    one_rm_deadlift: float | None = None  # 1RM deadlift in kg
     notes: str = ""
     id: int | None = None
     created_at: datetime | None = None
@@ -102,6 +107,11 @@ class UserProfile:
             ],
             "age": self.age,
             "body_weight": self.body_weight,
+            "height": self.height,
+            "one_rm_ohp": self.one_rm_ohp,
+            "one_rm_squat": self.one_rm_squat,
+            "one_rm_bench_press": self.one_rm_bench_press,
+            "one_rm_deadlift": self.one_rm_deadlift,
             "notes": self.notes,
         }
 
@@ -141,6 +151,11 @@ class UserProfile:
             ],
             age=data.get("age"),
             body_weight=data.get("body_weight"),
+            height=data.get("height"),
+            one_rm_ohp=data.get("one_rm_ohp"),
+            one_rm_squat=data.get("one_rm_squat"),
+            one_rm_bench_press=data.get("one_rm_bench_press"),
+            one_rm_deadlift=data.get("one_rm_deadlift"),
             notes=data.get("notes", ""),
             created_at=created_at,
             updated_at=updated_at,
@@ -164,8 +179,26 @@ class UserProfile:
             for lim in self.limitations:
                 summary += f"  - {lim.description} ({lim.severity})\n"
 
+        if self.age:
+            summary += f"Age: {self.age}\n"
+
         if self.body_weight:
             summary += f"Body weight: {self.body_weight}kg\n"
+
+        if self.height:
+            summary += f"Height: {self.height}cm\n"
+
+        one_rm_lines = []
+        if self.one_rm_ohp:
+            one_rm_lines.append(f"  - Overhead Press: {self.one_rm_ohp}kg")
+        if self.one_rm_squat:
+            one_rm_lines.append(f"  - Squat: {self.one_rm_squat}kg")
+        if self.one_rm_bench_press:
+            one_rm_lines.append(f"  - Bench Press: {self.one_rm_bench_press}kg")
+        if self.one_rm_deadlift:
+            one_rm_lines.append(f"  - Deadlift: {self.one_rm_deadlift}kg")
+        if one_rm_lines:
+            summary += "1RM:\n" + "\n".join(one_rm_lines) + "\n"
 
         if self.notes:
             summary += f"Notes: {self.notes}\n"

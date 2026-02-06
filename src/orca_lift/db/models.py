@@ -19,6 +19,11 @@ class DBUserProfile:
     limitations: str  # JSON string
     age: int | None
     body_weight: float | None
+    height: float | None
+    one_rm_ohp: float | None
+    one_rm_squat: float | None
+    one_rm_bench_press: float | None
+    one_rm_deadlift: float | None
     notes: str
     created_at: datetime
     updated_at: datetime

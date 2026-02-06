@@ -8,7 +8,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from ..db.engine import init_db, get_db_path
+from ..db.engine import init_db
 from .routers import equipment, profile, programs, progress
 
 
@@ -20,10 +20,8 @@ STATIC_DIR = Path(__file__).parent / "static"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler - runs on startup and shutdown."""
-    # Startup: Initialize database
-    db_path = get_db_path()
-    if not db_path.exists():
-        await init_db()
+    # Startup: Initialize database (always run to apply migrations)
+    await init_db()
     yield
     # Shutdown: cleanup if needed
 

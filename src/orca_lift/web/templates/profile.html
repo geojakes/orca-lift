@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-3 gap-4">
             <div>
                 <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age (optional)</label>
                 <input type="number" id="age" name="age" min="13" max="100"
@@ -101,10 +101,47 @@
             </div>
 
             <div>
-                <label for="body_weight" class="block text-sm font-medium text-gray-700 mb-2">Body Weight kg (optional)</label>
+                <label for="body_weight" class="block text-sm font-medium text-gray-700 mb-2">Weight kg (optional)</label>
                 <input type="number" id="body_weight" name="body_weight" step="0.1" min="30" max="300"
                        value="{{ profile.body_weight if profile and profile.body_weight else '' }}"
                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="height" class="block text-sm font-medium text-gray-700 mb-2">Height cm (optional)</label>
+                <input type="number" id="height" name="height" step="0.1" min="100" max="250"
+                       value="{{ profile.height if profile and profile.height else '' }}"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">1RM Lifts kg (optional)</label>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="one_rm_squat" class="block text-xs text-gray-500 mb-1">Squat</label>
+                    <input type="number" id="one_rm_squat" name="one_rm_squat" step="0.5" min="0"
+                           value="{{ profile.one_rm_squat if profile and profile.one_rm_squat else '' }}"
+                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="one_rm_bench_press" class="block text-xs text-gray-500 mb-1">Bench Press</label>
+                    <input type="number" id="one_rm_bench_press" name="one_rm_bench_press" step="0.5" min="0"
+                           value="{{ profile.one_rm_bench_press if profile and profile.one_rm_bench_press else '' }}"
+                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="one_rm_deadlift" class="block text-xs text-gray-500 mb-1">Deadlift</label>
+                    <input type="number" id="one_rm_deadlift" name="one_rm_deadlift" step="0.5" min="0"
+                           value="{{ profile.one_rm_deadlift if profile and profile.one_rm_deadlift else '' }}"
+                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="one_rm_ohp" class="block text-xs text-gray-500 mb-1">Overhead Press</label>
+                    <input type="number" id="one_rm_ohp" name="one_rm_ohp" step="0.5" min="0"
+                           value="{{ profile.one_rm_ohp if profile and profile.one_rm_ohp else '' }}"
+                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
             </div>
         </div>
 

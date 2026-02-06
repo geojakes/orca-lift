@@ -19,6 +19,17 @@ def get_db_path(data_dir: Path | None = None) -> Path:
 
 async def _run_migrations(db: aiosqlite.Connection) -> None:
     """Run database migrations for schema updates."""
+    # Check if user_profiles table has the 1RM columns
+    cursor = await db.execute("PRAGMA table_info(user_profiles)")
+    columns = await cursor.fetchall()
+    profile_columns = {col[1] for col in columns}
+
+    for col in ["one_rm_ohp", "one_rm_squat", "one_rm_bench_press", "one_rm_deadlift", "height"]:
+        if col not in profile_columns:
+            await db.execute(f"ALTER TABLE user_profiles ADD COLUMN {col} REAL")
+
+    await db.commit()
+
     # Check if exercises table has the new columns
     cursor = await db.execute("PRAGMA table_info(exercises)")
     columns = await cursor.fetchall()
@@ -55,6 +66,11 @@ async def init_db(db_path: Path | None = None) -> None:
                 limitations TEXT DEFAULT '[]',
                 age INTEGER,
                 body_weight REAL,
+                height REAL,
+                one_rm_ohp REAL,
+                one_rm_squat REAL,
+                one_rm_bench_press REAL,
+                one_rm_deadlift REAL,
                 notes TEXT DEFAULT '',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

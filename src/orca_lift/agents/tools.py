@@ -83,6 +83,11 @@ async def get_user_profile() -> dict:
         "session_duration": profile.session_duration,
         "age": profile.age,
         "body_weight": profile.body_weight,
+        "height": profile.height,
+        "one_rm_ohp": profile.one_rm_ohp,
+        "one_rm_squat": profile.one_rm_squat,
+        "one_rm_bench_press": profile.one_rm_bench_press,
+        "one_rm_deadlift": profile.one_rm_deadlift,
         "limitations": profile.limitations,
         "notes": profile.notes,
     }
@@ -107,6 +112,10 @@ async def get_strength_levels() -> dict:
         "experience_level": profile.experience_level.value,
         "strength_levels": profile.strength_levels,
         "body_weight": profile.body_weight,
+        "one_rm_ohp": profile.one_rm_ohp,
+        "one_rm_squat": profile.one_rm_squat,
+        "one_rm_bench_press": profile.one_rm_bench_press,
+        "one_rm_deadlift": profile.one_rm_deadlift,
     }
 
 
@@ -474,11 +483,13 @@ CONGREGATION_TOOLS = [
     CongregationTool(
         get_user_profile,
         "Get the full user profile: name, experience level, goals, schedule, "
-        "session duration, age, body weight, limitations, and notes.",
+        "session duration, age, body weight, height, 1RM values (OHP, squat, "
+        "bench press, deadlift), limitations, and notes.",
     ),
     CongregationTool(
         get_strength_levels,
-        "Get the user's current strength levels for major lifts and body weight.",
+        "Get the user's current strength levels for major lifts, body weight, "
+        "and 1RM values (OHP, squat, bench press, deadlift).",
     ),
     CongregationTool(
         get_available_equipment,

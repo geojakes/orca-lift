@@ -273,7 +273,10 @@ class LiftoscriptGenerator:
         return "\n".join(lines)
 
     def validate(self, liftoscript: str) -> tuple[bool, list[str]]:
-        """Validate Liftoscript syntax.
+        """Validate Liftoscript syntax including advanced features.
+
+        Handles: labels, repeat syntax [1-N], reuse (...Name), templates
+        (/ used: none), line continuations (\\), and custom() progress scripts.
 
         Args:
             liftoscript: The Liftoscript code to validate
@@ -281,8 +284,26 @@ class LiftoscriptGenerator:
         Returns:
             Tuple of (is_valid, list of error messages)
         """
+        import re
+
         errors: list[str] = []
-        lines = liftoscript.strip().split("\n")
+        raw_lines = liftoscript.strip().split("\n")
+
+        # Join line continuations (backslash at end of line)
+        lines: list[str] = []
+        buffer = ""
+        for raw in raw_lines:
+            stripped = raw.rstrip()
+            if stripped.endswith("\\"):
+                buffer += stripped[:-1] + " "
+            else:
+                buffer += stripped
+                lines.append(buffer)
+                buffer = ""
+        if buffer:
+            lines.append(buffer)
+
+        in_script_block = False
 
         for i, line in enumerate(lines, 1):
             line = line.strip()
@@ -291,15 +312,25 @@ class LiftoscriptGenerator:
             if not line or line.startswith("//"):
                 continue
 
-            # Week headers
-            if line.startswith("# "):
+            # Track multi-line script blocks (progress: custom() ... ~)
+            if in_script_block:
+                if line == "~":
+                    in_script_block = False
                 continue
 
-            # Day headers
+            # Week headers — may include repeat syntax like # Week 1[1-4]
+            if re.match(r"^#\s+", line) and not line.startswith("## "):
+                continue
+
+            # Day headers — may include repeat syntax like ## Day 1[1-4]
             if line.startswith("## "):
                 continue
 
-            # Exercise lines should have at least name and sets
+            # Reuse syntax: ...ExerciseName or ...TemplateName
+            if line.startswith("..."):
+                continue
+
+            # Exercise / template lines must contain /
             if "/" in line:
                 parts = [p.strip() for p in line.split("/")]
 
@@ -307,39 +338,61 @@ class LiftoscriptGenerator:
                     errors.append(f"Line {i}: Exercise needs at least name and sets")
                     continue
 
-                # Check exercise name
+                # Exercise name — may have label prefix (e.g. "heavy: Bench Press")
+                # and/or repeat suffix (e.g. "Bench Press[1-4]")
                 name = parts[0]
+                # Strip label prefix
+                if ":" in name:
+                    name = name.split(":", 1)[1].strip()
+                # Strip repeat suffix like [1-4] or [1,3-5,8]
+                name = re.sub(r"\[[\d,\-]+\]$", "", name).strip()
+
                 if not name or name.startswith("//"):
                     errors.append(f"Line {i}: Missing exercise name")
 
-                # Check sets format
-                sets_reps = parts[1]
-                if not self._validate_sets_format(sets_reps):
-                    errors.append(f"Line {i}: Invalid sets format: {sets_reps}")
+                # Second part could be sets OR "used: none" (template marker)
+                second = parts[1]
+                if second.strip() == "used: none":
+                    # Template definition — remaining parts are valid
+                    pass
+                else:
+                    # Validate sets format
+                    if not self._validate_sets_format(second):
+                        errors.append(f"Line {i}: Invalid sets format: {second}")
 
-                # Check progression if present
+                # Check remaining parts for progress/update/weight
                 for part in parts[2:]:
+                    part = part.strip()
                     if part.startswith("progress:"):
                         prog = part[9:].strip()
-                        if not self._validate_progression_format(prog):
+                        if prog.startswith("custom("):
+                            # custom() opens a multi-line script block
+                            in_script_block = True
+                        elif not self._validate_progression_format(prog):
                             errors.append(f"Line {i}: Invalid progression: {prog}")
+                    elif part.startswith("update:"):
+                        update = part[7:].strip()
+                        if update.startswith("custom("):
+                            in_script_block = True
+                    # Weight, timer, warmup, etc. are free-form — skip
 
             else:
-                # Lines without "/" might be invalid unless they're just exercise names
-                # (which would be invalid anyway for Liftosaur)
                 if line and not line.startswith("#"):
                     errors.append(f"Line {i}: Invalid line format (missing /)")
 
         return len(errors) == 0, errors
 
     def _validate_sets_format(self, sets_str: str) -> bool:
-        """Validate sets x reps format."""
+        """Validate sets x reps format including advanced notations."""
         import re
+
+        sets_str = sets_str.strip()
 
         # Remove RPE annotation
         sets_str = re.sub(r"@RPE\d+\.?\d*", "", sets_str).strip()
 
-        # Handle comma-separated sets
+        # Remove weight suffix like "/ 135lb" that may be merged
+        # Handle comma-separated sets (e.g. "5x5, 1x5+")
         if "," in sets_str:
             parts = [p.strip() for p in sets_str.split(",")]
             return all(self._validate_single_set(p) for p in parts)
@@ -347,20 +400,41 @@ class LiftoscriptGenerator:
         return self._validate_single_set(sets_str)
 
     def _validate_single_set(self, set_str: str) -> bool:
-        """Validate a single set notation like 4x5 or 3x8-10 or 1x5+."""
+        """Validate a single set notation.
+
+        Supports: 4x5, 3x8-10, 1x5+, 3x60s, 3x8+, expressions like 3x(state.reps)
+        """
         import re
 
-        # Pattern: NxM, NxM-P, NxM+
-        pattern = r"^\d+x\d+(-\d+)?(\+)?$"
-        return bool(re.match(pattern, set_str.strip()))
+        set_str = set_str.strip()
+        if not set_str:
+            return False
+
+        # Standard: NxM, NxM-P, NxM+, NxMs (time-based)
+        if re.match(r"^\d+x\d+(-\d+)?(\+)?(s)?$", set_str):
+            return True
+
+        # Expression-based reps like Nx(state.reps) or Nx(state.weight)
+        if re.match(r"^\d+x\(.+\)(\+)?$", set_str):
+            return True
+
+        # Weight included like "4x5 135lb" or "3x8 80%"
+        if re.match(r"^\d+x\d+(-\d+)?(\+)?\s+[\d.]+(%|lb|kg)$", set_str):
+            return True
+
+        return False
 
     def _validate_progression_format(self, prog_str: str) -> bool:
         """Validate progression function format."""
         import re
 
-        # Pattern: function(params)
-        pattern = r"^(lp|dp|sum)\([^)]+\)$"
-        return bool(re.match(pattern, prog_str.strip()))
+        prog_str = prog_str.strip()
+
+        # Built-in functions: lp, dp, sum, custom
+        if re.match(r"^(lp|dp|sum|custom)\([^)]*\)$", prog_str):
+            return True
+
+        return False
 
 
 def generate_liftoscript(program: Program, config: GeneratorConfig | None = None) -> str:

@@ -18,6 +18,8 @@ from ..models.user_profile import UserProfile
 from orca import CongregationEvent, CongregationEventType
 
 from .congregation import CongregationResult, run_congregation, run_congregation_stream
+from .liftoscript_converter import LiftoscriptConverter
+from .liftoscript_spec import LIFTOSCRIPT_FULL_SPEC
 from .plan_builder import PlanContext, build_generation_plan
 from .tools import set_current_specialist, set_question_callback
 
@@ -41,6 +43,10 @@ class ProgramGenerator:
     def __init__(self, verbose: bool = True):
         self.verbose = verbose
         self.generator = LiftoscriptGenerator()
+        self.converter = LiftoscriptConverter(
+            liftoscript_spec=LIFTOSCRIPT_FULL_SPEC,
+            verbose=verbose,
+        )
 
     async def execute(
         self,
@@ -326,9 +332,9 @@ class ProgramGenerator:
         if self.verbose:
             print("\n=== Phase 4: Generating Liftoscript ===\n")
 
-        await notify("phase", "Generating Liftoscript...")
+        await notify("phase", "Converting to Liftoscript...")
 
-        # Execute Phase 4: Convert to Program model and generate Liftoscript
+        # Step 1: Build Program model (still needed for DB storage)
         program = self._build_program(
             congregation_result.final_program,
             congregation_result.final_thesis,
@@ -337,7 +343,26 @@ class ProgramGenerator:
             user_profile.id,
         )
 
-        liftoscript = self.generator.generate(program)
+        # Step 2: AI-powered Liftoscript conversion
+        effective_weeks = len(program.weeks) or num_weeks
+        conversion_result = await self.converter.convert(
+            final_program=congregation_result.final_program,
+            final_thesis=congregation_result.final_thesis or "",
+            num_weeks=effective_weeks,
+        )
+        liftoscript = conversion_result.liftoscript
+
+        # Step 3: Validate
+        is_valid, errors = self.generator.validate(liftoscript)
+        if not is_valid and self.verbose:
+            print(f"  Liftoscript validation warnings: {errors}")
+
+        # Step 4: Fallback to Python generator if AI returned empty
+        if not liftoscript.strip():
+            if self.verbose:
+                print("  AI converter returned empty, falling back to Python generator")
+            liftoscript = self.generator.generate(program)
+
         program.liftoscript = liftoscript
 
         if self.verbose:

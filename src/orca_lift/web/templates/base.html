@@ -19,10 +19,25 @@
         <div class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <a href="/" class="text-xl font-bold">orca-lift</a>
-                <div class="flex space-x-4">
+                <div class="flex items-center space-x-4">
                     <a href="/programs" class="hover:text-indigo-200">Programs</a>
                     <a href="/equipment" class="hover:text-indigo-200">Equipment</a>
                     <a href="/profile" class="hover:text-indigo-200">Profile</a>
+                    {% if request.state.current_profile is defined and request.state.current_profile %}
+                    <span class="text-indigo-300">|</span>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-7 h-7 rounded-full bg-indigo-400 flex items-center justify-center text-sm font-bold">
+                            {{ request.state.current_profile.name[0]|upper }}
+                        </div>
+                        <span class="text-sm font-medium">{{ request.state.current_profile.name }}</span>
+                    </div>
+                    <a href="/users" class="text-indigo-200 hover:text-white text-sm" title="Switch User">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

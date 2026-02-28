@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Select User - orca-lift{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Welcome to orca-lift</h1>
+        <p class="text-gray-600 mt-2">Select a user or create a new one to get started.</p>
+    </div>
+
+    {% if request.query_params.get('error') == 'not_found' %}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <p class="text-red-800">User not found.</p>
+    </div>
+    {% endif %}
+
+    {% if users %}
+    <div class="grid gap-4 mb-8">
+        {% for item in users %}
+        <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition
+                    {% if current_profile_id and item.profile.id == current_profile_id %}ring-2 ring-indigo-500{% endif %}">
+            <div class="flex justify-between items-center">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <span class="text-indigo-600 font-bold text-lg">{{ item.profile.name[0]|upper }}</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900">{{ item.profile.name }}</h2>
+                            <div class="flex items-center space-x-3 text-sm text-gray-500 mt-1">
+                                <span>{{ item.profile.experience_level.value.replace('_', ' ').title() }}</span>
+                                <span>&middot;</span>
+                                <span>{{ item.profile.schedule_days }} days/week</span>
+                                <span>&middot;</span>
+                                <span>{{ item.program_count }} program{{ 's' if item.program_count != 1 else '' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if item.profile.goals %}
+                    <div class="flex flex-wrap gap-1 mt-3 ml-13">
+                        {% for goal in item.profile.goals %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700">
+                            {{ goal.value.replace('_', ' ').title() }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex items-center space-x-2 ml-4">
+                    {% if current_profile_id and item.profile.id == current_profile_id %}
+                    <span class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded">Active</span>
+                    {% endif %}
+                    <form method="POST" action="/users/{{ item.profile.id }}/select">
+                        <button type="submit"
+                                class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition text-sm font-medium">
+                            {% if current_profile_id and item.profile.id == current_profile_id %}
+                            Continue
+                            {% else %}
+                            Select
+                            {% endif %}
+                        </button>
+                    </form>
+                    <button onclick="deleteUser({{ item.profile.id }}, '{{ item.profile.name|e }}')"
+                            class="text-gray-400 hover:text-red-600 transition p-2" title="Delete user">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white shadow rounded-lg p-8 text-center mb-8">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <h3 class="mt-2 text-lg font-medium text-gray-900">No users yet</h3>
+        <p class="mt-1 text-gray-500">Create your first user profile to get started.</p>
+    </div>
+    {% endif %}
+
+    <!-- Create New User Form -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-900">Create New User</h2>
+        </div>
+        <form method="POST" action="/users" class="p-6 space-y-4">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your name"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="experience_level" class="block text-sm font-medium text-gray-700 mb-1">Experience</label>
+                    <select id="experience_level" name="experience_level"
+                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        {% for level in experience_levels %}
+                        <option value="{{ level }}" {{ 'selected' if level == 'intermediate' else '' }}>
+                            {{ level.replace('_', ' ').title() }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="schedule_days" class="block text-sm font-medium text-gray-700 mb-1">Days/Week</label>
+                    <select id="schedule_days" name="schedule_days"
+                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        {% for days in range(2, 7) %}
+                        <option value="{{ days }}" {{ 'selected' if days == 4 else '' }}>{{ days }} days</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-500">You can fill in the full profile (goals, equipment, lifts) after creating the user.</p>
+
+            <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium">
+                Create User
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+async function deleteUser(profileId, profileName) {
+    if (!confirm(`Are you sure you want to delete "${profileName}"? All their programs and data will be permanently removed.`)) {
+        return;
+    }
+    try {
+        const response = await fetch(`/users/${profileId}`, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert('Failed to delete: ' + (data.detail || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Failed to delete: ' + err.message);
+    }
+}
+</script>
+{% endblock %}

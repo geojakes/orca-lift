@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from ...db.repositories import EquipmentConfigRepository, UserProfileRepository
+from ...db.repositories import EquipmentConfigRepository
 from ...models.equipment import EquipmentConfig, STANDARD_PLATE_SETS
 
 router = APIRouter(prefix="/equipment", tags=["equipment"])
@@ -16,11 +16,11 @@ def get_templates(request: Request):
 
 @router.get("", response_class=HTMLResponse)
 async def equipment_page(request: Request):
-    """Equipment configuration page."""
+    """Equipment configuration page for the current user."""
     templates = get_templates(request)
 
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    # Use the current user from middleware
+    profile = request.state.current_profile
 
     config = None
     if profile:
@@ -47,9 +47,9 @@ async def save_equipment(
     plate_preset: str | None = Form(None),
     custom_plates: str | None = Form(None),
 ):
-    """Save equipment configuration."""
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    """Save equipment configuration for the current user."""
+    # Use the current user from middleware
+    profile = request.state.current_profile
 
     if not profile:
         return RedirectResponse(url="/equipment?error=no_profile", status_code=302)
@@ -86,9 +86,9 @@ async def save_equipment(
 
 @router.get("/api/config")
 async def get_equipment_config(request: Request):
-    """Get equipment configuration as JSON."""
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    """Get equipment configuration as JSON for the current user."""
+    # Use the current user from middleware
+    profile = request.state.current_profile
 
     if not profile:
         return {"error": "No profile found"}

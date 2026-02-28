@@ -1,5 +1,5 @@
 """Web routers for orca-lift."""
 
-from . import equipment, programs, progress
+from . import equipment, profile, programs, progress, users
 
-__all__ = ["equipment", "programs", "progress"]
+__all__ = ["equipment", "profile", "programs", "progress", "users"]

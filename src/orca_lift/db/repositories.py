@@ -278,6 +278,15 @@ class FitnessDataRepository:
             await db.commit()
             return cursor.rowcount
 
+    async def delete_by_profile(self, profile_id: int) -> int:
+        """Delete all fitness data for a profile."""
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute(
+                "DELETE FROM fitness_data WHERE profile_id = ?", (profile_id,)
+            )
+            await db.commit()
+            return cursor.rowcount
+
 
 class ProgramRepository:
     """Repository for generated programs."""
@@ -326,6 +335,17 @@ class ProgramRepository:
             db.row_factory = aiosqlite.Row
             cursor = await db.execute(
                 "SELECT * FROM programs ORDER BY created_at DESC"
+            )
+            rows = await cursor.fetchall()
+            return [self._row_to_program(row) for row in rows]
+
+    async def list_by_profile(self, profile_id: int) -> list[Program]:
+        """List all programs for a specific user profile."""
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                "SELECT * FROM programs WHERE profile_id = ? ORDER BY created_at DESC",
+                (profile_id,),
             )
             rows = await cursor.fetchall()
             return [self._row_to_program(row) for row in rows]

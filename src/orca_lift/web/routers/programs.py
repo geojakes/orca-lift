@@ -33,13 +33,15 @@ def get_templates(request: Request):
 
 @router.get("", response_class=HTMLResponse)
 async def programs_list(request: Request):
-    """List all programs."""
+    """List programs for the current user."""
     templates = get_templates(request)
 
+    profile = request.state.current_profile
     program_repo = ProgramRepository()
     progress_repo = ProgramProgressRepository()
 
-    programs = await program_repo.list_all()
+    # Only list programs for the current user
+    programs = await program_repo.list_by_profile(profile.id)
 
     # Add progress info to each program
     programs_with_progress = []
@@ -64,8 +66,8 @@ async def new_program_form(request: Request):
     """Show program generation form."""
     templates = get_templates(request)
 
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    # Use the current user's profile from middleware
+    profile = request.state.current_profile
 
     return templates.TemplateResponse(
         "programs/new.html",
@@ -190,7 +192,12 @@ async def generate_program(
     """Generate a new program with streaming progress.
 
     Returns Server-Sent Events for real-time progress updates.
+    Uses the current user's profile for program generation.
     """
+    # Get the current user's profile from middleware
+    current_profile = request.state.current_profile
+    current_profile_id = request.state.current_profile_id
+
     # Create tracked job
     job = await job_tracker.create_job(goals, weeks)
     job_id = job.id
@@ -209,16 +216,16 @@ async def generate_program(
         try:
             await job_tracker.start_job(job_id)
 
-            # Get profile
+            # Use the current user's profile (captured from middleware)
             profile_repo = UserProfileRepository()
-            profile = await profile_repo.get_latest()
+            profile = await profile_repo.get(current_profile_id)
 
             if not profile:
                 await on_progress("error", "No profile found", None)
                 await job_tracker.fail_job(job_id, "No profile found")
                 return None
 
-            await on_progress("status", "Loading profile...", None)
+            await on_progress("status", f"Loading profile for {profile.name}...", None)
 
             # Get equipment constraints
             equipment_constraints = None
@@ -250,7 +257,7 @@ async def generate_program(
                 on_progress=on_progress,
             )
 
-            # Save program
+            # Save program (it will be associated with the current user's profile)
             program_repo = ProgramRepository()
             program_id = await program_repo.create(result.program)
 

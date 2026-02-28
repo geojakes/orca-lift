@@ -21,11 +21,11 @@ def get_templates(request: Request):
 
 @router.get("", response_class=HTMLResponse)
 async def profile_page(request: Request):
-    """User profile page."""
+    """User profile page - loads the current user's profile."""
     templates = get_templates(request)
 
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    # Use the current user from middleware
+    profile = request.state.current_profile
 
     # Pre-compute selected values for template
     selected_goals = []
@@ -66,7 +66,10 @@ async def save_profile(
     one_rm_deadlift: float | None = Form(None),
     notes: str = Form(""),
 ):
-    """Save or update user profile."""
+    """Save or update the current user's profile."""
+    # Get current profile from middleware
+    current_profile = request.state.current_profile
+
     profile = UserProfile(
         name=name,
         experience_level=ExperienceLevel(experience_level),
@@ -86,24 +89,21 @@ async def save_profile(
 
     profile_repo = UserProfileRepository()
 
-    # Check if profile exists
-    existing = await profile_repo.get_latest()
-    if existing:
-        profile.id = existing.id
-        await profile_repo.update(profile)
-    else:
-        await profile_repo.create(profile)
+    # Always update the current user's profile
+    profile.id = current_profile.id
+    await profile_repo.update(profile)
 
     return RedirectResponse(url="/profile?saved=true", status_code=302)
 
 
 @router.post("/sync")
 async def sync_health_connect(
+    request: Request,
     backup: UploadFile = File(...),
 ):
     """Sync fitness data from Health Connect backup upload."""
-    profile_repo = UserProfileRepository()
-    profile = await profile_repo.get_latest()
+    # Use the current user from middleware
+    profile = request.state.current_profile
 
     if not profile:
         return {"error": "No profile found. Please create a profile first."}

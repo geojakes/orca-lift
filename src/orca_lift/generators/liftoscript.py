@@ -278,6 +278,10 @@ class LiftoscriptGenerator:
         Handles: labels, repeat syntax [1-N], reuse (...Name), templates
         (/ used: none), line continuations (\\), and custom() progress scripts.
 
+        Also checks cross-exercise consistency: the same exercise name must
+        have the same progress arguments everywhere it appears, unless
+        differentiated by labels.
+
         Args:
             liftoscript: The Liftoscript code to validate
 
@@ -304,6 +308,11 @@ class LiftoscriptGenerator:
             lines.append(buffer)
 
         in_script_block = False
+        # Track exercise progress for cross-exercise consistency
+        # Key: exercise name (with label if present), Value: (progress_str, first_line, location)
+        exercise_progress: dict[str, tuple[str, int, str]] = {}
+        current_week = ""
+        current_day = ""
 
         for i, line in enumerate(lines, 1):
             line = line.strip()
@@ -320,10 +329,12 @@ class LiftoscriptGenerator:
 
             # Week headers — may include repeat syntax like # Week 1[1-4]
             if re.match(r"^#\s+", line) and not line.startswith("## "):
+                current_week = line
                 continue
 
             # Day headers — may include repeat syntax like ## Day 1[1-4]
             if line.startswith("## "):
+                current_day = line
                 continue
 
             # Reuse syntax: ...ExerciseName or ...TemplateName
@@ -340,10 +351,13 @@ class LiftoscriptGenerator:
 
                 # Exercise name — may have label prefix (e.g. "heavy: Bench Press")
                 # and/or repeat suffix (e.g. "Bench Press[1-4]")
-                name = parts[0]
-                # Strip label prefix
+                raw_name = parts[0]
+                label = ""
+                name = raw_name
                 if ":" in name:
-                    name = name.split(":", 1)[1].strip()
+                    label, name = name.split(":", 1)
+                    label = label.strip()
+                    name = name.strip()
                 # Strip repeat suffix like [1-4] or [1,3-5,8]
                 name = re.sub(r"\[[\d,\-]+\]$", "", name).strip()
 
@@ -352,19 +366,19 @@ class LiftoscriptGenerator:
 
                 # Second part could be sets OR "used: none" (template marker)
                 second = parts[1]
-                if second.strip() == "used: none":
-                    # Template definition — remaining parts are valid
-                    pass
-                else:
+                is_template = second.strip() == "used: none"
+                if not is_template:
                     # Validate sets format
                     if not self._validate_sets_format(second):
                         errors.append(f"Line {i}: Invalid sets format: {second}")
 
                 # Check remaining parts for progress/update/weight
+                progress_str = None
                 for part in parts[2:]:
                     part = part.strip()
                     if part.startswith("progress:"):
                         prog = part[9:].strip()
+                        progress_str = prog
                         if prog.startswith("custom("):
                             # custom() opens a multi-line script block
                             in_script_block = True
@@ -376,11 +390,142 @@ class LiftoscriptGenerator:
                             in_script_block = True
                     # Weight, timer, warmup, etc. are free-form — skip
 
+                # Cross-exercise consistency check
+                # The key includes the label so "heavy: Bench Press" and
+                # "light: Bench Press" are tracked separately.
+                if progress_str and not is_template:
+                    exercise_key = f"{label}: {name}" if label else name
+                    location = f"{current_week}, {current_day}"
+                    if exercise_key in exercise_progress:
+                        prev_prog, prev_line, prev_loc = exercise_progress[exercise_key]
+                        if prev_prog != progress_str:
+                            errors.append(
+                                f"Line {i}: Exercise '{name}' has progress '{progress_str}' "
+                                f"but previously had '{prev_prog}' at line {prev_line} "
+                                f"({prev_loc}). Use labels (e.g., 'phase1: {name}') to "
+                                f"differentiate."
+                            )
+                    else:
+                        exercise_progress[exercise_key] = (progress_str, i, location)
+
             else:
                 if line and not line.startswith("#"):
                     errors.append(f"Line {i}: Invalid line format (missing /)")
 
         return len(errors) == 0, errors
+
+    def fix_duplicate_progress(self, liftoscript: str) -> str:
+        """Fix 'same progress with different arguments' errors by adding labels.
+
+        When the same exercise appears with different progress arguments across
+        weeks/days, Liftosaur rejects it. This method auto-adds labels like
+        'v1:', 'v2:' to differentiate them.
+
+        Args:
+            liftoscript: The Liftoscript code that may have conflicts
+
+        Returns:
+            Fixed Liftoscript with labels added where needed
+        """
+        import re
+
+        raw_lines = liftoscript.strip().split("\n")
+
+        # First pass: find exercises with conflicting progress
+        # Key: bare exercise name, Value: list of distinct progress strings
+        exercise_variants: dict[str, list[str]] = {}
+        for line in raw_lines:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("//") or stripped.startswith("#") or stripped.startswith("..."):
+                continue
+            if "/" not in stripped:
+                continue
+
+            parts = [p.strip() for p in stripped.split("/")]
+            if len(parts) < 2:
+                continue
+
+            raw_name = parts[0]
+            name = raw_name
+            # Skip if already labeled
+            if ":" in name:
+                continue
+            name = re.sub(r"\[[\d,\-]+\]$", "", name).strip()
+
+            # Find progress
+            progress_str = None
+            for part in parts[2:]:
+                part = part.strip()
+                if part.startswith("progress:"):
+                    progress_str = part[9:].strip()
+                    break
+
+            if progress_str and name:
+                if name not in exercise_variants:
+                    exercise_variants[name] = []
+                if progress_str not in exercise_variants[name]:
+                    exercise_variants[name].append(progress_str)
+
+        # Find which exercises have conflicts
+        conflicting = {
+            name: variants
+            for name, variants in exercise_variants.items()
+            if len(variants) > 1
+        }
+
+        if not conflicting:
+            return liftoscript
+
+        # Second pass: add labels to conflicting exercises
+        result_lines = []
+        for line in raw_lines:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("//") or stripped.startswith("#") or stripped.startswith("..."):
+                result_lines.append(line)
+                continue
+            if "/" not in stripped:
+                result_lines.append(line)
+                continue
+
+            parts = [p.strip() for p in stripped.split("/")]
+            if len(parts) < 2:
+                result_lines.append(line)
+                continue
+
+            raw_name = parts[0]
+            # Skip if already labeled
+            if ":" in raw_name:
+                result_lines.append(line)
+                continue
+
+            name = re.sub(r"\[[\d,\-]+\]$", "", raw_name).strip()
+
+            if name not in conflicting:
+                result_lines.append(line)
+                continue
+
+            # Find this line's progress
+            progress_str = None
+            for part in parts[2:]:
+                part = part.strip()
+                if part.startswith("progress:"):
+                    progress_str = part[9:].strip()
+                    break
+
+            if not progress_str:
+                result_lines.append(line)
+                continue
+
+            # Determine label based on variant index
+            variant_idx = conflicting[name].index(progress_str)
+            label = f"v{variant_idx + 1}"
+
+            # Preserve leading whitespace
+            leading_ws = line[: len(line) - len(line.lstrip())]
+            new_line = f"{leading_ws}{label}: {stripped}"
+            result_lines.append(new_line)
+
+        return "\n".join(result_lines)
 
     def _validate_sets_format(self, sets_str: str) -> bool:
         """Validate sets x reps format including advanced notations."""

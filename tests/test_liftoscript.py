@@ -254,6 +254,245 @@ class TestProgressionFormatting:
         assert "sum(5lb, 30)" in result
 
 
+class TestCrossExerciseConsistency:
+    """Tests for cross-exercise progress consistency validation."""
+
+    def test_validate_same_progress_across_weeks(self):
+        """Same exercise with same progress in multiple weeks is valid."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1 - Push
+Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 2
+## Day 1 - Push
+Bench Press / 4x5 / progress: lp(5lb)
+"""
+        is_valid, errors = generator.validate(script)
+        assert is_valid
+        assert len(errors) == 0
+
+    def test_validate_different_progress_same_exercise_error(self):
+        """Same exercise with different progress across weeks is an error."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1 - Push
+Bicep Curl / 3x10 / progress: dp(2.5lb, 8, 12)
+
+# Week 2
+## Day 1 - Push
+Bicep Curl / 3x8 / progress: lp(5lb)
+"""
+        is_valid, errors = generator.validate(script)
+        assert not is_valid
+        assert any("Bicep Curl" in e for e in errors)
+        assert any("progress" in e.lower() for e in errors)
+
+    def test_validate_different_progress_with_labels_ok(self):
+        """Same exercise with different progress but different labels is valid."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1 - Push
+heavy: Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 2
+## Day 1 - Push
+light: Bench Press / 3x10 / progress: dp(2.5lb, 8, 12)
+"""
+        is_valid, errors = generator.validate(script)
+        assert is_valid
+        assert len(errors) == 0
+
+    def test_validate_same_label_different_progress_error(self):
+        """Same exercise with same label but different progress is an error."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1 - Push
+heavy: Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 5
+## Day 1 - Push
+heavy: Bench Press / 4x3 / progress: lp(10lb)
+"""
+        is_valid, errors = generator.validate(script)
+        assert not is_valid
+        assert any("Bench Press" in e for e in errors)
+
+    def test_validate_multiple_exercises_independent(self):
+        """Different exercises with different progress are independent."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1 - Push
+Bench Press / 4x5 / progress: lp(5lb)
+Overhead Press / 3x8-10 / progress: dp(2.5lb, 8, 10)
+
+# Week 2
+## Day 1 - Push
+Bench Press / 4x5 / progress: lp(5lb)
+Overhead Press / 3x8-10 / progress: dp(2.5lb, 8, 10)
+"""
+        is_valid, errors = generator.validate(script)
+        assert is_valid
+
+    def test_validate_exercise_without_progress_ignored(self):
+        """Exercises without progress don't participate in consistency check."""
+        generator = LiftoscriptGenerator()
+        script = """
+# Week 1
+## Day 1
+Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 2
+## Day 1
+Bench Press / 3x8
+"""
+        is_valid, errors = generator.validate(script)
+        assert is_valid
+
+
+class TestFixDuplicateProgress:
+    """Tests for fix_duplicate_progress auto-label method."""
+
+    def test_fix_adds_labels_to_conflicting_exercises(self):
+        """Conflicting progress should get v1, v2 labels."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1 - Push
+Bicep Curl / 3x10 / progress: dp(2.5lb, 8, 12)
+
+# Week 5
+## Day 1 - Push
+Bicep Curl / 3x8 / progress: lp(5lb)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+
+        # Both occurrences should now have labels
+        assert "v1: Bicep Curl" in fixed
+        assert "v2: Bicep Curl" in fixed
+        # Original unlabeled version should not remain
+        lines = [l.strip() for l in fixed.split("\n") if "Bicep Curl" in l]
+        for line in lines:
+            assert line.startswith("v1:") or line.startswith("v2:")
+
+    def test_fix_no_change_when_no_conflicts(self):
+        """No modification when all exercises have consistent progress."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1
+Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 2
+## Day 1
+Bench Press / 4x5 / progress: lp(5lb)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+        assert fixed == script
+
+    def test_fix_skips_already_labeled_exercises(self):
+        """Already-labeled exercises should not be double-labeled."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1
+heavy: Bench Press / 4x5 / progress: lp(5lb)
+
+# Week 2
+## Day 1
+light: Bench Press / 3x10 / progress: dp(2.5lb, 8, 12)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+        # Should remain unchanged since exercises are already labeled
+        assert "heavy: Bench Press" in fixed
+        assert "light: Bench Press" in fixed
+        assert "v1:" not in fixed
+        assert "v2:" not in fixed
+
+    def test_fix_only_affects_conflicting_exercises(self):
+        """Non-conflicting exercises should not be modified."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1
+Bench Press / 4x5 / progress: lp(5lb)
+Bicep Curl / 3x10 / progress: dp(2.5lb, 8, 12)
+
+# Week 2
+## Day 1
+Bench Press / 4x5 / progress: lp(5lb)
+Bicep Curl / 3x8 / progress: lp(5lb)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+
+        # Bench Press should remain unlabeled (consistent progress)
+        bench_lines = [l.strip() for l in fixed.split("\n") if "Bench Press" in l]
+        for line in bench_lines:
+            assert not line.startswith("v1:") and not line.startswith("v2:")
+
+        # Bicep Curl should get labels (conflicting progress)
+        curl_lines = [l.strip() for l in fixed.split("\n") if "Bicep Curl" in l]
+        for line in curl_lines:
+            assert line.startswith("v1:") or line.startswith("v2:")
+
+    def test_fix_produces_valid_liftoscript(self):
+        """After fixing, the result should pass validation."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1 - Push
+Bicep Curl / 3x10 / progress: dp(2.5lb, 8, 12)
+
+# Week 5
+## Day 1 - Push
+Bicep Curl / 3x8 / progress: lp(5lb)"""
+
+        # Original should fail validation
+        is_valid, errors = generator.validate(script)
+        assert not is_valid
+
+        # Fixed version should pass
+        fixed = generator.fix_duplicate_progress(script)
+        is_valid, errors = generator.validate(fixed)
+        assert is_valid, f"Fixed script still has errors: {errors}"
+
+    def test_fix_handles_three_variants(self):
+        """Three different progress variants get v1, v2, v3 labels."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1
+Squat / 4x5 / progress: lp(5lb)
+
+# Week 4
+## Day 1
+Squat / 3x8-10 / progress: dp(5lb, 8, 10)
+
+# Week 8
+## Day 1
+Squat / 5x3 / progress: lp(10lb)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+        assert "v1: Squat" in fixed
+        assert "v2: Squat" in fixed
+        assert "v3: Squat" in fixed
+
+    def test_fix_preserves_non_exercise_lines(self):
+        """Week headers, day headers, and blank lines are preserved."""
+        generator = LiftoscriptGenerator()
+        script = """# Week 1
+## Day 1 - Push
+Bicep Curl / 3x10 / progress: dp(2.5lb, 8, 12)
+
+# Week 5
+## Day 1 - Push
+Bicep Curl / 3x8 / progress: lp(5lb)"""
+
+        fixed = generator.fix_duplicate_progress(script)
+        assert "# Week 1" in fixed
+        assert "# Week 5" in fixed
+        assert "## Day 1 - Push" in fixed
+
+
 def test_generate_liftoscript_convenience_function(sample_program):
     """Test the convenience function."""
     result = generate_liftoscript(sample_program)

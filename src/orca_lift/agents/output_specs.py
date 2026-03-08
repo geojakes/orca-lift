@@ -103,6 +103,45 @@ program_framework_specs = [
     ),
 ]
 
+# Constraint extraction outputs
+_constraint_spec = OutputSpec(
+    name="constraint",
+    type="object",
+    description="A single extracted constraint",
+    source=[
+        OutputSpec(
+            name="type",
+            type="string",
+            description="Constraint type: equipment, schedule, exercise_restriction, exercise_requirement, cardio, other",
+        ),
+        OutputSpec(
+            name="rule",
+            type="string",
+            description="Clear constraint rule statement (e.g., 'Only treadmill for cardio exercises')",
+        ),
+        OutputSpec(
+            name="violations",
+            type="list[string]",
+            description="Examples of what would violate this constraint (e.g., ['elliptical', 'stationary bike', 'rowing machine'])",
+        ),
+    ],
+)
+
+constraint_extraction_specs = [
+    OutputSpec(
+        name="constraints",
+        type="list",
+        description="List of all extracted constraints from user request and profile",
+        source=_constraint_spec,
+    ),
+    OutputSpec(
+        name="constraint_summary",
+        type="string",
+        description="Human-readable summary of all constraints for the mediator checklist",
+    ),
+]
+
+
 # Exercise spec for nested structure
 _exercise_spec = OutputSpec(
     name="exercise",

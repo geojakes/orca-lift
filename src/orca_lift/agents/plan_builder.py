@@ -5,11 +5,13 @@ from dataclasses import dataclass
 from orca import Plan, PlanNode, ModelType
 
 from .output_specs import (
+    constraint_extraction_specs,
     equipment_assessment_specs,
     program_framework_specs,
     user_analysis_specs,
 )
 from .prompts import (
+    CONSTRAINT_EXTRACTION_PROMPT,
     EQUIPMENT_ASSESSMENT_PROMPT,
     PROGRAM_FRAMEWORK_PROMPT,
     USER_ANALYSIS_PROMPT,
@@ -35,6 +37,7 @@ def build_generation_plan(context: PlanContext) -> Plan:
     Phase 1 (Parallel):
     ├── user_analysis (analyze user profile and data)
     ├── equipment_assessment (assess available equipment)
+    ├── constraint_extraction (extract constraints from goals and profile)
             ↓
     Phase 2:
     ├── program_framework (design high-level structure)
@@ -61,6 +64,16 @@ def build_generation_plan(context: PlanContext) -> Plan:
         model_override=ModelType.SONNET,
     )
 
+    constraint_extraction_node = PlanNode(
+        name="constraint_extraction",
+        prompt=CONSTRAINT_EXTRACTION_PROMPT.format(
+            user_goals=context.user_goals,
+            user_profile=context.user_profile,
+        ),
+        output_specs=constraint_extraction_specs,
+        model_override=ModelType.SONNET,
+    )
+
     # Phase 2: Program framework (depends on phase 1)
     # Use output references to inject results from previous nodes
     framework_prompt = PROGRAM_FRAMEWORK_PROMPT.format(
@@ -74,7 +87,11 @@ def build_generation_plan(context: PlanContext) -> Plan:
         name="program_framework",
         prompt=framework_prompt,
         output_specs=program_framework_specs,
-        dependencies=[user_analysis_node, equipment_assessment_node],
+        dependencies=[
+            user_analysis_node,
+            equipment_assessment_node,
+            constraint_extraction_node,
+        ],
         model_override=ModelType.SONNET,
     )
 
@@ -82,6 +99,7 @@ def build_generation_plan(context: PlanContext) -> Plan:
         nodes=[
             user_analysis_node,
             equipment_assessment_node,
+            constraint_extraction_node,
             program_framework_node,
         ],
         default_model=ModelType.SONNET,

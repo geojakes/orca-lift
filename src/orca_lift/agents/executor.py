@@ -1,5 +1,6 @@
 """Plan execution orchestration for program generation."""
 
+import json as json_module
 from dataclasses import dataclass
 from typing import Awaitable, Callable
 
@@ -15,13 +16,18 @@ from ..models.program import (
     SetScheme,
 )
 from ..models.user_profile import UserProfile
+from ..validators import validate_program_constraints
 from orca import CongregationEvent, CongregationEventType
 
 from .congregation import CongregationResult, run_congregation, run_congregation_stream
 from .liftoscript_converter import LiftoscriptConverter
 from .liftoscript_spec import LIFTOSCRIPT_FULL_SPEC
 from .plan_builder import PlanContext, build_generation_plan
+from .prompts import format_constraint_checklist
 from .tools import set_current_specialist, set_question_callback
+
+# Max number of AI correction attempts for constraint violations
+MAX_CORRECTION_RETRIES = 2
 
 # Type for progress callback: (event_type, message, data)
 ProgressCallback = Callable[[str, str, dict | None], Awaitable[None]]
@@ -109,10 +115,20 @@ class ProgramGenerator:
         user_analysis = plan_result.get("user_analysis", {})
         equipment_assessment = plan_result.get("equipment_assessment", {})
         program_framework = plan_result.get("program_framework", {})
+        constraint_extraction = plan_result.get("constraint_extraction", {})
 
         phase_outputs["user_analysis"] = user_analysis
         phase_outputs["equipment_assessment"] = equipment_assessment
         phase_outputs["program_framework"] = program_framework
+        phase_outputs["constraint_extraction"] = constraint_extraction
+
+        # Build extracted constraints list and constraint checklist for mediator
+        extracted_constraints = constraint_extraction.get("constraints", [])
+        if not isinstance(extracted_constraints, list):
+            extracted_constraints = []
+        constraint_checklist = format_constraint_checklist(
+            user_profile, extracted_constraints
+        )
 
         if self.verbose:
             print("\n=== Phase 2: Program framework designed ===")
@@ -161,6 +177,7 @@ class ProgramGenerator:
                     program_framework=program_framework,
                     equipment_constraints=equipment_constraints,
                     profile_id=user_profile.id,
+                    constraint_checklist=constraint_checklist,
                 ):
                     if event.type == CongregationEventType.CLIENT_START:
                         # Track which specialist is currently active
@@ -297,6 +314,7 @@ class ProgramGenerator:
                 verbose=self.verbose,
                 equipment_constraints=equipment_constraints,
                 profile_id=user_profile.id,
+                constraint_checklist=constraint_checklist,
             )
 
             # DEBUG: Log congregation result in non-streaming mode
@@ -329,6 +347,55 @@ class ProgramGenerator:
             "converged": congregation_result.converged,
         }
 
+        # === Constraint validation loop ===
+        if self.verbose:
+            print("\n=== Validating program against constraints ===\n")
+
+        await notify("phase", "Validating program constraints...")
+
+        for attempt in range(MAX_CORRECTION_RETRIES + 1):
+            validation = validate_program_constraints(
+                congregation_result.final_program,
+                user_profile,
+                extracted_constraints=extracted_constraints,
+            )
+
+            if validation.warnings and self.verbose:
+                for w in validation.warnings:
+                    print(f"  Warning: {w.message}")
+
+            if not validation.errors:
+                if self.verbose:
+                    print("  All constraints satisfied!")
+                break
+
+            if attempt == MAX_CORRECTION_RETRIES:
+                if self.verbose:
+                    print(
+                        f"  {len(validation.errors)} constraint violation(s) remain "
+                        f"after {MAX_CORRECTION_RETRIES} correction attempts"
+                    )
+                    for err in validation.errors:
+                        print(f"    - {err.message}")
+                break
+
+            if self.verbose:
+                print(
+                    f"  Found {len(validation.errors)} violation(s), "
+                    f"requesting correction (attempt {attempt + 1}/{MAX_CORRECTION_RETRIES})..."
+                )
+            await notify(
+                "phase",
+                f"Fixing {len(validation.errors)} constraint violation(s) "
+                f"(attempt {attempt + 1})...",
+            )
+
+            congregation_result.final_program = await self._correct_violations(
+                congregation_result.final_program,
+                validation.errors,
+                user_profile,
+            )
+
         if self.verbose:
             print("\n=== Phase 4: Generating Liftoscript ===\n")
 
@@ -352,12 +419,15 @@ class ProgramGenerator:
         )
         liftoscript = conversion_result.liftoscript
 
-        # Step 3: Validate
+        # Step 3: Fix duplicate progress conflicts (auto-add labels)
+        liftoscript = self.generator.fix_duplicate_progress(liftoscript)
+
+        # Step 4: Validate
         is_valid, errors = self.generator.validate(liftoscript)
         if not is_valid and self.verbose:
             print(f"  Liftoscript validation warnings: {errors}")
 
-        # Step 4: Fallback to Python generator if AI returned empty
+        # Step 5: Fallback to Python generator if AI returned empty
         if not liftoscript.strip():
             if self.verbose:
                 print("  AI converter returned empty, falling back to Python generator")
@@ -519,6 +589,87 @@ class ProgramGenerator:
             congregation_log=congregation_log,
             profile_id=profile_id,
         )
+
+    async def _correct_violations(
+        self,
+        program_data: dict,
+        violations: list,
+        user_profile: UserProfile,
+    ) -> dict:
+        """Use AI to correct constraint violations in the program.
+
+        Sends the program + violations to Sonnet and asks it to fix only the
+        flagged issues, returning the corrected program dict.
+        """
+        from .liftoscript_converter import LiftoscriptConverter
+
+        violation_lines = []
+        for v in violations:
+            line = f"- [{v.constraint_type}] {v.message}"
+            if v.location:
+                line += f" (at {v.location})"
+            if v.suggestion:
+                line += f" — suggestion: {v.suggestion}"
+            violation_lines.append(line)
+
+        eq_list = ", ".join(eq.value for eq in user_profile.available_equipment)
+        limitations_str = ""
+        if user_profile.limitations:
+            lim_lines = []
+            for lim in user_profile.limitations:
+                affected = ", ".join(lim.affected_exercises) if lim.affected_exercises else "N/A"
+                lim_lines.append(f"  - {lim.description} ({lim.severity}): affects {affected}")
+            limitations_str = "\n".join(lim_lines)
+
+        correction_prompt = f"""The following generated training program has constraint violations that MUST be fixed.
+
+Program (JSON):
+```json
+{json_module.dumps(program_data, indent=2)}
+```
+
+VIOLATIONS TO FIX:
+{chr(10).join(violation_lines)}
+
+USER CONSTRAINTS:
+- Available equipment: {eq_list}
+- Schedule: {user_profile.schedule_days} days/week, {user_profile.session_duration} min/session
+- Experience: {user_profile.experience_level.value}
+{f"- Limitations:{chr(10)}{limitations_str}" if limitations_str else ""}
+
+INSTRUCTIONS:
+1. Fix ONLY the violations listed above
+2. Do NOT change anything else about the program
+3. Replace violating exercises with appropriate alternatives that use the user's available equipment
+4. Return the complete corrected program with the same JSON structure"""
+
+        try:
+            from orca import AgentChat, ModelType as OrcaModelType
+            from .output_specs import final_program_specs
+
+            chat = AgentChat(
+                system_prompt="You are a program correction assistant. Fix the specified constraint violations in the training program.",
+                model_type=OrcaModelType.SONNET,
+                output_specs=final_program_specs,
+            )
+
+            result = await chat.send(correction_prompt)
+
+            if result and isinstance(result, dict):
+                return result
+            if result and isinstance(result, str):
+                try:
+                    parsed = json_module.loads(result)
+                    if isinstance(parsed, dict):
+                        return parsed
+                except json_module.JSONDecodeError:
+                    pass
+        except Exception as e:
+            if self.verbose:
+                print(f"  Correction attempt failed: {e}")
+
+        # Return original if correction failed
+        return program_data
 
     def _parse_thesis_to_weeks(self, thesis: str) -> list[dict]:
         """Attempt to parse a free-form thesis into week structure.

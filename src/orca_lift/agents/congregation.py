@@ -86,10 +86,20 @@ def create_specialist_clients(
     return clients
 
 
-def create_mediator_config() -> MediatorConfig:
-    """Create the mediator configuration."""
+def create_mediator_config(
+    constraint_checklist: str = "",
+) -> MediatorConfig:
+    """Create the mediator configuration.
+
+    Args:
+        constraint_checklist: Formatted constraint checklist to inject into
+            the mediator's system prompt.
+    """
+    prompt = MEDIATOR_SYSTEM.format(
+        constraint_checklist=constraint_checklist or "No specific constraints provided.",
+    )
     return MediatorConfig(
-        persona_prompt=MEDIATOR_SYSTEM,
+        persona_prompt=prompt,
         model_type=ModelType.HAIKU,  # TODO: Change back to OPUS
         output_spec=final_program_specs,
         web=True,
@@ -100,6 +110,7 @@ def create_congregation(
     verbose: bool = True,
     equipment_constraints: str | None = None,
     tools: list[CongregationTool] | None = None,
+    constraint_checklist: str = "",
 ) -> Congregation:
     """Create the full congregation for program generation.
 
@@ -107,9 +118,10 @@ def create_congregation(
         verbose: Whether to show deliberation progress
         equipment_constraints: Formatted equipment constraints string
         tools: Optional list of CongregationTool objects for info requests
+        constraint_checklist: Formatted constraint checklist for the mediator
     """
     clients = create_specialist_clients(equipment_constraints=equipment_constraints)
-    mediator_config = create_mediator_config()
+    mediator_config = create_mediator_config(constraint_checklist=constraint_checklist)
 
     # Use provided tools or default congregation tools
     congregation_tools = tools if tools is not None else CONGREGATION_TOOLS
@@ -152,6 +164,7 @@ async def run_congregation_stream(
     program_framework: dict,
     equipment_constraints: str | None = None,
     profile_id: int | None = None,
+    constraint_checklist: str = "",
 ) -> AsyncGenerator[CongregationEvent, None]:
     """Run the congregation with streaming events.
 
@@ -163,6 +176,7 @@ async def run_congregation_stream(
         program_framework: The proposed program framework
         equipment_constraints: Formatted equipment constraints string
         profile_id: User profile ID for info request tools
+        constraint_checklist: Formatted constraint checklist for the mediator
 
     Yields:
         CongregationEvent objects for each significant event
@@ -174,6 +188,7 @@ async def run_congregation_stream(
     congregation = create_congregation(
         verbose=False,  # We're streaming instead
         equipment_constraints=equipment_constraints,
+        constraint_checklist=constraint_checklist,
     )
 
     topic = _build_topic(user_summary, program_framework)
@@ -188,6 +203,7 @@ async def run_congregation(
     verbose: bool = True,
     equipment_constraints: str | None = None,
     profile_id: int | None = None,
+    constraint_checklist: str = "",
 ) -> CongregationResult:
     """Run the congregation to design a program.
 
@@ -197,6 +213,7 @@ async def run_congregation(
         verbose: Whether to show deliberation progress
         equipment_constraints: Formatted equipment constraints string
         profile_id: User profile ID for info request tools
+        constraint_checklist: Formatted constraint checklist for the mediator
 
     Returns:
         CongregationResult with final program and deliberation log
@@ -208,6 +225,7 @@ async def run_congregation(
     congregation = create_congregation(
         verbose=verbose,
         equipment_constraints=equipment_constraints,
+        constraint_checklist=constraint_checklist,
     )
 
     topic = _build_topic(user_summary, program_framework)

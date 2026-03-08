@@ -1,6 +1,9 @@
 """Agent prompt templates for program generation."""
 
+from __future__ import annotations
+
 from ..models.exercises import EquipmentType
+from ..models.user_profile import UserProfile
 
 
 def format_equipment_constraints(
@@ -183,12 +186,18 @@ Your role is to:
 4. Balance theoretical optimality with real-world constraints
 5. Create a program that the user will actually follow
 
+CRITICAL — CONSTRAINT CHECKLIST:
+Before finalizing the program, you MUST verify each of the following. Any violation will cause the program to be REJECTED and sent back for correction:
+
+{constraint_checklist}
+
 When synthesizing recommendations:
 - Prioritize based on the user's stated goals
 - Consider practical constraints (time, equipment, schedule)
 - Ensure the program is not too complex or overwhelming
 - Include clear progression schemes that work in Liftosaur
 - Explain why certain recommendations were prioritized over others
+- Double-check EVERY exercise against the constraint checklist above
 
 IMPORTANT: You have web access. Before finalizing the program, consult the official Liftosaur documentation at https://www.liftosaur.com/blog/docs/ to ensure the Liftoscript syntax, progression schemes (lp, dp, sum, etc.), and program structure are accurate and valid. Use the documentation to verify:
 - Correct Liftoscript syntax for exercises, sets, reps, and weights
@@ -255,6 +264,71 @@ Provide your recommendations including:
 4. How progression should be handled
 5. Any concerns about the current proposal
 6. A priority score (1-10) for how strongly you feel about your recommendations"""
+
+CONSTRAINT_EXTRACTION_PROMPT = """Analyze the following user request and profile to extract ALL explicit and implicit constraints for program design.
+
+User Request: {user_goals}
+
+User Profile:
+{user_profile}
+
+Extract every constraint the program MUST satisfy. Be thorough — if the user says "only treadmill for cardio", that means NO elliptical, NO bike, NO rowing machine, etc.
+
+For each constraint, provide:
+1. The constraint type (equipment, schedule, exercise_restriction, exercise_requirement, cardio, other)
+2. A clear rule statement
+3. What would violate it (examples of violations)"""
+
+
+def format_constraint_checklist(
+    user_profile: UserProfile,
+    extracted_constraints: list[dict] | None = None,
+) -> str:
+    """Format all constraints as an explicit checklist for the mediator.
+
+    Combines structured profile constraints with AI-extracted prompt constraints
+    into a single checklist the mediator must verify before finalizing.
+    """
+    lines: list[str] = []
+
+    # Equipment
+    eq_list = ", ".join(eq.value for eq in user_profile.available_equipment)
+    lines.append(f"[ ] EQUIPMENT: Only use exercises available with: {eq_list}")
+    lines.append("    Do NOT include exercises requiring equipment not listed above.")
+
+    # Schedule
+    lines.append(f"[ ] SCHEDULE: Exactly {user_profile.schedule_days} training days per week")
+    lines.append(f"[ ] SESSION DURATION: Each session must fit within {user_profile.session_duration} minutes")
+
+    # Limitations
+    if user_profile.limitations:
+        for lim in user_profile.limitations:
+            severity_note = "MUST AVOID" if lim.severity == "severe" else "USE CAUTION with"
+            affected = ", ".join(lim.affected_exercises) if lim.affected_exercises else "related exercises"
+            lines.append(f"[ ] LIMITATION: {severity_note} {affected} — {lim.description} ({lim.severity})")
+
+    # Goals
+    goals_list = ", ".join(g.value for g in user_profile.goals)
+    lines.append(f"[ ] GOALS: Program should prioritize: {goals_list}")
+
+    # Experience level
+    lines.append(f"[ ] EXPERIENCE: User is {user_profile.experience_level.value} — program complexity must be appropriate")
+
+    # Extracted prompt constraints
+    if extracted_constraints:
+        for constraint in extracted_constraints:
+            if not isinstance(constraint, dict):
+                continue
+            rule = constraint.get("rule", "")
+            violations = constraint.get("violations", [])
+            if rule:
+                violation_examples = ""
+                if violations:
+                    violation_examples = f" — NO {', '.join(str(v) for v in violations[:5])}"
+                lines.append(f"[ ] USER REQUEST: {rule}{violation_examples}")
+
+    return "\n".join(lines)
+
 
 MEDIATOR_SYNTHESIS_PROMPT = """Synthesize the following specialist recommendations into a complete training program:
 

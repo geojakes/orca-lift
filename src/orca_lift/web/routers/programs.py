@@ -8,7 +8,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 
 from ...agents import ProgramExecutor
-from ...agents.prompts import format_equipment_constraints
+from ...agents.prompts import format_constraint_checklist, format_equipment_constraints
 from ...agents.tools import answer_question
 from ...db.repositories import (
     EquipmentConfigRepository,
@@ -24,6 +24,9 @@ router = APIRouter(prefix="/programs", tags=["programs"])
 
 # Store active job event queues for reconnection
 _job_queues: dict[str, asyncio.Queue] = {}
+
+# Store active refinement services per program for conversation continuity
+_refinement_services: dict[int, RefinementService] = {}
 
 
 def get_templates(request: Request):
@@ -357,36 +360,142 @@ async def get_liftoscript(program_id: int):
     }
 
 
+@router.get("/{program_id}/structure", response_class=HTMLResponse)
+async def get_program_structure(request: Request, program_id: int):
+    """Return just the program structure HTML partial for AJAX refresh."""
+    templates = get_templates(request)
+
+    program_repo = ProgramRepository()
+    program = await program_repo.get(program_id)
+
+    if not program:
+        return HTMLResponse("<p>Program not found</p>", status_code=404)
+
+    progress_repo = ProgramProgressRepository()
+    progress = await progress_repo.get_by_program(program_id)
+
+    return templates.TemplateResponse(
+        "programs/_structure.html",
+        {
+            "request": request,
+            "program": program,
+            "progress": progress,
+        },
+    )
+
+
 @router.post("/{program_id}/chat")
 async def chat_refine(
     request: Request,
     program_id: int,
     message: str = Form(...),
 ):
-    """Refine program via chat message with streaming response."""
-    async def event_stream() -> AsyncGenerator[str, None]:
+    """Refine program via chat message with streaming specialist deliberation."""
+    # Capture profile info from the request state before entering the generator
+    current_profile = request.state.current_profile
+    current_profile_id = request.state.current_profile_id
+
+    # Create a queue for streaming events from the refinement service
+    progress_queue: asyncio.Queue = asyncio.Queue()
+
+    async def on_progress(event_type: str, msg: str, data: dict | None = None):
+        await progress_queue.put((event_type, msg, data))
+
+    async def run_refinement():
+        """Run refinement in background, streaming events to queue."""
         try:
             program_repo = ProgramRepository()
             program = await program_repo.get(program_id)
 
             if not program:
-                yield f"data: {json.dumps({'type': 'error', 'message': 'Program not found'})}\n\n"
+                await on_progress("error", "Program not found")
                 return
 
-            yield f"data: {json.dumps({'type': 'status', 'message': 'Consulting specialists...'})}\n\n"
+            # Load user profile
+            profile_repo = UserProfileRepository()
+            profile = await profile_repo.get(current_profile_id)
 
-            # Refine program
-            service = RefinementService()
-            refined = await service.refine(program, message)
+            # Load equipment constraints
+            equipment_constraints = None
+            constraint_checklist = ""
+
+            if profile:
+                config_repo = EquipmentConfigRepository()
+                config = await config_repo.get_by_profile(profile.id)
+
+                if config:
+                    exercise_repo = ExerciseRepository()
+                    exercises = await exercise_repo.get_by_equipment(
+                        profile.available_equipment
+                    )
+                    exercise_names = [ex.name for ex in exercises]
+
+                    equipment_constraints = format_equipment_constraints(
+                        equipment_types=profile.available_equipment,
+                        available_exercises=exercise_names,
+                        min_increment=config.min_increment(),
+                        weight_unit=config.weight_unit,
+                    )
+
+                constraint_checklist = format_constraint_checklist(profile)
+
+            # Get or create refinement service for conversation continuity
+            if program_id not in _refinement_services:
+                _refinement_services[program_id] = RefinementService()
+            service = _refinement_services[program_id]
+
+            # Refine with full congregation
+            refined = await service.refine(
+                program=program,
+                request=message,
+                user_profile=profile,
+                equipment_constraints=equipment_constraints,
+                constraint_checklist=constraint_checklist,
+                on_progress=on_progress,
+            )
 
             # Save changes
             await program_repo.update(refined)
 
-            yield f"data: {json.dumps({'type': 'status', 'message': 'Program updated!'})}\n\n"
-            yield f"data: {json.dumps({'type': 'complete', 'summary': refined.get_summary()})}\n\n"
+            await on_progress("complete", "Program updated!", {
+                "summary": refined.get_summary(),
+            })
 
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+            await on_progress("error", str(e))
+        finally:
+            await progress_queue.put(("done", "", None))
+
+    async def event_stream() -> AsyncGenerator[str, None]:
+        # Start refinement in background
+        refinement_task = asyncio.create_task(run_refinement())
+
+        try:
+            while True:
+                try:
+                    event = await asyncio.wait_for(progress_queue.get(), timeout=120.0)
+                    event_type, msg, data = event
+
+                    if event_type == "done":
+                        break
+                    elif event_type == "error":
+                        yield f"data: {json.dumps({'type': 'error', 'message': msg})}\n\n"
+                        break
+                    elif event_type == "complete":
+                        yield f"data: {json.dumps({'type': 'complete', 'summary': data.get('summary', '') if data else ''})}\n\n"
+                    elif event_type == "specialist":
+                        yield f"data: {json.dumps({'type': 'specialist', 'name': msg, 'preview': data.get('preview', '') if data else '', 'full': data.get('full', '') if data else '', 'aligned': data.get('aligned') if data else None})}\n\n"
+                    elif event_type == "info_request":
+                        yield f"data: {json.dumps({'type': 'info_request', 'name': msg, 'functions': data.get('functions', []) if data else []})}\n\n"
+                    elif event_type == "phase":
+                        yield f"data: {json.dumps({'type': 'phase', 'message': msg})}\n\n"
+                    else:
+                        yield f"data: {json.dumps({'type': 'status', 'message': msg})}\n\n"
+
+                except asyncio.TimeoutError:
+                    yield f": keepalive\n\n"
+        finally:
+            pass
 
     return StreamingResponse(
         event_stream(),

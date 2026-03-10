@@ -1,0 +1,55 @@
+<div id="program-structure" class="bg-white shadow rounded-lg overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-900">Program Structure</h2>
+        <p class="text-sm text-gray-500">
+            {{ program.total_weeks }} weeks, {{ program.days_per_week }} days/week
+        </p>
+    </div>
+
+    <div class="divide-y">
+        {% for week in program.weeks %}
+        <details class="group" {% if loop.first %}open{% endif %}>
+            <summary class="px-6 py-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center">
+                <span class="font-medium text-gray-900">
+                    Week {{ week.week_number }}
+                    {% if week.deload %}
+                    <span class="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Deload</span>
+                    {% endif %}
+                </span>
+                <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </summary>
+            <div class="px-6 pb-4 space-y-4">
+                {% for day in week.days %}
+                <div class="border rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-medium text-gray-900">
+                            Day {{ loop.index }} - {{ day.name }}
+                            {% if day.focus %}
+                            <span class="text-gray-500 font-normal">| {{ day.focus }}</span>
+                            {% endif %}
+                        </h3>
+                        {% if progress and progress.current_week == week.week_number and progress.current_day == loop.index %}
+                        <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">Current</span>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-2">
+                        {% for exercise in day.exercises %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-700">{{ exercise.name }}</span>
+                            <span class="text-gray-500">
+                                {{ exercise.sets|length }}x{{ exercise.sets[0].reps if exercise.sets else '?' }}
+                                | {{ exercise.progression.value }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </details>
+        {% endfor %}
+    </div>
+</div>

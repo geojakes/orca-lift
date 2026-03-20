@@ -1,2 +1,15 @@
 **/*.pyc
 **/__pycache__/
+.DS_Store
+
+# Python backend
+backend/.venv/
+backend/.pytest_cache/
+backend/data/
+
+# Android
+orcafit-android/.gradle/
+orcafit-android/.idea/
+orcafit-android/build/
+orcafit-android/app/build/
+orcafit-android/local.properties

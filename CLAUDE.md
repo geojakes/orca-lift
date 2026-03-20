@@ -2,43 +2,55 @@
 
 ## Overview
 
-orca-lift is a CLI tool that generates personalized Liftosaur weightlifting programs using the Orca multi-agent AI framework. It uses a congregation of specialist AI agents to deliberate on program design.
+orca-lift is a monorepo containing:
+- **backend/** — Python CLI + REST API that generates personalized Liftosaur weightlifting programs using the Orca multi-agent AI framework
+- **orcafit-android/** — Android companion app (Kotlin/Jetpack Compose)
 
 ## Project Structure
 
 ```
 orca-lift/
-├── src/orca_lift/
-│   ├── cli.py                  # Click CLI entry point
-│   ├── agents/                 # AI agent pipeline
-│   │   ├── output_specs.py     # Structured output definitions
-│   │   ├── prompts.py          # Agent prompt templates
-│   │   ├── congregation.py     # Multi-agent deliberation
-│   │   ├── plan_builder.py     # DAG plan construction
-│   │   └── executor.py         # Pipeline orchestration
-│   ├── clients/                # Fitness data parsers
-│   │   ├── base.py             # FitnessDataClient protocol
-│   │   ├── health_connect/     # Health Connect SQLite parser
-│   │   ├── google_fit/         # Google Fit Takeout parser
-│   │   └── manual/             # Interactive questionnaire
-│   ├── generators/
-│   │   └── liftoscript.py      # Liftoscript DSL generator
-│   ├── models/                 # Data models
-│   │   ├── user_profile.py     # User fitness profile
-│   │   ├── program.py          # Training program structure
-│   │   └── exercises.py        # Exercise library
-│   ├── db/                     # Database layer
-│   │   ├── engine.py           # SQLite setup
-│   │   └── repositories.py     # Data access
-│   ├── services/
-│   │   └── refine.py           # Program refinement
-│   └── commands/               # CLI commands
-├── tests/
-├── integration_tests/
-└── data/                       # Runtime data (SQLite DB)
+├── backend/                        # Python backend
+│   ├── src/orca_lift/
+│   │   ├── cli.py                  # Click CLI entry point
+│   │   ├── agents/                 # AI agent pipeline
+│   │   │   ├── output_specs.py     # Structured output definitions
+│   │   │   ├── prompts.py          # Agent prompt templates
+│   │   │   ├── congregation.py     # Multi-agent deliberation
+│   │   │   ├── plan_builder.py     # DAG plan construction
+│   │   │   └── executor.py         # Pipeline orchestration
+│   │   ├── clients/                # Fitness data parsers
+│   │   │   ├── base.py             # FitnessDataClient protocol
+│   │   │   ├── health_connect/     # Health Connect SQLite parser
+│   │   │   ├── google_fit/         # Google Fit Takeout parser
+│   │   │   └── manual/             # Interactive questionnaire
+│   │   ├── generators/
+│   │   │   └── liftoscript.py      # Liftoscript DSL generator
+│   │   ├── models/                 # Data models
+│   │   │   ├── user_profile.py     # User fitness profile
+│   │   │   ├── program.py          # Training program structure
+│   │   │   └── exercises.py        # Exercise library
+│   │   ├── db/                     # Database layer
+│   │   │   ├── engine.py           # SQLite setup
+│   │   │   └── repositories.py     # Data access
+│   │   ├── services/
+│   │   │   └── refine.py           # Program refinement
+│   │   ├── web/                    # FastAPI REST API + templates
+│   │   └── commands/               # CLI commands
+│   ├── tests/
+│   ├── integration_tests/
+│   ├── scripts/
+│   ├── data/                       # Runtime data (SQLite DB)
+│   └── pyproject.toml
+├── orcafit-android/                # Android app
+│   ├── app/src/                    # Kotlin source
+│   ├── build.gradle.kts
+│   └── ...
+├── CLAUDE.md
+└── README.md
 ```
 
-## Key Components
+## Backend
 
 ### Multi-Agent Congregation
 
@@ -79,22 +91,17 @@ Bench Press / 4x5 / progress: lp(5lb)
 Overhead Press / 3x8-10 / progress: dp(2.5lb, 8, 10)
 ```
 
-## Development
-
-### Setup
+### Setup & Running
 
 ```bash
+cd backend
 uv sync
-```
 
-### Running
-
-```bash
 # Initialize
-uv run orca-lift init
+uv run orcafit init
 
 # Generate a program
-uv run orca-lift generate "Build strength, 4 days/week"
+uv run orcafit generate "Build strength, 4 days/week"
 
 # Run tests
 uv run pytest tests/
@@ -102,10 +109,10 @@ uv run pytest tests/
 
 ### Key Files for Modifications
 
-- **Add new progression scheme**: `src/orca_lift/generators/liftoscript.py`
-- **Modify agent prompts**: `src/orca_lift/agents/prompts.py`
-- **Add fitness data source**: Create new client in `src/orca_lift/clients/`
-- **Change output format**: `src/orca_lift/agents/output_specs.py`
+- **Add new progression scheme**: `backend/src/orca_lift/generators/liftoscript.py`
+- **Modify agent prompts**: `backend/src/orca_lift/agents/prompts.py`
+- **Add fitness data source**: Create new client in `backend/src/orca_lift/clients/`
+- **Change output format**: `backend/src/orca_lift/agents/output_specs.py`
 
 ## Data Sources
 

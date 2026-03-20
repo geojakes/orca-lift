@@ -37,6 +37,9 @@ class MovementPattern(str, Enum):
     CARRY = "carry"
     ROTATION = "rotation"
     ISOLATION = "isolation"
+    CARDIO_STEADY = "cardio_steady"
+    CARDIO_INTERVAL = "cardio_interval"
+    CARDIO_MIXED = "cardio_mixed"
 
 
 class EquipmentType(str, Enum):
@@ -52,6 +55,34 @@ class EquipmentType(str, Enum):
     EZ_BAR = "ez_bar"
     TRAP_BAR = "trap_bar"
     SMITH_MACHINE = "smith_machine"
+    TREADMILL = "treadmill"
+    STATIONARY_BIKE = "stationary_bike"
+    ROWING_MACHINE = "rowing_machine"
+    ELLIPTICAL = "elliptical"
+    STAIR_CLIMBER = "stair_climber"
+    JUMP_ROPE = "jump_rope"
+    BATTLE_ROPES = "battle_ropes"
+    SLED = "sled"
+    NONE = "none"
+
+
+class ExerciseCategory(str, Enum):
+    """Exercise category."""
+
+    RESISTANCE = "resistance"
+    CARDIO = "cardio"
+    FLEXIBILITY = "flexibility"
+    PLYOMETRIC = "plyometric"
+
+
+class CardioType(str, Enum):
+    """Cardio exercise sub-types."""
+
+    STEADY_STATE = "steady_state"
+    INTERVAL = "interval"
+    HIIT = "hiit"
+    SPRINT = "sprint"
+    CIRCUIT = "circuit"
 
 
 @dataclass
@@ -62,9 +93,17 @@ class Exercise:
     muscle_groups: list[MuscleGroup]
     movement_pattern: MovementPattern
     equipment: list[EquipmentType]
+    category: ExerciseCategory = ExerciseCategory.RESISTANCE
     aliases: list[str] = field(default_factory=list)
     liftosaur_id: str | None = None  # Liftosaur's internal exercise ID
     is_compound: bool = False  # True for multi-joint movements
+    # Cardio-specific fields
+    cardio_type: CardioType | None = None
+    tracks_distance: bool = False
+    tracks_heart_rate: bool = False
+    tracks_pace: bool = False
+    tracks_calories: bool = False
+    # ID
     id: int | None = None
 
     def to_dict(self) -> dict:
@@ -74,9 +113,15 @@ class Exercise:
             "muscle_groups": [mg.value for mg in self.muscle_groups],
             "movement_pattern": self.movement_pattern.value,
             "equipment": [eq.value for eq in self.equipment],
+            "category": self.category.value,
             "aliases": self.aliases,
             "liftosaur_id": self.liftosaur_id,
             "is_compound": self.is_compound,
+            "cardio_type": self.cardio_type.value if self.cardio_type else None,
+            "tracks_distance": self.tracks_distance,
+            "tracks_heart_rate": self.tracks_heart_rate,
+            "tracks_pace": self.tracks_pace,
+            "tracks_calories": self.tracks_calories,
         }
 
     @classmethod
@@ -88,9 +133,15 @@ class Exercise:
             muscle_groups=[MuscleGroup(mg) for mg in data["muscle_groups"]],
             movement_pattern=MovementPattern(data["movement_pattern"]),
             equipment=[EquipmentType(eq) for eq in data["equipment"]],
+            category=ExerciseCategory(data.get("category", "resistance")),
             aliases=data.get("aliases", []),
             liftosaur_id=data.get("liftosaur_id"),
             is_compound=data.get("is_compound", False),
+            cardio_type=CardioType(data["cardio_type"]) if data.get("cardio_type") else None,
+            tracks_distance=data.get("tracks_distance", False),
+            tracks_heart_rate=data.get("tracks_heart_rate", False),
+            tracks_pace=data.get("tracks_pace", False),
+            tracks_calories=data.get("tracks_calories", False),
         )
 
 
@@ -591,3 +642,255 @@ COMMON_EXERCISES: list[Exercise] = [
         is_compound=True,
     ),
 ]
+
+CARDIO_EXERCISES: list[Exercise] = [
+    # Running
+    Exercise(
+        name="Treadmill Run",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.GLUTES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.TREADMILL],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Treadmill", "Treadmill Jog", "Running on Treadmill"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    Exercise(
+        name="Outdoor Run",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.GLUTES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.NONE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Running", "Jogging", "Road Run", "Trail Run"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    Exercise(
+        name="Sprint Intervals",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.GLUTES],
+        movement_pattern=MovementPattern.CARDIO_INTERVAL,
+        equipment=[EquipmentType.NONE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Sprints", "Interval Sprints", "Wind Sprints"],
+        cardio_type=CardioType.SPRINT,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    # Cycling
+    Exercise(
+        name="Stationary Bike",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.STATIONARY_BIKE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Bike", "Cycling", "Indoor Cycling", "Exercise Bike"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    Exercise(
+        name="Outdoor Cycling",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.NONE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Road Cycling", "Biking", "Bike Ride"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    # Rowing
+    Exercise(
+        name="Rowing Machine",
+        muscle_groups=[MuscleGroup.BACK, MuscleGroup.LATS, MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.ABS],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.ROWING_MACHINE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Rower", "Erg", "Indoor Rowing", "Concept2"],
+        is_compound=True,
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    # Elliptical
+    Exercise(
+        name="Elliptical",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.GLUTES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.ELLIPTICAL],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Elliptical Trainer", "Cross Trainer"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Stair Climber
+    Exercise(
+        name="Stair Climber",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.GLUTES, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.STAIR_CLIMBER],
+        category=ExerciseCategory.CARDIO,
+        aliases=["StairMaster", "Stair Stepper", "Step Mill"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Jump Rope
+    Exercise(
+        name="Jump Rope",
+        muscle_groups=[MuscleGroup.CALVES, MuscleGroup.QUADS, MuscleGroup.SHOULDERS, MuscleGroup.ABS],
+        movement_pattern=MovementPattern.CARDIO_INTERVAL,
+        equipment=[EquipmentType.JUMP_ROPE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Skipping Rope", "Skip Rope", "Rope Jumping"],
+        cardio_type=CardioType.INTERVAL,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Battle Ropes
+    Exercise(
+        name="Battle Ropes",
+        muscle_groups=[MuscleGroup.SHOULDERS, MuscleGroup.ABS, MuscleGroup.BACK, MuscleGroup.BICEPS],
+        movement_pattern=MovementPattern.CARDIO_INTERVAL,
+        equipment=[EquipmentType.BATTLE_ROPES],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Battling Ropes", "Heavy Ropes", "Rope Waves"],
+        is_compound=True,
+        cardio_type=CardioType.HIIT,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Sled
+    Exercise(
+        name="Sled Push",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.CARDIO_MIXED,
+        equipment=[EquipmentType.SLED],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Prowler Push", "Sled Drive"],
+        is_compound=True,
+        cardio_type=CardioType.HIIT,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    Exercise(
+        name="Sled Pull",
+        muscle_groups=[MuscleGroup.BACK, MuscleGroup.HAMSTRINGS, MuscleGroup.GLUTES, MuscleGroup.BICEPS],
+        movement_pattern=MovementPattern.CARDIO_MIXED,
+        equipment=[EquipmentType.SLED],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Prowler Pull", "Sled Drag"],
+        is_compound=True,
+        cardio_type=CardioType.HIIT,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Walking
+    Exercise(
+        name="Walking",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES, MuscleGroup.GLUTES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.NONE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Walking", "Brisk Walk", "Power Walk"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+    Exercise(
+        name="Incline Treadmill Walk",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.TREADMILL],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Incline Walk", "12-3-30", "Treadmill Incline"],
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_calories=True,
+    ),
+    # Swimming
+    Exercise(
+        name="Swimming",
+        muscle_groups=[MuscleGroup.LATS, MuscleGroup.SHOULDERS, MuscleGroup.ABS, MuscleGroup.QUADS],
+        movement_pattern=MovementPattern.CARDIO_STEADY,
+        equipment=[EquipmentType.NONE],
+        category=ExerciseCategory.CARDIO,
+        aliases=["Swim", "Lap Swimming", "Pool Swimming", "Freestyle"],
+        is_compound=True,
+        cardio_type=CardioType.STEADY_STATE,
+        tracks_distance=True,
+        tracks_heart_rate=True,
+        tracks_pace=True,
+        tracks_calories=True,
+    ),
+]
+
+PLYOMETRIC_EXERCISES: list[Exercise] = [
+    Exercise(
+        name="Box Jump",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.GLUTES, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.SQUAT,
+        equipment=[EquipmentType.BODYWEIGHT],
+        category=ExerciseCategory.PLYOMETRIC,
+        aliases=["Box Jumps", "Plyo Box Jump"],
+        is_compound=True,
+    ),
+    Exercise(
+        name="Burpee",
+        muscle_groups=[MuscleGroup.CHEST, MuscleGroup.QUADS, MuscleGroup.ABS, MuscleGroup.SHOULDERS],
+        movement_pattern=MovementPattern.CARDIO_MIXED,
+        equipment=[EquipmentType.BODYWEIGHT],
+        category=ExerciseCategory.PLYOMETRIC,
+        aliases=["Burpees"],
+        is_compound=True,
+    ),
+    Exercise(
+        name="Kettlebell Swing",
+        muscle_groups=[MuscleGroup.GLUTES, MuscleGroup.HAMSTRINGS, MuscleGroup.ABS, MuscleGroup.SHOULDERS],
+        movement_pattern=MovementPattern.HINGE,
+        equipment=[EquipmentType.KETTLEBELL],
+        category=ExerciseCategory.PLYOMETRIC,
+        aliases=["KB Swing", "Russian Swing", "Kettlebell Swing"],
+        is_compound=True,
+    ),
+    Exercise(
+        name="Mountain Climber",
+        muscle_groups=[MuscleGroup.ABS, MuscleGroup.QUADS, MuscleGroup.SHOULDERS],
+        movement_pattern=MovementPattern.CARDIO_MIXED,
+        equipment=[EquipmentType.BODYWEIGHT],
+        category=ExerciseCategory.PLYOMETRIC,
+        aliases=["Mountain Climbers"],
+        is_compound=True,
+    ),
+    Exercise(
+        name="Jump Squat",
+        muscle_groups=[MuscleGroup.QUADS, MuscleGroup.GLUTES, MuscleGroup.CALVES],
+        movement_pattern=MovementPattern.SQUAT,
+        equipment=[EquipmentType.BODYWEIGHT],
+        category=ExerciseCategory.PLYOMETRIC,
+        aliases=["Squat Jump", "Jumping Squat"],
+        is_compound=True,
+    ),
+]
+
+ALL_EXERCISES: list[Exercise] = COMMON_EXERCISES + CARDIO_EXERCISES + PLYOMETRIC_EXERCISES

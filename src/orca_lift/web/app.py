@@ -9,9 +9,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from ..db.engine import init_db
+from ..db.engine import init_db, seed_exercises
 from ..db.repositories import UserProfileRepository
 from .routers import equipment, profile, programs, progress, users
+from .routers import api_auth, api_exercises, api_programs, api_workouts, api_profile
 
 
 # Template and static file paths
@@ -19,7 +20,11 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 STATIC_DIR = Path(__file__).parent / "static"
 
 # Paths that don't require a selected user
-PUBLIC_PATHS = ("/users", "/health", "/static")
+PUBLIC_PATHS = (
+    "/users", "/health", "/static",
+    "/api/v1/",  # All API routes use JWT auth, not cookie-based middleware
+    "/docs", "/openapi.json"
+)
 
 
 class CurrentUserMiddleware(BaseHTTPMiddleware):
@@ -64,6 +69,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan handler - runs on startup and shutdown."""
     # Startup: Initialize database (always run to apply migrations)
     await init_db()
+    await seed_exercises()
     yield
     # Shutdown: cleanup if needed
 
@@ -71,9 +77,9 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     app = FastAPI(
-        title="orca-lift",
-        description="AI-Powered Liftosaur Program Generator",
-        version="0.1.0",
+        title="OrcaFit",
+        description="AI-Powered Fitness Program Generator & Workout Tracker",
+        version="0.2.0",
         lifespan=lifespan,
     )
 
@@ -90,12 +96,19 @@ def create_app() -> FastAPI:
     # Store templates in app state for use in routers
     app.state.templates = templates
 
-    # Include routers
+    # Include web UI routers
     app.include_router(users.router)
     app.include_router(equipment.router)
     app.include_router(profile.router)
     app.include_router(programs.router)
     app.include_router(progress.router)
+
+    # Include API routers (for mobile app)
+    app.include_router(api_auth.router)
+    app.include_router(api_exercises.router)
+    app.include_router(api_programs.router)
+    app.include_router(api_workouts.router)
+    app.include_router(api_profile.router)
 
     @app.get("/", response_class=HTMLResponse)
     async def root(request: Request):
@@ -108,7 +121,7 @@ def create_app() -> FastAPI:
     @app.get("/health")
     async def health():
         """Health check endpoint."""
-        return {"status": "healthy", "version": "0.1.0"}
+        return {"status": "healthy", "version": "0.2.0"}
 
     return app
 

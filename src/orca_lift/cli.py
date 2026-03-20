@@ -1,4 +1,4 @@
-"""CLI entry point for orca-lift."""
+"""CLI entry point for orcafit."""
 
 import asyncio
 
@@ -12,27 +12,27 @@ from .commands.serve import serve
 
 
 @click.group()
-@click.version_option(version="0.1.0", prog_name="orca-lift")
+@click.version_option(version="0.1.0", prog_name="orcafit")
 def main():
-    """orca-lift: AI-Powered Liftosaur Program Generator.
+    """orcafit: AI-Powered Fitness Program Generator & Workout Tracker.
 
-    Generate personalized weightlifting programs using multi-agent AI deliberation.
-    Programs are output in Liftoscript format compatible with Liftosaur.
+    Generate personalized training programs using multi-agent AI deliberation.
+    Programs are output in Liftoscript format compatible with Liftosaur or native OrcaFit JSON format.
 
     Example usage:
 
         # Initialize the project
-        orca-lift init
+        orcafit init
 
         # Import your fitness data
-        orca-lift import manual
+        orcafit import manual
 
         # Generate a program
-        orca-lift generate "Build strength, 4 days per week"
+        orcafit generate "Build strength, 4 days per week"
 
         # View and export programs
-        orca-lift programs list
-        orca-lift export 1 --clipboard
+        orcafit programs list
+        orcafit export 1 --clipboard
     """
     pass
 

@@ -6,6 +6,7 @@ from pathlib import Path
 
 import aiosqlite
 
+from ..models.auth import User
 from ..models.equipment import EquipmentConfig
 from ..models.exercises import (
     COMMON_EXERCISES,
@@ -17,6 +18,13 @@ from ..models.exercises import (
 from ..models.program import Program
 from ..models.progress import ProgramProgress, ProgramStatus
 from ..models.user_profile import UserProfile
+from ..models.workout import (
+    LoggedSet,
+    PersonalRecord,
+    Workout,
+    WorkoutExercise,
+    WorkoutStatus,
+)
 from .engine import get_db_path
 
 
@@ -731,3 +739,300 @@ class ProgramProgressRepository:
             last_workout_at=last_workout_at,
             status=ProgramStatus(row["status"]),
         )
+
+
+class UserRepository:
+    """Repository for application users."""
+
+    def __init__(self, db_path: Path | None = None):
+        self.db_path = db_path or get_db_path()
+
+    async def create(self, user: User) -> int:
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute(
+                "INSERT INTO users (email, hashed_password, name) VALUES (?, ?, ?)",
+                (user.email, user.hashed_password, user.name),
+            )
+            await db.commit()
+            return cursor.lastrowid
+
+    async def get_by_email(self, email: str) -> User | None:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("SELECT * FROM users WHERE email = ?", (email,))
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return User(
+                id=row["id"],
+                email=row["email"],
+                hashed_password=row["hashed_password"],
+                name=row["name"],
+                is_active=bool(row["is_active"]),
+                created_at=datetime.fromisoformat(row["created_at"]) if row["created_at"] else None,
+            )
+
+    async def get(self, user_id: int) -> User | None:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return User(
+                id=row["id"],
+                email=row["email"],
+                hashed_password=row["hashed_password"],
+                name=row["name"],
+                is_active=bool(row["is_active"]),
+                created_at=datetime.fromisoformat(row["created_at"]) if row["created_at"] else None,
+            )
+
+
+class WorkoutRepository:
+    """Repository for workout sessions."""
+
+    def __init__(self, db_path: Path | None = None):
+        self.db_path = db_path or get_db_path()
+
+    async def create(self, workout: Workout) -> int:
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute(
+                """
+                INSERT INTO workouts
+                (user_id, program_id, week_number, day_number, day_name, status,
+                 exercises, started_at, completed_at, notes, total_duration_seconds)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    workout.user_id,
+                    workout.program_id,
+                    workout.week_number,
+                    workout.day_number,
+                    workout.day_name,
+                    workout.status.value,
+                    json.dumps([ex.to_dict() for ex in workout.exercises]),
+                    workout.started_at.isoformat() if workout.started_at else None,
+                    workout.completed_at.isoformat() if workout.completed_at else None,
+                    workout.notes,
+                    workout.total_duration_seconds,
+                ),
+            )
+            await db.commit()
+            return cursor.lastrowid
+
+    async def get(self, workout_id: int) -> Workout | None:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("SELECT * FROM workouts WHERE id = ?", (workout_id,))
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return self._row_to_workout(row)
+
+    async def get_active(self, user_id: int) -> Workout | None:
+        """Get the user's current in-progress workout."""
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                """SELECT * FROM workouts 
+                WHERE user_id = ? AND status IN ('in_progress', 'paused')
+                ORDER BY started_at DESC LIMIT 1""",
+                (user_id,),
+            )
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return self._row_to_workout(row)
+
+    async def list_by_user(self, user_id: int, limit: int = 50) -> list[Workout]:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                """SELECT * FROM workouts WHERE user_id = ?
+                ORDER BY created_at DESC LIMIT ?""",
+                (user_id, limit),
+            )
+            rows = await cursor.fetchall()
+            return [self._row_to_workout(row) for row in rows]
+
+    async def list_by_program(self, program_id: int) -> list[Workout]:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                "SELECT * FROM workouts WHERE program_id = ? ORDER BY created_at DESC",
+                (program_id,),
+            )
+            rows = await cursor.fetchall()
+            return [self._row_to_workout(row) for row in rows]
+
+    async def update(self, workout: Workout) -> None:
+        if workout.id is None:
+            raise ValueError("Workout must have an ID to update")
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                """
+                UPDATE workouts SET
+                    status = ?, exercises = ?, started_at = ?, completed_at = ?,
+                    notes = ?, total_duration_seconds = ?
+                WHERE id = ?
+                """,
+                (
+                    workout.status.value,
+                    json.dumps([ex.to_dict() for ex in workout.exercises]),
+                    workout.started_at.isoformat() if workout.started_at else None,
+                    workout.completed_at.isoformat() if workout.completed_at else None,
+                    workout.notes,
+                    workout.total_duration_seconds,
+                    workout.id,
+                ),
+            )
+            await db.commit()
+
+    async def delete(self, workout_id: int) -> None:
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute("DELETE FROM workouts WHERE id = ?", (workout_id,))
+            await db.commit()
+
+    def _row_to_workout(self, row: aiosqlite.Row) -> Workout:
+        exercises_data = json.loads(row["exercises"])
+        started = row["started_at"]
+        completed = row["completed_at"]
+        return Workout(
+            id=row["id"],
+            user_id=row["user_id"],
+            program_id=row["program_id"],
+            week_number=row["week_number"],
+            day_number=row["day_number"],
+            day_name=row["day_name"] or "",
+            status=WorkoutStatus(row["status"]),
+            exercises=[WorkoutExercise.from_dict(ex) for ex in exercises_data],
+            started_at=datetime.fromisoformat(started) if started else None,
+            completed_at=datetime.fromisoformat(completed) if completed else None,
+            notes=row["notes"] or "",
+            total_duration_seconds=row["total_duration_seconds"],
+        )
+
+
+class PersonalRecordRepository:
+    """Repository for personal records."""
+
+    def __init__(self, db_path: Path | None = None):
+        self.db_path = db_path or get_db_path()
+
+    async def create(self, pr: PersonalRecord, user_id: int) -> int:
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute(
+                """
+                INSERT INTO personal_records
+                (user_id, exercise_id, exercise_name, record_type, value, unit,
+                 achieved_at, workout_id, previous_value)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    pr.exercise_id,
+                    pr.exercise_name,
+                    pr.record_type,
+                    pr.value,
+                    pr.unit,
+                    pr.achieved_at.isoformat() if pr.achieved_at else None,
+                    pr.workout_id,
+                    pr.previous_value,
+                ),
+            )
+            await db.commit()
+            return cursor.lastrowid
+
+    async def get_for_exercise(
+        self, user_id: int, exercise_id: str
+    ) -> list[PersonalRecord]:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                """SELECT * FROM personal_records
+                WHERE user_id = ? AND exercise_id = ?
+                ORDER BY achieved_at DESC""",
+                (user_id, exercise_id),
+            )
+            rows = await cursor.fetchall()
+            return [self._row_to_pr(row) for row in rows]
+
+    async def get_latest(
+        self, user_id: int, exercise_id: str, record_type: str
+    ) -> PersonalRecord | None:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                """SELECT * FROM personal_records
+                WHERE user_id = ? AND exercise_id = ? AND record_type = ?
+                ORDER BY value DESC LIMIT 1""",
+                (user_id, exercise_id, record_type),
+            )
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return self._row_to_pr(row)
+
+    async def list_all_for_user(self, user_id: int) -> list[PersonalRecord]:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                """SELECT * FROM personal_records
+                WHERE user_id = ?
+                ORDER BY achieved_at DESC""",
+                (user_id,),
+            )
+            rows = await cursor.fetchall()
+            return [self._row_to_pr(row) for row in rows]
+
+    def _row_to_pr(self, row: aiosqlite.Row) -> PersonalRecord:
+        achieved = row["achieved_at"]
+        return PersonalRecord(
+            id=row["id"],
+            exercise_id=row["exercise_id"],
+            exercise_name=row["exercise_name"],
+            record_type=row["record_type"],
+            value=row["value"],
+            unit=row["unit"],
+            achieved_at=datetime.fromisoformat(achieved) if achieved else None,
+            workout_id=row["workout_id"],
+            previous_value=row["previous_value"],
+        )
+
+
+class ActiveProgramRepository:
+    """Repository for tracking which program is active per user."""
+
+    def __init__(self, db_path: Path | None = None):
+        self.db_path = db_path or get_db_path()
+
+    async def set_active(self, user_id: int, program_id: int) -> None:
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                """INSERT INTO active_programs (user_id, program_id)
+                VALUES (?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET
+                    program_id = excluded.program_id,
+                    activated_at = CURRENT_TIMESTAMP""",
+                (user_id, program_id),
+            )
+            await db.commit()
+
+    async def get_active(self, user_id: int) -> int | None:
+        """Returns the active program_id for a user, or None."""
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                "SELECT program_id FROM active_programs WHERE user_id = ?",
+                (user_id,),
+            )
+            row = await cursor.fetchone()
+            return row["program_id"] if row else None
+
+    async def clear(self, user_id: int) -> None:
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                "DELETE FROM active_programs WHERE user_id = ?", (user_id,)
+            )
+            await db.commit()

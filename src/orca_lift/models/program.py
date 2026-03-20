@@ -6,12 +6,14 @@ from enum import Enum
 
 
 class ProgressionScheme(str, Enum):
-    """Progression schemes supported by Liftosaur."""
+    """Progression schemes for workout programs."""
 
     LINEAR = "lp"  # Linear progression
     DOUBLE = "dp"  # Double progression (weight after hitting top of rep range)
     SUM = "sum"  # Sum progression (total reps across sets)
     CUSTOM = "custom"  # Custom Liftoscript logic
+    RPE_BASED = "rpe"  # RPE-based progression
+    PERCENTAGE = "pct"  # Percentage-based progression
 
 
 @dataclass
@@ -149,6 +151,7 @@ class Program:
     goals: str  # Original user request
     congregation_log: list[dict] = field(default_factory=list)  # Deliberation history
     liftoscript: str = ""  # Generated Liftoscript code
+    format_output: str | dict = ""  # OrcaFit JSON or other formats
     id: int | None = None
     profile_id: int | None = None
     created_at: datetime | None = None
@@ -162,6 +165,7 @@ class Program:
             "goals": self.goals,
             "congregation_log": self.congregation_log,
             "liftoscript": self.liftoscript,
+            "format_output": self.format_output,
         }
 
     @classmethod
@@ -182,6 +186,7 @@ class Program:
             goals=data["goals"],
             congregation_log=data.get("congregation_log", []),
             liftoscript=data.get("liftoscript", ""),
+            format_output=data.get("format_output", ""),
             created_at=created_at,
         )
 

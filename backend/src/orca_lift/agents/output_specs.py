@@ -148,12 +148,42 @@ _exercise_spec = OutputSpec(
     type="object",
     description="Exercise configuration",
     source=[
-        OutputSpec(name="name", type="string", description="Exercise name"),
-        OutputSpec(name="sets", type="int", description="Number of sets"),
+        OutputSpec(name="name", type="string", description="Exercise name from the Liftosaur built-in list"),
+        OutputSpec(name="sets", type="int", description="Number of working sets"),
         OutputSpec(name="reps_min", type="int", description="Minimum reps per set"),
         OutputSpec(name="reps_max", type="int", description="Maximum reps per set"),
-        OutputSpec(name="progression", type="string", description="Progression type: lp, dp, or sum"),
+        OutputSpec(name="progression", type="string", description="Progression type: lp, dp, sum, or custom"),
         OutputSpec(name="increment", type="float", description="Weight increment in lbs"),
+        OutputSpec(
+            name="rpe_per_set",
+            type="list[float]",
+            description="RPE target for each set (e.g., [9, 10] for two sets at @9 and @10). Use numeric values 7-10.",
+        ),
+        OutputSpec(
+            name="rest_seconds",
+            type="int",
+            description="Rest time between sets in seconds (e.g., 60, 120, 180)",
+        ),
+        OutputSpec(
+            name="notes",
+            type="string",
+            description="Coaching cues and exercise execution notes",
+        ),
+        OutputSpec(
+            name="substitutions",
+            type="list[string]",
+            description="Alternative exercises that can replace this one",
+        ),
+        OutputSpec(
+            name="techniques",
+            type="list[string]",
+            description="Intensification techniques to apply: dropset, myorep, lengthened_partial",
+        ),
+        OutputSpec(
+            name="grouping_prefix",
+            type="string",
+            description="Superset/circuit grouping label (e.g., 'A', 'B') when exercises are paired",
+        ),
     ],
 )
 
@@ -164,7 +194,7 @@ _day_spec = OutputSpec(
     description="Training day configuration",
     source=[
         OutputSpec(name="name", type="string", description="Day name (e.g., Monday, Day 1)"),
-        OutputSpec(name="focus", type="string", description="Day focus (e.g., Upper, Lower, Push)"),
+        OutputSpec(name="focus", type="string", description="Descriptive day focus like 'Full Body', 'Upper', 'Lower', 'Arms/Delts', 'Push', 'Pull', 'Legs'"),
         OutputSpec(
             name="exercises",
             type="list",
@@ -182,6 +212,16 @@ _week_spec = OutputSpec(
     source=[
         OutputSpec(name="week_number", type="int", description="Week number (1, 2, 3, etc.)"),
         OutputSpec(name="is_deload", type="bool", description="Whether this is a deload week"),
+        OutputSpec(
+            name="phase_name",
+            type="string",
+            description="Training phase name: 'Introduction', 'Accumulation', 'Intensification', 'Deload'",
+        ),
+        OutputSpec(
+            name="techniques_enabled",
+            type="list[string]",
+            description="Intensification techniques active this week: 'dropsets', 'myoreps', 'lengthened_partials'",
+        ),
         OutputSpec(
             name="days",
             type="list",
@@ -213,6 +253,11 @@ final_program_specs = [
         type="list",
         description="List of training weeks",
         source=_week_spec,
+    ),
+    OutputSpec(
+        name="progression_strategy",
+        type="string",
+        description="Description of progression approach: template names (e.g., 'progression', 'dropsets', 'myoreps'), phase transitions, RPE ramping strategy, and deload structure. The Liftoscript converter uses this to generate reusable custom() templates.",
     ),
     OutputSpec(
         name="rationale",

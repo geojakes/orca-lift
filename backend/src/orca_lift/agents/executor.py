@@ -527,14 +527,38 @@ class ProgramGenerator:
                             reps_max = reps_min
                     is_amrap = ex_data.get("is_amrap_final_set", False)
 
+                    # Per-set RPE from enriched data (e.g., [9, 10])
+                    rpe_per_set = ex_data.get("rpe_per_set", [])
+                    if not isinstance(rpe_per_set, list):
+                        rpe_per_set = []
+
+                    # Rest seconds from enriched data
+                    rest_seconds = ex_data.get("rest_seconds")
+                    if rest_seconds is not None:
+                        try:
+                            rest_seconds = int(rest_seconds)
+                        except (ValueError, TypeError):
+                            rest_seconds = None
+
                     for i in range(num_sets):
                         is_last = i == num_sets - 1
                         reps = reps_min if reps_min == reps_max else f"{reps_min}-{reps_max}"
+                        # Use per-set RPE if available, else fall back to uniform rpe_target
+                        set_rpe = None
+                        if rpe_per_set and i < len(rpe_per_set):
+                            try:
+                                set_rpe = float(rpe_per_set[i])
+                            except (ValueError, TypeError):
+                                set_rpe = None
+                        if set_rpe is None:
+                            set_rpe = ex_data.get("rpe_target")
+
                         sets.append(
                             SetScheme(
                                 reps=reps,
-                                rpe=ex_data.get("rpe_target"),
+                                rpe=set_rpe,
                                 is_amrap=is_last and is_amrap,
+                                rest_seconds=rest_seconds,
                             )
                         )
 
@@ -553,6 +577,14 @@ class ProgramGenerator:
                         except (ValueError, TypeError):
                             raw_increment = 5
 
+                    # Collect enriched metadata
+                    substitutions = ex_data.get("substitutions", [])
+                    if not isinstance(substitutions, list):
+                        substitutions = []
+                    techniques = ex_data.get("techniques", [])
+                    if not isinstance(techniques, list):
+                        techniques = []
+
                     exercises.append(
                         ProgramExercise(
                             name=ex_data.get("name", "Unknown"),
@@ -562,6 +594,8 @@ class ProgramGenerator:
                                 "increment": raw_increment,
                             },
                             notes=ex_data.get("notes", ""),
+                            substitutions=substitutions,
+                            techniques=techniques,
                         )
                     )
 
@@ -578,6 +612,7 @@ class ProgramGenerator:
                     week_number=week_data.get("week_number", len(weeks) + 1),
                     days=days,
                     deload=week_data.get("is_deload", False),
+                    phase_name=week_data.get("phase_name", ""),
                 )
             )
 

@@ -127,6 +127,7 @@ Your expertise includes:
 - Block periodization
 - Deload protocols and timing
 - Peaking strategies
+- Intensification techniques (dropsets, myo-reps, lengthened partials)
 
 Key principles you prioritize:
 1. Training must be organized in phases with specific goals
@@ -134,6 +135,14 @@ Key principles you prioritize:
 3. Variety in training stimulus prevents stagnation
 4. Deloads are necessary for continued progress
 5. The right periodization depends on training age and goals
+
+When designing multi-week programs (6+ weeks), structure them in distinct phases:
+- Phase 1 (Introduction/Accumulation): Progressive RPE ramping (e.g., starting @7-8, building to @9-10 over weeks)
+- Deload week: Reduced intensity — all exercises use baseline RPE, no progression
+- Phase 2 (Intensification): Advanced techniques activated — dropsets, myo-reps, lengthened partials
+- Each phase should have clear RPE targets per set that ramp across weeks
+- Always include a deload week between phases
+- Specify which intensification techniques should be enabled per phase
 
 When making recommendations, consider:
 - The user's ability to recover (age, stress, sleep)
@@ -259,9 +268,17 @@ Proposed Framework:
 
 Provide your recommendations including:
 1. Key principles from your specialty that should be applied
-2. Specific exercise recommendations with sets, reps, and rationale
+2. Specific exercise recommendations including:
+   - Per-set RPE targets (use numeric values like 8, 9, 10 — each set can have different RPE)
+   - Rest periods in seconds (e.g., 60s for isolation, 120s for compounds, 180s for heavy compounds)
+   - Exercise substitutions (2-3 alternatives per exercise)
+   - Coaching notes for proper execution
+   - Any intensification techniques (dropsets, myo-reps, lengthened partials) and when to introduce them
 3. Volume recommendations for relevant muscle groups
-4. How progression should be handled
+4. How progression should be handled, including:
+   - Whether exercises share the same progression logic (reusable templates)
+   - Phase-specific progression changes (e.g., RPE ramping across weeks, deload weeks)
+   - Intensification technique timing (which weeks/phases to activate dropsets, myo-reps, etc.)
 5. Any concerns about the current proposal
 6. A priority score (1-10) for how strongly you feel about your recommendations"""
 
@@ -345,7 +362,16 @@ Create a complete program that:
 1. Incorporates the best recommendations from each specialist
 2. Resolves any conflicts in a principled way
 3. Is practical for the user's schedule and equipment
-4. Uses progression schemes compatible with Liftosaur (lp, dp, sum)
+4. Uses progression schemes compatible with Liftosaur (lp, dp, sum, or custom)
 5. Includes appropriate deload weeks if warranted
+6. For each exercise, specifies:
+   - Individual RPE per set (e.g., set 1 @9, set 2 @10) — NOT a single uniform RPE
+   - Rest time in seconds (60s for isolation, 120s for compounds, 180s for heavy compounds)
+   - 2-3 substitution exercises
+   - Coaching notes for proper execution
+   - Applicable intensification techniques (dropsets, myo-reps, lengthened partials)
+7. Describes the progression strategy: which exercises share the same progression template, how RPE ramps across weeks, when intensification techniques activate
+8. Structures multi-week programs with named phases (Introduction, Accumulation, Deload, Intensification), placing deload weeks between phases
+9. Uses descriptive day names like "Full Body", "Upper", "Lower", "Arms/Delts" — NOT "Day 1", "Day 2"
 
 For each design decision, briefly explain the rationale and which specialist's input was most influential."""

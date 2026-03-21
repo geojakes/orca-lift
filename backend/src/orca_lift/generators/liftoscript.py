@@ -380,20 +380,30 @@ class LiftoscriptGenerator:
                         prog = part[9:].strip()
                         progress_str = prog
                         if prog.startswith("custom("):
-                            # custom() opens a multi-line script block
-                            in_script_block = True
+                            # Inline template reuse like custom() { ...progression }
+                            # does NOT open a multi-line script block
+                            if re.match(r"^custom\([^)]*\)\s*\{\s*\.\.\.\w+\s*\}$", prog):
+                                pass  # Single-line, no script block
+                            else:
+                                # custom() opens a multi-line script block
+                                in_script_block = True
                         elif not self._validate_progression_format(prog):
                             errors.append(f"Line {i}: Invalid progression: {prog}")
                     elif part.startswith("update:"):
                         update = part[7:].strip()
                         if update.startswith("custom("):
-                            in_script_block = True
+                            # Inline template reuse like custom() { ...dropsets }
+                            if re.match(r"^custom\([^)]*\)\s*\{\s*\.\.\.\w+\s*\}$", update):
+                                pass  # Single-line, no script block
+                            else:
+                                in_script_block = True
                     # Weight, timer, warmup, etc. are free-form — skip
 
                 # Cross-exercise consistency check
                 # The key includes the label so "heavy: Bench Press" and
                 # "light: Bench Press" are tracked separately.
-                if progress_str and not is_template:
+                # Skip "none" (deload weeks) — it doesn't conflict with other progressions
+                if progress_str and progress_str != "none" and not is_template:
                     exercise_key = f"{label}: {name}" if label else name
                     location = f"{current_week}, {current_day}"
                     if exercise_key in exercise_progress:
@@ -533,8 +543,12 @@ class LiftoscriptGenerator:
 
         sets_str = sets_str.strip()
 
-        # Remove RPE annotation
-        sets_str = re.sub(r"@RPE\d+\.?\d*", "", sets_str).strip()
+        # Remove RPE annotation (both @RPE8 and bare @8 formats)
+        sets_str = re.sub(r"@RPE\d+\.?\d*\+?", "", sets_str).strip()
+        sets_str = re.sub(r"@\d+\.?\d*\+?", "", sets_str).strip()
+
+        # Remove set labels in parentheses like (Full ROM), (Partial), (Dropset)
+        sets_str = re.sub(r"\([^)]*\)", "", sets_str).strip()
 
         # Remove weight suffix like "/ 135lb" that may be merged
         # Handle comma-separated sets (e.g. "5x5, 1x5+")
@@ -548,10 +562,24 @@ class LiftoscriptGenerator:
         """Validate a single set notation.
 
         Supports: 4x5, 3x8-10, 1x5+, 3x60s, 3x8+, expressions like 3x(state.reps)
+        Also handles set labels (Full ROM), (Partial), RPE @8, and rest times.
         """
         import re
 
         set_str = set_str.strip()
+        if not set_str:
+            return False
+
+        # Strip set labels in parentheses like (Full ROM), (Partial)
+        set_str = re.sub(r"\([^)]*\)", "", set_str).strip()
+
+        # Strip RPE annotations (both @RPE8 and bare @8 formats)
+        set_str = re.sub(r"@RPE\d+\.?\d*\+?", "", set_str).strip()
+        set_str = re.sub(r"@\d+\.?\d*\+?", "", set_str).strip()
+
+        # Strip rest time suffix like "60s" that may be attached
+        set_str = re.sub(r"\s+\d+s$", "", set_str).strip()
+
         if not set_str:
             return False
 
@@ -564,7 +592,7 @@ class LiftoscriptGenerator:
             return True
 
         # Weight included like "4x5 135lb" or "3x8 80%"
-        if re.match(r"^\d+x\d+(-\d+)?(\+)?\s+[\d.]+(%|lb|kg)$", set_str):
+        if re.match(r"^\d+x\d+(-\d+)?(\+)?\s+[\d.]+(%|lb|kg)\+?$", set_str):
             return True
 
         return False
@@ -575,8 +603,16 @@ class LiftoscriptGenerator:
 
         prog_str = prog_str.strip()
 
+        # "none" for deload weeks
+        if prog_str == "none":
+            return True
+
         # Built-in functions: lp, dp, sum, custom
         if re.match(r"^(lp|dp|sum|custom)\([^)]*\)$", prog_str):
+            return True
+
+        # Template reuse: custom() { ...templateName }
+        if re.match(r"^custom\([^)]*\)\s*\{\s*\.\.\.\w+\s*\}$", prog_str):
             return True
 
         return False

@@ -65,6 +65,20 @@ RPE, percentage and weight can be specified for each set or range of sets indivi
 Bench Press / 1x5 @8, 1x3 @9, 1x1 @10, 5x5 50%
 ```
 
+This per-set RPE notation is commonly used in professional programs where each set ramps in intensity:
+
+```
+Lying Leg Curl / 1x6-8 @9, 1x6-8 @10 / 60s
+Squat / 1x6-8 @7, 1x6-8 @8 / 180s
+```
+
+You can also add set labels in parentheses to annotate the purpose of each set:
+
+```
+Lying Leg Curl / 1x6-8 @10 (Full ROM), 1x6-8 @10 (Full ROM), 1x1+ (Partial) / 60s
+T Bar Row / 1x8-10 @9, 1x8-10 @10, 2x1+ (Dropset) / 120s
+```
+
 You can specify the rest time. E.g. this is how you could do **myo-reps** - i.e. doing heavy 12, and then doing 5x5 with short rest times and same weight:
 
 ```
@@ -157,7 +171,15 @@ You can add a progression like this:
 Bench Press / 3x8 / progress: lp(5lb)
 ```
 
-You only need to add it to one of the days in your program per exercise, no need to repeat it week over week or day over day. It will be applied to all such exercises in a program. You may disable progression for specific days or weeks via `progress: none` section.
+You only need to add it to one of the days in your program per exercise, no need to repeat it week over week or day over day. It will be applied to all such exercises in a program. You may disable progression for specific days or weeks via `progress: none` section. This is essential for **deload weeks** where you want exercises to stay at current weight:
+
+```
+// Deload week
+# Week 7
+## Full Body
+Squat / 1x6-8 @7, 1x6-8 @8 / 180s / progress: none
+Bench Press / 1x6-8 @8, 1x6-8 @9 / 180s / progress: none
+```
 
 If you try to specify different progressions for the same exercise in different weeks/days, it'll give you an error - the progressions are applied for an exercise across whole program. You cannot have e.g. linear progression on day 1, and double progression on day 2.
 
@@ -804,6 +826,224 @@ t1: Overhead Press / ...t1 / progress: custom(increase: 5lb) { ...t1 }
 t2: Deadlift / ...t2 / progress: custom(increase: 10lb, stage3increase: 15lb) { ...t2 }
 t3: Bent Over Row / ...t3
 ```
+
+
+## Professional Multi-Phase Program (RPE-based with intensification techniques)
+
+This example shows a 12-week program with intro phase (weeks 1-6), deload (week 7), and intensification phase (weeks 8-12) using custom progression templates, per-set RPE, rest times, rich exercise comments, week ranges, dropsets, myo-reps, and lengthened partials:
+
+```
+# Week 1
+// Intro phase
+## Full Body
+progression / used: none / 0x1 0lb / progress: custom(lastWeight: 0lb, incr: 5lb) {~
+  if (originalWeights[ns] == 0lb) {
+    weights = completedWeights[ns]
+  }
+  var.isCompleted = programNumberOfSets == 1 ?
+    completedReps[1] >= reps[1] :
+    completedReps[1] >= reps[1] && completedReps[2] >= reps[2]
+  if (var.isCompleted) {
+    var.lastSetWeight = originalWeights[ns] == 0lb ? completedWeights[ns] : weights[ns]
+    state.lastWeight = var.lastSetWeight
+    weights = var.lastSetWeight + state.incr
+  } else if (state.lastWeight != 0 && min(completedReps) < minReps) {
+    weights = state.lastWeight
+    reps += 2
+  }
+~}
+
+dropsets / used: none / update: custom() {~
+  if (week >= 8) {
+    if (setIndex == 0) {
+      weights[programNumberOfSets] = weights[programNumberOfSets - 2] * 0.75
+      weights[programNumberOfSets - 1] = weights[programNumberOfSets - 2] * 0.75
+    } else if (setIndex == programNumberOfSets - 2) {
+      weights[programNumberOfSets] = completedWeights[programNumberOfSets - 2] * 0.75
+      weights[programNumberOfSets - 1] = completedWeights[programNumberOfSets - 2] * 0.75
+    }
+  }
+~}
+
+myoreps / used: none / update: custom() {~
+  if (week >= 8) {
+    if (setIndex == numberOfSets) {
+      if (completedReps[numberOfSets] > 1) {
+        numberOfSets += 1
+        sets(numberOfSets, numberOfSets, 2, 2, 0, weights[numberOfSets], 5, 0, 0)
+      }
+    }
+  }
+~}
+
+// [Video](https://youtu.be/y28L1m1PYUQ)
+//
+// **OG**: Lying Leg Curl > Subs: Seated Leg Curl, Nordic Ham Curl
+//
+// **Note**: Set the machine so that you get the biggest stretch possible at the bottom.
+//
+Lying Leg Curl / 1x6-8 @9, 1x6-8 @10 / 60s / progress: custom() { ...progression }
+
+// **OG**: Squat (Your Choice) > Subs: Front Squat, Hack Squat
+//
+// **Note**: This can be a Barbell Back Squat, Front Squat, or Hack Squat.
+Squat / 1x6-8 @7, 1x6-8 @8 / 180s / progress: custom() { ...progression }
+
+// **OG**: Barbell Incline Press > Subs: Smith Machine Incline Press, DB Incline Press
+//
+// **Note**: Pause for 1 second at the bottom of each rep.
+Incline Bench Press / 1x6-8 @8, 1x6-8 @9 / 180s / progress: custom() { ...progression }
+
+Lateral Raise / 1x8-10 @10 / 60s / progress: custom() { ...progression }
+
+Wide Pull Up / 1x6-8 @8, 1x6-8 @9 / 120s / progress: custom() { ...progression }
+
+A: Standing Calf Raise / 1x6-8 @10 / 60s / progress: custom() { ...progression }
+
+## Upper
+Lat Pulldown / 1x8-10 @8, 1x8-10 @9 / 120s / progress: custom() { ...progression }
+T Bar Row / 1x8-10 @8, 1x8-10 @9 / 120s / progress: custom() { ...progression } / update: custom() { ...dropsets }
+Shrug / 1x6-8 @9 / 60s / progress: custom() { ...progression }
+Chest Press, Leverage Machine / 1x8-10 @8, 1x8-10 @9 / 180s / progress: custom() { ...progression }
+Lateral Raise, Cable / 1x8-10 @9, 1x8-10 @10 / 60s / progress: custom() { ...progression }
+Reverse Fly / 1x8-10 @10 / 60s / progress: custom() { ...progression }
+Crunch, Cable / 1x6-8 @9, 1x6-8 @10 / 60s / progress: custom() { ...progression }
+
+# Week 2
+## Full Body
+Lying Leg Curl[2-6] / 1x6-8 @10, 1x6-8 @10 / 60s
+Squat[2-6] / 1x6-8 @9, 1x6-8 @10 / 180s
+Incline Bench Press[2-6] / 1x6-8 @9, 1x6-8 @10
+Lateral Raise[2-6] / 1x8-10 @10 / 60s
+Wide Pull Up[2-6] / 1x6-8 @9, 1x6-8 @10 / 120s
+A: Standing Calf Raise[2-6] / 1x6-8 @10 / 60s
+
+## Upper
+Lat Pulldown[2-6] / 1x8-10 @9, 1x8-10 @10 / 120s
+T Bar Row[2-6] / 1x8-10 @9, 1x8-10 @10 / 120s
+Shrug[2-6] / 1x6-8 @10 / 60s
+Chest Press, Leverage Machine[2-6] / 1x8-10 @9, 1x8-10 @10 / 180s
+Lateral Raise, Cable[2-6] / 1x8-10 @10, 1x8-10 @10 / 60s
+Reverse Fly[2-6] / 1x8-10 @10 / 60s
+Crunch, Cable[2-6] / 1x6-8 @10, 1x6-8 @10 / 60s
+
+# Week 3
+## Full Body
+
+
+## Upper
+
+
+
+# Week 4
+## Full Body
+
+
+## Upper
+
+
+
+# Week 5
+## Full Body
+
+
+## Upper
+
+
+
+# Week 6
+## Full Body
+
+
+## Upper
+
+
+
+// Deload week
+# Week 7
+## Full Body
+Lying Leg Curl / 1x6-8 @9, 1x6-8 @10 / 60s / progress: none
+Squat / 1x6-8 @7, 1x6-8 @8 / 180s / progress: none
+Incline Bench Press / 1x6-8 @8, 1x6-8 @9 / 180s / progress: none
+Lateral Raise / 1x8-10 @10 / 60s / progress: none
+Wide Pull Up / 1x6-8 @8, 1x6-8 @9 / 120s / progress: none
+A: Standing Calf Raise / 1x6-8 @10 / 60s / progress: none
+
+## Upper
+Lat Pulldown / 1x8-10 @8, 1x8-10 @9 / 120s / progress: none
+T Bar Row / 1x8-10 @8, 1x8-10 @9 / 120s / progress: none
+Shrug / 1x6-8 @9 / 60s / progress: none
+Chest Press, Leverage Machine / 1x8-10 @8, 1x8-10 @9 / 180s / progress: none
+Lateral Raise, Cable / 1x8-10 @9, 1x8-10 @10 / 60s / progress: none
+Reverse Fly / 1x8-10 @10 / 60s / progress: none
+Crunch, Cable / 1x6-8 @9, 1x6-8 @10 / 60s / progress: none
+
+# Week 8
+## Full Body
+// **LSIT**: Lengthened Partials (Extend Set)
+Lying Leg Curl[8-12] / 1x6-8 @10 (Full ROM), 1x6-8 @10 (Full ROM), 1x1+ (Partial) / 60s / progress: custom() { ...progression }
+Squat[8-12] / 1x6-8 @9, 1x6-8 @10 / 180s / progress: custom() { ...progression }
+Incline Bench Press[8-12] / 1x6-8 @9, 1x6-8 @10 / 180s / progress: custom() { ...progression }
+Lateral Raise[8-12] / 1x8-10 @10 / 60s / progress: custom() { ...progression }
+// **LSIT**: Lengthened Partials (Extend Set)
+Wide Pull Up[8-12] / 1x6-8 @9 (Full ROM), 1x6-8 @10 (Full ROM), 1x1+ (Partial) / 120s / progress: custom() { ...progression }
+A: Standing Calf Raise[8-12] / 1x6-8 @10 (Full ROM), 1x1+ (Partial) / 60s / progress: custom() { ...progression }
+
+## Upper
+// **LSIT**: Lengthened Partials (Extend Set)
+Lat Pulldown[8-12] / 1x8-10 @9 (Full ROM), 1x8-10 @10 (Full ROM), 1x1+ (Partial) / 120s
+// **LSIT**: Two Drop Sets (~25% per)
+T Bar Row[8-12] / 1x8-10 @9, 1x8-10 @10, 2x1+ (Dropset) / 120s
+Shrug[8-12] / 1x6-8 @10 / 60s
+Chest Press, Leverage Machine[8-12] / 1x8-10 @9, 1x8-10 @10 / 180s
+Lateral Raise, Cable[8-12] / 1x8-10 @10, 1x8-10 @10 / 60s
+Reverse Fly[8-12] / 1x8-10 @10 / 60s
+Crunch, Cable[8-12] / 1x6-8 @10, 1x6-8 @10 / 60s
+
+# Week 9
+## Full Body
+
+
+## Upper
+
+
+
+# Week 10
+## Full Body
+
+
+## Upper
+
+
+
+# Week 11
+## Full Body
+
+
+## Upper
+
+
+
+# Week 12
+## Full Body
+
+
+## Upper
+
+
+```
+
+Key patterns in this example:
+1. **Templates** (`progression`, `dropsets`, `myoreps`) defined once at the top with `/ used: none`
+2. **Template reuse** via `progress: custom() { ...progression }` and `update: custom() { ...dropsets }`
+3. **Per-set RPE** without "RPE" prefix: `1x6-8 @9, 1x6-8 @10`
+4. **Rest times** as a section: `/ 60s`, `/ 120s`, `/ 180s`
+5. **Rich comments** with OG exercise names, substitutions, and coaching notes
+6. **Week ranges** `[2-6]` and `[8-12]` for repeating exercises — empty weeks filled by ranges
+7. **Deload week** (Week 7) with `progress: none` on all exercises
+8. **Set labels** in parentheses: `(Full ROM)`, `(Partial)`, `(Dropset)`
+9. **Exercise grouping** with `A:`, `B:` prefixes for supersets
+10. **RPE ramping**: Week 1 starts lower (@7-@9), Week 2+ goes to @10, deload resets to Week 1 RPE
 
 
 # Liftoscript Grammar (Lezer)

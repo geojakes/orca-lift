@@ -38,6 +38,8 @@ class ProgramExercise:
     progression_params: dict = field(default_factory=dict)
     notes: str = ""
     superset_with: str | None = None  # Name of exercise to superset with
+    substitutions: list[str] = field(default_factory=list)  # Alternative exercises
+    techniques: list[str] = field(default_factory=list)  # e.g., ["dropset", "myorep", "lengthened_partial"]
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -58,6 +60,8 @@ class ProgramExercise:
             "progression_params": self.progression_params,
             "notes": self.notes,
             "superset_with": self.superset_with,
+            "substitutions": self.substitutions,
+            "techniques": self.techniques,
         }
 
     @classmethod
@@ -80,6 +84,8 @@ class ProgramExercise:
             progression_params=data.get("progression_params", {}),
             notes=data.get("notes", ""),
             superset_with=data.get("superset_with"),
+            substitutions=data.get("substitutions", []),
+            techniques=data.get("techniques", []),
         )
 
 
@@ -120,6 +126,7 @@ class ProgramWeek:
     days: list[ProgramDay]
     deload: bool = False
     notes: str = ""
+    phase_name: str = ""  # e.g., "Introduction", "Accumulation", "Deload", "Intensification"
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -128,6 +135,7 @@ class ProgramWeek:
             "days": [day.to_dict() for day in self.days],
             "deload": self.deload,
             "notes": self.notes,
+            "phase_name": self.phase_name,
         }
 
     @classmethod
@@ -138,6 +146,7 @@ class ProgramWeek:
             days=[ProgramDay.from_dict(day) for day in data["days"]],
             deload=data.get("deload", False),
             notes=data.get("notes", ""),
+            phase_name=data.get("phase_name", ""),
         )
 
 

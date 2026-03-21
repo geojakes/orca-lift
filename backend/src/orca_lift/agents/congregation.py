@@ -152,11 +152,17 @@ Proposed Framework:
 
 Each specialist should provide their recommendations for:
 1. Exercise selection and order
-2. Sets and rep ranges
-3. Progression schemes (lp = linear, dp = double progression, sum = total reps)
-4. Any concerns or modifications needed
+2. Sets and rep ranges with per-set RPE targets (e.g., set 1 @9, set 2 @10)
+3. Rest periods per exercise in seconds (60s isolation, 120s compounds, 180s heavy compounds)
+4. Progression schemes (lp = linear, dp = double progression, sum = total reps, custom = custom script)
+5. Periodization phases with names (Introduction, Accumulation, Deload, Intensification)
+6. Deload week placement and structure
+7. Intensification techniques per phase (dropsets, myo-reps, lengthened partials)
+8. Exercise substitutions and coaching notes
+9. Reusable progression templates for exercises sharing the same progression logic
+10. Any concerns or modifications needed
 
-The mediator should synthesize all recommendations into a complete program structure."""
+The mediator should synthesize all recommendations into a complete program structure with descriptive day names (e.g., Full Body, Upper, Lower, Arms/Delts)."""
 
 
 async def run_congregation_stream(

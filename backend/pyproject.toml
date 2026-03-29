@@ -2,7 +2,7 @@
 name = "orcafit"
 version = "0.1.0"
 description = "AI-Powered Fitness Program Generator & Workout Tracker"
-readme = "README.md"
+readme = "../README.md"
 requires-python = ">=3.13"
 dependencies = [
     "orca",

@@ -344,10 +344,18 @@ async def ask_human(question: str) -> dict:
     Returns:
         A dict with the user's answer, or an error if no callback is set.
 
-    Examples:
+    DO NOT ask about equipment, 1RM values, or recent lifts — this data is
+    already in the profile (use get_user_profile/get_strength_levels/get_available_equipment).
+
+    Examples of GOOD questions:
         - "Do you prefer training in the morning or evening?"
         - "Are you training for a specific event or competition?"
         - "Do you have any exercises you particularly enjoy or want to avoid?"
+
+    Examples of BAD questions (never ask these):
+        - "What equipment do you have?" (use get_available_equipment)
+        - "What are your current 1RM values?" (use get_strength_levels)
+        - "What weight do you use for bench press?" (progression handles this)
     """
     global _question_callback, _current_specialist
 
@@ -533,6 +541,8 @@ CONGREGATION_TOOLS = [
         ask_human,
         "Ask the user a question when you need clarification about their "
         "preferences, goals, or constraints. Use sparingly - only when the "
-        "answer would significantly impact your recommendations.",
+        "answer would significantly impact your recommendations. "
+        "NEVER ask about equipment, 1RM values, or recent lifts — use the "
+        "data tools instead (get_user_profile, get_strength_levels, get_available_equipment).",
     ),
 ]

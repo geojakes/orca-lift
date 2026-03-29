@@ -66,6 +66,14 @@ def create_specialist_clients(
         ("recovery_analyst", "Recovery Analyst", RECOVERY_ANALYST_SYSTEM),
     ]
 
+    global_rules = (
+        "ABSOLUTE RULE: Never call ask_human for data that exists in the user profile. "
+        "Equipment, 1RM values, body weight, age, and height are already stored — "
+        "use get_user_profile(), get_strength_levels(), or get_available_equipment() instead. "
+        "If data is missing from the profile, proceed without it. "
+        "Only use ask_human for questions the profile cannot answer, such as exercise preferences or event goals."
+    )
+
     clients = []
     for client_id, name, prompt_template in specialists:
         # Inject equipment constraints into prompt
@@ -78,8 +86,9 @@ def create_specialist_clients(
                 persona_name=name,
                 persona_prompt=prompt,
                 agent_client=agent_client,
-                model_type=ModelType.HAIKU,  # TODO: Change back to SONNET
+                model_type=ModelType.SONNET,
                 web=True,
+                global_rules=global_rules,
             )
         )
 
@@ -100,7 +109,7 @@ def create_mediator_config(
     )
     return MediatorConfig(
         persona_prompt=prompt,
-        model_type=ModelType.HAIKU,  # TODO: Change back to OPUS
+        model_type=ModelType.OPUS,
         output_spec=final_program_specs,
         web=True,
     )

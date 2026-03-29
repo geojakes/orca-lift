@@ -268,9 +268,21 @@ async function reconnectToJob(jobId) {
 
     try {
         const response = await fetch('/programs/jobs/' + jobId + '/stream');
+        const contentType = response.headers.get('content-type') || '';
+
+        // If the response is JSON (not SSE), the job is gone
+        if (contentType.includes('application/json')) {
+            sessionStorage.removeItem('activeJobId');
+            loadingIndicator.classList.add('hidden');
+            progressContainer.classList.add('hidden');
+            formContainer.classList.remove('hidden');
+            return;
+        }
+
         await processEventStream(response, progressLog, loadingIndicator);
     } catch (err) {
         loadingIndicator.classList.add('hidden');
+        sessionStorage.removeItem('activeJobId');
         const entry = document.createElement('div');
         entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
         entry.innerHTML = `<p class="text-red-800">Error reconnecting: ${err.message}</p>`;

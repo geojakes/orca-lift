@@ -3,19 +3,48 @@
 {% block title %}Generate Program - orca-lift{% endblock %}
 
 {% block content %}
+<style>
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes dotBounce1 { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+    @keyframes dotBounce2 { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+    @keyframes dotBounce3 { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+    .step-animate { animation: slideInLeft 0.4s ease-out both; }
+    .step-line { transition: background-color 0.3s ease, height 0.3s ease; }
+    .progress-ring-circle {
+        transition: stroke-dashoffset 0.5s ease;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+    }
+    .specialist-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+</style>
+
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Generate New Program</h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Generate New Program</h1>
+    <p class="text-gray-500 mb-6">Our AI coaches will create a personalized training plan for you.</p>
 
     {% if not profile %}
-    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <p class="text-yellow-800">
-            No user profile found. Please <a href="/profile" class="text-indigo-600 hover:text-indigo-800 font-medium underline">create your profile</a> first.
-        </p>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-5 mb-6">
+        <div class="flex items-start space-x-3">
+            <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <div>
+                <p class="text-yellow-800 font-medium">Profile required</p>
+                <p class="text-yellow-700 text-sm mt-1">Please <a href="/profile" class="text-indigo-600 hover:text-indigo-800 font-medium underline">create your profile</a> first so we can personalize your program.</p>
+            </div>
+        </div>
     </div>
     {% else %}
 
     <div id="form-container">
-        <form id="generate-form" class="space-y-6 bg-white shadow rounded-lg p-6">
+        <form id="generate-form" class="space-y-6 bg-white shadow rounded-xl p-6">
             <div>
                 <label for="goals" class="block text-sm font-medium text-gray-700 mb-2">
                     What are your goals?
@@ -41,22 +70,45 @@
 
             <div class="pt-4">
                 <button type="submit"
-                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium">
+                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium shadow-sm hover:shadow">
                     Generate Program
                 </button>
             </div>
         </form>
     </div>
 
-    <div id="progress-container" class="hidden bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Generating Program</h2>
-        <div id="progress-log" class="space-y-2 text-sm text-gray-600">
-        </div>
-        <div class="mt-4">
-            <div class="animate-pulse flex space-x-2 items-center" id="loading-indicator">
-                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div>
-                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+    <div id="progress-container" class="hidden">
+        <!-- Progress ring + stepper layout -->
+        <div class="bg-white shadow rounded-xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Generating Program</h2>
+                    <p class="text-sm text-gray-500 mt-1" id="progress-subtitle">Starting up...</p>
+                </div>
+                <!-- Circular progress indicator -->
+                <div class="relative w-16 h-16 flex-shrink-0">
+                    <svg class="w-16 h-16" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="4"/>
+                        <circle id="progress-ring" cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="4"
+                                stroke-dasharray="175.93" stroke-dashoffset="175.93" stroke-linecap="round"
+                                class="progress-ring-circle"/>
+                    </svg>
+                    <span id="progress-pct" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-indigo-600">0%</span>
+                </div>
+            </div>
+
+            <!-- Vertical stepper -->
+            <div id="progress-log" class="relative ml-4">
+            </div>
+
+            <!-- Loading indicator at bottom -->
+            <div class="mt-4 flex items-center space-x-2 ml-4" id="loading-indicator">
+                <div class="flex space-x-1">
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full" style="animation: dotBounce1 1.2s infinite ease-in-out"></div>
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full" style="animation: dotBounce2 1.2s 0.15s infinite ease-in-out"></div>
+                    <div class="w-2 h-2 bg-indigo-500 rounded-full" style="animation: dotBounce3 1.2s 0.3s infinite ease-in-out"></div>
+                </div>
+                <span class="text-sm text-gray-400">Working...</span>
             </div>
         </div>
     </div>
@@ -65,54 +117,134 @@
 </div>
 
 <!-- Modal for full specialist reasoning -->
-<div id="specialist-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b">
+<div id="specialist-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between p-5 border-b">
             <h3 id="modal-title" class="text-lg font-semibold text-gray-900"></h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
-        <div class="p-4 overflow-y-auto flex-1">
+        <div class="p-5 overflow-y-auto flex-1">
             <div id="modal-aligned" class="mb-3"></div>
-            <div id="modal-content" class="text-gray-700 whitespace-pre-wrap"></div>
+            <div id="modal-content" class="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed"></div>
         </div>
     </div>
 </div>
 
 <!-- Modal for human questions from specialists -->
-<div id="question-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
-        <div class="flex items-center justify-between p-4 border-b bg-indigo-50">
-            <div class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <h3 id="question-modal-title" class="text-lg font-semibold text-gray-900">Specialist Question</h3>
+<div id="question-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full">
+        <div class="flex items-center justify-between p-5 border-b bg-gradient-to-r from-indigo-50 to-white">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 id="question-modal-title" class="text-lg font-semibold text-gray-900">Specialist Question</h3>
+                    <p class="text-xs text-gray-500">Your input helps personalize the program</p>
+                </div>
             </div>
             <span id="question-queue-badge" class="hidden px-2 py-1 text-xs font-medium bg-indigo-600 text-white rounded-full"></span>
         </div>
-        <form id="question-form" class="p-4">
+        <form id="question-form" class="p-5">
             <input type="hidden" id="question-id" name="question_id" value="">
-            <p id="question-text" class="text-gray-700 mb-4"></p>
+            <p id="question-text" class="text-gray-700 mb-4 leading-relaxed"></p>
             <textarea id="question-answer" name="answer" rows="3"
                       placeholder="Type your answer here..."
                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 mb-4"></textarea>
-            <div class="flex justify-end space-x-3">
-                <button type="button" onclick="skipQuestion()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
-                    Skip
-                </button>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                    Submit Answer
-                </button>
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-400">
+                    <kbd class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-500 font-mono text-[10px]">Enter</kbd> to submit &middot;
+                    <kbd class="px-1.5 py-0.5 bg-gray-100 rounded text-gray-500 font-mono text-[10px]">Esc</kbd> to skip
+                </span>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="skipQuestion()" class="px-4 py-2 text-gray-500 hover:text-gray-700 text-sm transition">
+                        Skip
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium text-sm">
+                        Submit
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <script>
+// Stepper step counter and progress tracking
+let stepCount = 0;
+const totalEstimatedSteps = 8;
+
+const specialistMeta = {
+    'Strength Coach': { color: 'bg-red-100 text-red-700 border-red-300', letter: 'S' },
+    'Hypertrophy Expert': { color: 'bg-purple-100 text-purple-700 border-purple-300', letter: 'H' },
+    'Periodization Specialist': { color: 'bg-blue-100 text-blue-700 border-blue-300', letter: 'P' },
+    'Recovery Analyst': { color: 'bg-green-100 text-green-700 border-green-300', letter: 'R' },
+    'Mediator': { color: 'bg-amber-100 text-amber-700 border-amber-300', letter: 'M' },
+};
+
+function getSpecialistMeta(name) {
+    for (const key of Object.keys(specialistMeta)) {
+        if (name.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(name.toLowerCase())) {
+            return specialistMeta[key];
+        }
+    }
+    return { color: 'bg-gray-100 text-gray-700 border-gray-300', letter: name[0] };
+}
+
+function updateProgress(pct) {
+    const ring = document.getElementById('progress-ring');
+    const pctText = document.getElementById('progress-pct');
+    const circumference = 175.93;
+    const offset = circumference - (pct / 100 * circumference);
+    ring.style.strokeDashoffset = offset;
+    pctText.textContent = Math.round(pct) + '%';
+}
+
+function addStep(content, type = 'status') {
+    stepCount++;
+    const progressLog = document.getElementById('progress-log');
+    const pct = Math.min(95, (stepCount / totalEstimatedSteps) * 100);
+    updateProgress(pct);
+
+    if (type === 'status') {
+        document.getElementById('progress-subtitle').textContent = content;
+    }
+
+    const step = document.createElement('div');
+    step.className = 'flex step-animate mb-0';
+
+    step.innerHTML = `
+        <div class="flex flex-col items-center mr-4 flex-shrink-0">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold
+                        ${type === 'complete' ? 'bg-green-500 text-white' : type === 'error' ? 'bg-red-500 text-white' : 'bg-indigo-100 text-indigo-600'}">
+                ${type === 'complete' ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>'
+                : type === 'error' ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>'
+                : stepCount}
+            </div>
+            <div class="w-0.5 flex-1 bg-gray-200 step-line mt-1 mb-1" id="step-line-${stepCount}"></div>
+        </div>
+        <div class="pb-5 flex-1 min-w-0" id="step-content-${stepCount}">
+        </div>
+    `;
+
+    progressLog.appendChild(step);
+
+    return document.getElementById(`step-content-${stepCount}`);
+}
+
+function completePreviousSteps() {
+    for (let i = 1; i < stepCount; i++) {
+        const line = document.getElementById(`step-line-${i}`);
+        if (line) line.classList.replace('bg-gray-200', 'bg-indigo-300');
+    }
+}
+
 // Modal functions
 function showModal(name, content, aligned) {
     document.getElementById('modal-title').textContent = name;
@@ -136,11 +268,10 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-// Question queue system for handling multiple back-to-back questions
+// Question queue system
 const questionQueue = [];
 let questionModalOpen = false;
 
-// Question modal functions
 function updateQueueBadge() {
     const badge = document.getElementById('question-queue-badge');
     if (questionQueue.length > 0) {
@@ -152,7 +283,6 @@ function updateQueueBadge() {
 }
 
 function showQuestionModal(questionId, specialist, question) {
-    // If modal is already open, queue this question
     if (questionModalOpen) {
         questionQueue.push({ questionId, specialist, question });
         console.log('Question queued:', questionId, '- Queue length:', questionQueue.length);
@@ -176,11 +306,9 @@ function closeQuestionModal() {
     document.body.style.overflow = '';
     questionModalOpen = false;
 
-    // Check if there are queued questions
     if (questionQueue.length > 0) {
         const next = questionQueue.shift();
         console.log('Showing next queued question:', next.questionId);
-        // Small delay to allow the modal close animation to complete
         setTimeout(() => {
             showQuestionModal(next.questionId, next.specialist, next.question);
         }, 100);
@@ -209,7 +337,6 @@ function skipQuestion() {
     submitQuestionAnswer(questionId, 'No preference / skip this question');
 }
 
-// Question form submission
 document.getElementById('question-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const questionId = document.getElementById('question-id').value;
@@ -219,23 +346,22 @@ document.getElementById('question-form')?.addEventListener('submit', async funct
     }
 });
 
-// Close modal on escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        closeModal();
-        // Don't close question modal on escape - user should explicitly skip or answer
+        if (questionModalOpen) {
+            skipQuestion();
+        } else {
+            closeModal();
+        }
     }
 });
 
-// Close modal on backdrop click
 document.getElementById('specialist-modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'specialist-modal') closeModal();
 });
 
-// Store current job ID for reconnection
 let currentJobId = null;
 
-// Check for active jobs on page load
 async function checkActiveJobs() {
     try {
         const response = await fetch('/programs/jobs');
@@ -253,7 +379,6 @@ async function checkActiveJobs() {
     }
 }
 
-// Reconnect to an existing job
 async function reconnectToJob(jobId) {
     currentJobId = jobId;
 
@@ -264,13 +389,15 @@ async function reconnectToJob(jobId) {
 
     formContainer.classList.add('hidden');
     progressContainer.classList.remove('hidden');
-    progressLog.innerHTML = '<div class="text-sm text-gray-500 mb-2">Reconnecting to job ' + jobId + '...</div>';
+    progressLog.innerHTML = '';
+
+    const contentEl = addStep('Reconnecting to generation job...', 'status');
+    contentEl.innerHTML = '<span class="text-sm text-gray-500">Reconnecting to job ' + jobId + '...</span>';
 
     try {
         const response = await fetch('/programs/jobs/' + jobId + '/stream');
         const contentType = response.headers.get('content-type') || '';
 
-        // If the response is JSON (not SSE), the job is gone
         if (contentType.includes('application/json')) {
             sessionStorage.removeItem('activeJobId');
             loadingIndicator.classList.add('hidden');
@@ -283,14 +410,11 @@ async function reconnectToJob(jobId) {
     } catch (err) {
         loadingIndicator.classList.add('hidden');
         sessionStorage.removeItem('activeJobId');
-        const entry = document.createElement('div');
-        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
-        entry.innerHTML = `<p class="text-red-800">Error reconnecting: ${err.message}</p>`;
-        progressLog.appendChild(entry);
+        const contentEl2 = addStep('Error reconnecting', 'error');
+        contentEl2.innerHTML = `<div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">Error reconnecting: ${err.message}</div>`;
     }
 }
 
-// Process SSE event stream
 async function processEventStream(response, progressLog, loadingIndicator) {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -315,89 +439,98 @@ async function processEventStream(response, progressLog, loadingIndicator) {
     }
 }
 
-// Handle a single event
 function handleEvent(data, progressLog, loadingIndicator) {
     if (data.type === 'job_started') {
         currentJobId = data.job_id;
-        // Store in sessionStorage for page refresh recovery
         sessionStorage.setItem('activeJobId', data.job_id);
     } else if (data.type === 'status') {
-        const entry = document.createElement('div');
-        entry.className = 'flex items-center space-x-2';
-        entry.innerHTML = `
-            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <span>${data.message}</span>
-        `;
-        progressLog.appendChild(entry);
+        completePreviousSteps();
+        const contentEl = addStep(data.message, 'status');
+        contentEl.innerHTML = `<span class="text-sm font-medium text-gray-800">${data.message}</span>`;
     } else if (data.type === 'info_request') {
-        const entry = document.createElement('div');
-        entry.className = 'ml-6 p-2 bg-blue-50 rounded-lg border-l-4 border-blue-400 text-sm';
         const funcs = data.functions || [];
-        entry.innerHTML = `
-            <div class="flex items-center space-x-2">
-                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        const logEl = document.getElementById('progress-log');
+        const infoEl = document.createElement('div');
+        infoEl.className = 'ml-11 -mt-3 mb-3 step-animate';
+        infoEl.innerHTML = `
+            <div class="flex items-center space-x-2 text-xs text-gray-400 pl-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
-                <span class="text-blue-700"><strong>${data.name}</strong> querying: ${funcs.join(', ')}</span>
+                <span><em>${data.name}</em> querying: ${funcs.join(', ')}</span>
             </div>
         `;
-        progressLog.appendChild(entry);
+        logEl.appendChild(infoEl);
     } else if (data.type === 'specialist') {
         const preview = data.preview || data.content || 'Processing...';
         const full = data.full || data.content || preview;
         const aligned = data.aligned;
-        const entry = document.createElement('div');
-        const alignedClass = aligned === true ? 'border-green-400' : aligned === false ? 'border-orange-400' : 'border-indigo-400';
-        entry.className = `ml-6 p-3 bg-gray-50 rounded-lg border-l-4 ${alignedClass} cursor-pointer hover:bg-gray-100 transition`;
-        entry.innerHTML = `
-            <div class="flex items-center justify-between">
-                <div class="font-medium text-indigo-700">${data.name}</div>
-                ${aligned === true || aligned === false ? `<span class="text-xs px-2 py-1 rounded ${aligned ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${aligned ? 'Aligned' : 'Not Aligned'}</span>` : ''}
+        const meta = getSpecialistMeta(data.name);
+
+        completePreviousSteps();
+        const contentEl = addStep(data.name + ' responded', 'specialist');
+        contentEl.innerHTML = `
+            <div class="p-3 rounded-lg border cursor-pointer hover:shadow-sm transition ${aligned === true ? 'border-green-200 bg-green-50/50' : aligned === false ? 'border-orange-200 bg-orange-50/50' : 'border-gray-200 bg-gray-50/50'}"
+                 id="specialist-card-${stepCount}">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center space-x-2">
+                        <div class="specialist-icon ${meta.color} border">${meta.letter}</div>
+                        <span class="font-medium text-sm text-gray-800">${data.name}</span>
+                    </div>
+                    ${aligned === true || aligned === false
+                        ? `<span class="text-xs px-2 py-0.5 rounded-full font-medium ${aligned ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${aligned ? 'Aligned' : 'Changes'}</span>`
+                        : ''}
+                </div>
+                <p class="text-sm text-gray-600 line-clamp-2">${preview}</p>
+                <p class="text-xs text-indigo-500 mt-2 font-medium">View full reasoning</p>
             </div>
-            <div class="text-sm text-gray-600 mt-1">${preview}</div>
-            <div class="text-xs text-indigo-500 mt-2">Click to read full reasoning</div>
         `;
-        entry.onclick = () => showModal(data.name, full, aligned);
-        progressLog.appendChild(entry);
+        const card = document.getElementById(`specialist-card-${stepCount}`);
+        card.dataset.full = full;
+        card.onclick = function() {
+            showModal(data.name, this.dataset.full, aligned);
+        };
     } else if (data.type === 'complete') {
         loadingIndicator.classList.add('hidden');
         sessionStorage.removeItem('activeJobId');
-        const entry = document.createElement('div');
-        entry.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
-        entry.innerHTML = `
-            <p class="text-green-800 font-medium">Program generated: ${data.name}</p>
-            <a href="/programs/${data.program_id}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
-                View Program &rarr;
-            </a>
-        `;
-        progressLog.appendChild(entry);
-    } else if (data.type === 'human_question') {
-        // Show question modal for user input
-        const entry = document.createElement('div');
-        entry.className = 'ml-6 p-3 bg-indigo-50 rounded-lg border-l-4 border-indigo-400';
-        entry.innerHTML = `
-            <div class="flex items-center space-x-2">
-                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span class="text-indigo-700"><strong>${data.name}</strong> is asking you a question...</span>
+        completePreviousSteps();
+        updateProgress(100);
+        document.getElementById('progress-subtitle').textContent = 'Program ready!';
+
+        const contentEl = addStep('Program generated', 'complete');
+        contentEl.innerHTML = `
+            <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p class="text-green-800 font-medium">${data.name}</p>
+                <a href="/programs/${data.program_id}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 mt-2 text-sm font-medium">
+                    View Program
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
             </div>
         `;
-        progressLog.appendChild(entry);
+    } else if (data.type === 'human_question') {
+        const meta = getSpecialistMeta(data.name);
+        const contentEl = addStep(data.name + ' has a question', 'status');
+        contentEl.innerHTML = `
+            <div class="flex items-center space-x-2 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                <div class="specialist-icon ${meta.color} border">${meta.letter}</div>
+                <span class="text-sm text-indigo-700"><strong>${data.name}</strong> is asking you a question...</span>
+            </div>
+        `;
         showQuestionModal(data.question_id, data.name, data.question);
     } else if (data.type === 'error') {
         loadingIndicator.classList.add('hidden');
         sessionStorage.removeItem('activeJobId');
-        const entry = document.createElement('div');
-        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
-        entry.innerHTML = `<p class="text-red-800">Error: ${data.message}</p>`;
-        progressLog.appendChild(entry);
+        const contentEl = addStep('Error', 'error');
+        contentEl.innerHTML = `
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-800 text-sm">${data.message}</p>
+            </div>
+        `;
     }
 }
 
-// Check for saved job on page load
 document.addEventListener('DOMContentLoaded', () => {
     const savedJobId = sessionStorage.getItem('activeJobId');
     if (savedJobId) {
@@ -417,7 +550,9 @@ document.getElementById('generate-form')?.addEventListener('submit', async funct
 
     formContainer.classList.add('hidden');
     progressContainer.classList.remove('hidden');
-    progressLog.innerHTML = ''; // Clear previous content
+    progressLog.innerHTML = '';
+    stepCount = 0;
+    updateProgress(0);
 
     const formData = new FormData(this);
 
@@ -431,10 +566,12 @@ document.getElementById('generate-form')?.addEventListener('submit', async funct
     } catch (err) {
         loadingIndicator.classList.add('hidden');
         sessionStorage.removeItem('activeJobId');
-        const entry = document.createElement('div');
-        entry.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
-        entry.innerHTML = `<p class="text-red-800">Error: ${err.message}</p>`;
-        progressLog.appendChild(entry);
+        const contentEl = addStep('Error', 'error');
+        contentEl.innerHTML = `
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-800 text-sm">${err.message}</p>
+            </div>
+        `;
     }
 });
 </script>

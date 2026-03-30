@@ -3,212 +3,371 @@
 {% block title %}Profile - orca-lift{% endblock %}
 
 {% block content %}
+<style>
+    .chip-toggle input:checked + label {
+        background-color: #4f46e5;
+        color: white;
+        border-color: #4f46e5;
+    }
+    .chip-toggle input:checked + label:hover {
+        background-color: #4338ca;
+    }
+    .collapsible-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    .collapsible-content.open {
+        max-height: 500px;
+    }
+</style>
+
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">
         {% if profile %}{{ profile.name }}'s Profile{% else %}Your Profile{% endif %}
     </h1>
+    <p class="text-gray-500 mb-6">Configure your training preferences and physical stats.</p>
 
     {% if request.query_params.get('saved') %}
-    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-        <p class="text-green-800">Profile saved successfully!</p>
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center space-x-2">
+        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <p class="text-green-800 font-medium">Profile saved successfully!</p>
     </div>
     {% endif %}
 
     {% if request.query_params.get('synced') %}
-    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center space-x-2">
+        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
         <p class="text-green-800">Health Connect data synced! {{ request.query_params.get('workouts', '0') }} workout sessions imported.</p>
     </div>
     {% endif %}
 
-    <form method="POST" action="/profile" class="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-            <input type="text" id="name" name="name" required
-                   value="{{ profile.name if profile else '' }}"
-                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-
-        <div>
-            <label for="experience_level" class="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
-            <select id="experience_level" name="experience_level" required
-                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                {% for level in experience_levels %}
-                <option value="{{ level }}" {{ 'selected' if profile and profile.experience_level.value == level else '' }}>
-                    {{ level.replace('_', ' ').title() }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Fitness Goals</label>
-            <div class="grid grid-cols-2 gap-2">
-                {% for goal in fitness_goals %}
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" name="goals" value="{{ goal }}"
-                           {{ 'checked' if goal in selected_goals else '' }}
-                           class="rounded text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-sm text-gray-700">{{ goal.replace('_', ' ').title() }}</span>
-                </label>
-                {% endfor %}
+    <form method="POST" action="/profile" class="space-y-6">
+        <!-- Section 1: Personal Info -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="font-semibold text-gray-900">Personal Info</h2>
+                </div>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+                    <input type="text" id="name" name="name" required
+                           value="{{ profile.name if profile else '' }}"
+                           class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700 mb-1.5">Age</label>
+                        <input type="number" id="age" name="age" min="13" max="100"
+                               value="{{ profile.age if profile and profile.age else '' }}"
+                               placeholder="--"
+                               class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="body_weight" class="block text-sm font-medium text-gray-700 mb-1.5">Weight (kg)</label>
+                        <input type="number" id="body_weight" name="body_weight" step="0.1" min="30" max="300"
+                               value="{{ profile.body_weight if profile and profile.body_weight else '' }}"
+                               placeholder="--"
+                               class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="height" class="block text-sm font-medium text-gray-700 mb-1.5">Height (cm)</label>
+                        <input type="number" id="height" name="height" step="0.1" min="100" max="250"
+                               value="{{ profile.height if profile and profile.height else '' }}"
+                               placeholder="--"
+                               class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Available Equipment</label>
-            <div class="grid grid-cols-2 gap-2">
-                {% for equip in equipment_types %}
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" name="equipment" value="{{ equip }}"
-                           {{ 'checked' if equip in selected_equipment else '' }}
-                           class="rounded text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-sm text-gray-700">{{ equip.replace('_', ' ').title() }}</span>
-                </label>
-                {% endfor %}
+        <!-- Section 2: Training Preferences -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="font-semibold text-gray-900">Training Preferences</h2>
+                </div>
+            </div>
+            <div class="p-6 space-y-5">
+                <div>
+                    <label for="experience_level" class="block text-sm font-medium text-gray-700 mb-1.5">Experience Level</label>
+                    <select id="experience_level" name="experience_level" required
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        {% for level in experience_levels %}
+                        <option value="{{ level }}" {{ 'selected' if profile and profile.experience_level.value == level else '' }}>
+                            {{ level.replace('_', ' ').title() }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fitness Goals</label>
+                    <div class="flex flex-wrap gap-2">
+                        {% for goal in fitness_goals %}
+                        <div class="chip-toggle">
+                            <input type="checkbox" name="goals" value="{{ goal }}" id="goal-{{ goal }}"
+                                   {{ 'checked' if goal in selected_goals else '' }}
+                                   class="sr-only">
+                            <label for="goal-{{ goal }}"
+                                   class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border border-gray-200 bg-gray-50 text-gray-600 cursor-pointer hover:bg-gray-100 transition select-none">
+                                {{ goal.replace('_', ' ').title() }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="schedule_days" class="block text-sm font-medium text-gray-700 mb-1.5">Training Days/Week</label>
+                        <select id="schedule_days" name="schedule_days" required
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            {% for days in range(2, 7) %}
+                            <option value="{{ days }}" {{ 'selected' if profile and profile.schedule_days == days else ('selected' if not profile and days == 4 else '') }}>
+                                {{ days }} days
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="session_duration" class="block text-sm font-medium text-gray-700 mb-1.5">Session Duration</label>
+                        <select id="session_duration" name="session_duration"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="30" {{ 'selected' if profile and profile.session_duration == 30 else '' }}>30 min</option>
+                            <option value="45" {{ 'selected' if profile and profile.session_duration == 45 else '' }}>45 min</option>
+                            <option value="60" {{ 'selected' if profile and profile.session_duration == 60 else '' }}>60 min</option>
+                            <option value="75" {{ 'selected' if profile and profile.session_duration == 75 else '' }}>75 min</option>
+                            <option value="90" {{ 'selected' if profile and profile.session_duration == 90 else '' }}>90 min</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="schedule_days" class="block text-sm font-medium text-gray-700 mb-2">Training Days/Week</label>
-                <select id="schedule_days" name="schedule_days" required
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    {% for days in range(2, 7) %}
-                    <option value="{{ days }}" {{ 'selected' if profile and profile.schedule_days == days else ('selected' if not profile and days == 4 else '') }}>
-                        {{ days }} days
-                    </option>
+        <!-- Section 3: Equipment -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <h2 class="font-semibold text-gray-900">Available Equipment</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-wrap gap-2">
+                    {% for equip in equipment_types %}
+                    <div class="chip-toggle">
+                        <input type="checkbox" name="equipment" value="{{ equip }}" id="equip-{{ equip }}"
+                               {{ 'checked' if equip in selected_equipment else '' }}
+                               class="sr-only">
+                        <label for="equip-{{ equip }}"
+                               class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border border-gray-200 bg-gray-50 text-gray-600 cursor-pointer hover:bg-gray-100 transition select-none">
+                            {{ equip.replace('_', ' ').title() }}
+                        </label>
+                    </div>
                     {% endfor %}
-                </select>
-            </div>
-
-            <div>
-                <label for="session_duration" class="block text-sm font-medium text-gray-700 mb-2">Session Duration</label>
-                <select id="session_duration" name="session_duration"
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="30" {{ 'selected' if profile and profile.session_duration == 30 else '' }}>30 min</option>
-                    <option value="45" {{ 'selected' if profile and profile.session_duration == 45 else '' }}>45 min</option>
-                    <option value="60" {{ 'selected' if profile and profile.session_duration == 60 else '' }}>60 min</option>
-                    <option value="75" {{ 'selected' if profile and profile.session_duration == 75 else '' }}>75 min</option>
-                    <option value="90" {{ 'selected' if profile and profile.session_duration == 90 else '' }}>90 min</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4">
-            <div>
-                <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age (optional)</label>
-                <input type="number" id="age" name="age" min="13" max="100"
-                       value="{{ profile.age if profile and profile.age else '' }}"
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-
-            <div>
-                <label for="body_weight" class="block text-sm font-medium text-gray-700 mb-2">Weight kg (optional)</label>
-                <input type="number" id="body_weight" name="body_weight" step="0.1" min="30" max="300"
-                       value="{{ profile.body_weight if profile and profile.body_weight else '' }}"
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-
-            <div>
-                <label for="height" class="block text-sm font-medium text-gray-700 mb-2">Height cm (optional)</label>
-                <input type="number" id="height" name="height" step="0.1" min="100" max="250"
-                       value="{{ profile.height if profile and profile.height else '' }}"
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">1RM Lifts kg (optional)</label>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="one_rm_squat" class="block text-xs text-gray-500 mb-1">Squat</label>
-                    <input type="number" id="one_rm_squat" name="one_rm_squat" step="0.5" min="0"
-                           value="{{ profile.one_rm_squat if profile and profile.one_rm_squat else '' }}"
-                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="one_rm_bench_press" class="block text-xs text-gray-500 mb-1">Bench Press</label>
-                    <input type="number" id="one_rm_bench_press" name="one_rm_bench_press" step="0.5" min="0"
-                           value="{{ profile.one_rm_bench_press if profile and profile.one_rm_bench_press else '' }}"
-                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="one_rm_deadlift" class="block text-xs text-gray-500 mb-1">Deadlift</label>
-                    <input type="number" id="one_rm_deadlift" name="one_rm_deadlift" step="0.5" min="0"
-                           value="{{ profile.one_rm_deadlift if profile and profile.one_rm_deadlift else '' }}"
-                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="one_rm_ohp" class="block text-xs text-gray-500 mb-1">Overhead Press</label>
-                    <input type="number" id="one_rm_ohp" name="one_rm_ohp" step="0.5" min="0"
-                           value="{{ profile.one_rm_ohp if profile and profile.one_rm_ohp else '' }}"
-                           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
             </div>
         </div>
 
-        <div>
-            <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes (optional)</label>
-            <textarea id="notes" name="notes" rows="3"
-                      placeholder="Any injuries, preferences, or other details..."
-                      class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">{{ profile.notes if profile else '' }}</textarea>
+        <!-- Section 4: Strength Numbers (collapsible) -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <button type="button" onclick="toggleSection('strength-section')"
+                    class="w-full px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white flex items-center justify-between hover:bg-gray-50 transition">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="font-semibold text-gray-900">Strength Numbers</h2>
+                        <p class="text-xs text-gray-400">1RM lifts in kg (optional)</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 strength-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="strength-section" class="collapsible-content {{ 'open' if profile and (profile.one_rm_squat or profile.one_rm_bench_press or profile.one_rm_deadlift or profile.one_rm_ohp) else '' }}">
+                <div class="p-6 space-y-4">
+                    {% set lifts = [
+                        ('one_rm_squat', 'Squat', profile.one_rm_squat if profile and profile.one_rm_squat else '', 60, 140, 220),
+                        ('one_rm_bench_press', 'Bench Press', profile.one_rm_bench_press if profile and profile.one_rm_bench_press else '', 40, 100, 160),
+                        ('one_rm_deadlift', 'Deadlift', profile.one_rm_deadlift if profile and profile.one_rm_deadlift else '', 60, 160, 260),
+                        ('one_rm_ohp', 'Overhead Press', profile.one_rm_ohp if profile and profile.one_rm_ohp else '', 30, 60, 100)
+                    ] %}
+                    {% for field_name, label, value, beginner_max, intermediate_max, advanced_max in lifts %}
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="{{ field_name }}" class="text-sm font-medium text-gray-700">{{ label }}</label>
+                            {% if value %}
+                            <span class="text-xs font-medium
+                                {% if value|float <= beginner_max %}text-green-600
+                                {% elif value|float <= intermediate_max %}text-blue-600
+                                {% elif value|float <= advanced_max %}text-purple-600
+                                {% else %}text-red-600{% endif %}">
+                                {% if value|float <= beginner_max %}Beginner
+                                {% elif value|float <= intermediate_max %}Intermediate
+                                {% elif value|float <= advanced_max %}Advanced
+                                {% else %}Elite{% endif %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <input type="number" id="{{ field_name }}" name="{{ field_name }}" step="0.5" min="0"
+                                   value="{{ value }}"
+                                   placeholder="kg"
+                                   class="w-24 border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            <div class="flex-1">
+                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-green-400" style="width: 33%"></div>
+                                    <div class="h-full bg-blue-400" style="width: 33%"></div>
+                                    <div class="h-full bg-purple-400" style="width: 34%"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                                    <span>Beginner</span>
+                                    <span>Intermediate</span>
+                                    <span>Advanced</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
-        <div class="pt-4">
+        <!-- Section 5: Notes (collapsible) -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <button type="button" onclick="toggleSection('notes-section')"
+                    class="w-full px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white flex items-center justify-between hover:bg-gray-50 transition">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="font-semibold text-gray-900">Notes</h2>
+                        <p class="text-xs text-gray-400">Injuries, preferences, etc. (optional)</p>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 notes-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="notes-section" class="collapsible-content {{ 'open' if profile and profile.notes else '' }}">
+                <div class="p-6">
+                    <textarea id="notes" name="notes" rows="3"
+                              placeholder="Any injuries, preferences, or other details..."
+                              class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">{{ profile.notes if profile else '' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-2">
             <button type="submit"
-                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition font-medium">
+                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-xl hover:bg-indigo-700 transition font-medium shadow-sm hover:shadow">
                 Save Profile
             </button>
         </div>
     </form>
 
     <!-- Health Connect Sync Section -->
-    <div class="mt-8 bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Import Fitness Data</h2>
-        <p class="text-sm text-gray-600 mb-4">
-            Upload a Health Connect backup to import your workout history. This helps generate better personalized programs.
-        </p>
-
-        <form id="sync-form" enctype="multipart/form-data" class="space-y-4">
-            <div id="drop-zone"
-                 class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-500 transition cursor-pointer">
-                <input type="file" id="backup-file" name="backup" accept=".zip" class="hidden">
-                <div id="drop-content">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <div class="mt-8 bg-white shadow rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b bg-gradient-to-r from-gray-50 to-white">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                     </svg>
-                    <p class="mt-2 text-sm text-gray-600">
-                        <span class="text-indigo-600 font-medium">Click to upload</span> or drag and drop
-                    </p>
-                    <p class="mt-1 text-xs text-gray-500">Health Connect backup (.zip)</p>
                 </div>
-                <div id="file-selected" class="hidden">
-                    <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p class="mt-2 text-sm text-gray-600" id="file-name"></p>
+                <div>
+                    <h2 class="font-semibold text-gray-900">Import Fitness Data</h2>
+                    <p class="text-xs text-gray-400">Upload Health Connect backup for personalized programs</p>
                 </div>
-            </div>
-
-            <button type="submit" id="sync-button" disabled
-                    class="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-lg cursor-not-allowed transition font-medium">
-                Import Data
-            </button>
-        </form>
-
-        <div id="sync-progress" class="hidden mt-4">
-            <div class="flex items-center space-x-2">
-                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
-                <span class="text-sm text-gray-600">Processing backup...</span>
             </div>
         </div>
+        <div class="p-6">
+            <form id="sync-form" enctype="multipart/form-data" class="space-y-4">
+                <div id="drop-zone"
+                     class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-indigo-500 transition cursor-pointer">
+                    <input type="file" id="backup-file" name="backup" accept=".zip" class="hidden">
+                    <div id="drop-content">
+                        <svg class="mx-auto h-12 w-12 text-gray-300" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-600">
+                            <span class="text-indigo-600 font-medium">Click to upload</span> or drag and drop
+                        </p>
+                        <p class="mt-1 text-xs text-gray-400">Health Connect backup (.zip)</p>
+                    </div>
+                    <div id="file-selected" class="hidden">
+                        <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-600" id="file-name"></p>
+                    </div>
+                </div>
 
-        <div id="sync-result" class="hidden mt-4"></div>
+                <button type="submit" id="sync-button" disabled
+                        class="w-full bg-gray-200 text-gray-400 py-2.5 px-4 rounded-lg cursor-not-allowed transition font-medium">
+                    Import Data
+                </button>
+            </form>
+
+            <div id="sync-progress" class="hidden mt-4">
+                <div class="flex items-center space-x-2">
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                    <span class="text-sm text-gray-600">Processing backup...</span>
+                </div>
+            </div>
+
+            <div id="sync-result" class="hidden mt-4"></div>
+        </div>
     </div>
 </div>
 
 <script>
+function toggleSection(id) {
+    const section = document.getElementById(id);
+    section.classList.toggle('open');
+    const isStrength = id === 'strength-section';
+    const chevron = document.querySelector(isStrength ? '.strength-chevron' : '.notes-chevron');
+    chevron.style.transform = section.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('strength-section')?.classList.contains('open')) {
+        document.querySelector('.strength-chevron').style.transform = 'rotate(180deg)';
+    }
+    if (document.getElementById('notes-section')?.classList.contains('open')) {
+        document.querySelector('.notes-chevron').style.transform = 'rotate(180deg)';
+    }
+});
+
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('backup-file');
 const dropContent = document.getElementById('drop-content');
@@ -219,17 +378,12 @@ const syncForm = document.getElementById('sync-form');
 const syncProgress = document.getElementById('sync-progress');
 const syncResult = document.getElementById('sync-result');
 
-// Click to open file picker
 dropZone.addEventListener('click', () => fileInput.click());
 
-// File selection handler
 fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-        showFileSelected(e.target.files[0]);
-    }
+    if (e.target.files.length > 0) showFileSelected(e.target.files[0]);
 });
 
-// Drag and drop handlers
 dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
@@ -243,7 +397,6 @@ dropZone.addEventListener('dragleave', (e) => {
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
-
     const files = e.dataTransfer.files;
     if (files.length > 0 && files[0].name.endsWith('.zip')) {
         fileInput.files = files;
@@ -256,13 +409,11 @@ function showFileSelected(file) {
     fileSelected.classList.remove('hidden');
     fileName.textContent = file.name;
     syncButton.disabled = false;
-    syncButton.className = 'w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition font-medium';
+    syncButton.className = 'w-full bg-indigo-600 text-white py-2.5 px-4 rounded-lg hover:bg-indigo-700 transition font-medium cursor-pointer';
 }
 
-// Form submission
 syncForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     if (!fileInput.files.length) return;
 
     syncButton.disabled = true;
@@ -273,22 +424,14 @@ syncForm.addEventListener('submit', async (e) => {
     formData.append('backup', fileInput.files[0]);
 
     try {
-        const response = await fetch('/profile/sync', {
-            method: 'POST',
-            body: formData
-        });
-
+        const response = await fetch('/profile/sync', { method: 'POST', body: formData });
         const data = await response.json();
 
         syncProgress.classList.add('hidden');
         syncResult.classList.remove('hidden');
 
         if (data.error) {
-            syncResult.innerHTML = `
-                <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p class="text-red-800">Error: ${data.error}</p>
-                </div>
-            `;
+            syncResult.innerHTML = `<div class="p-4 bg-red-50 border border-red-200 rounded-lg"><p class="text-red-800">Error: ${data.error}</p></div>`;
         } else {
             syncResult.innerHTML = `
                 <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -301,14 +444,8 @@ syncForm.addEventListener('submit', async (e) => {
     } catch (err) {
         syncProgress.classList.add('hidden');
         syncResult.classList.remove('hidden');
-        syncResult.innerHTML = `
-            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-red-800">Error: ${err.message}</p>
-            </div>
-        `;
+        syncResult.innerHTML = `<div class="p-4 bg-red-50 border border-red-200 rounded-lg"><p class="text-red-800">Error: ${err.message}</p></div>`;
     }
-
-    // Reset for another upload
     syncButton.disabled = false;
 });
 </script>

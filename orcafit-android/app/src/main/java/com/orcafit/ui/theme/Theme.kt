@@ -13,8 +13,12 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = OrcaPrimaryDark_DT,
     secondary = OrcaSecondaryDark_DT,
+    tertiary = OrcaTertiaryDark_DT,
+    tertiaryContainer = OrcaTertiaryContainerDark,
     background = OrcaBackgroundDark,
     surface = OrcaSurfaceDark,
+    surfaceVariant = OrcaSurfaceVariantDark,
+    surfaceTint = OrcaPrimaryDark_DT,
     error = OrcaError,
     onPrimary = OrcaOnBackground,
     onSecondary = OrcaOnSecondary,
@@ -25,8 +29,12 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = OrcaPrimary,
     secondary = OrcaSecondary,
+    tertiary = OrcaTertiary,
+    tertiaryContainer = OrcaTertiaryContainer,
     background = OrcaBackground,
     surface = OrcaSurface,
+    surfaceVariant = OrcaSurfaceVariant,
+    surfaceTint = OrcaSurfaceTint,
     error = OrcaError,
     onPrimary = OrcaOnPrimary,
     onSecondary = OrcaOnSecondary,
@@ -53,7 +61,7 @@ fun OrcaFitTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }

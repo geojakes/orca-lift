@@ -3,118 +3,278 @@
 {% block title %}Programs - orca-lift{% endblock %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Programs</h1>
+<style>
+    @keyframes slideUpIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInFromBottom {
+        from { opacity: 0; transform: translateY(100%); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .card-animate { animation: slideUpIn 0.3s ease-out both; }
+    .modal-backdrop { animation: fadeIn 0.2s ease-out; }
+    .modal-content { animation: slideInFromBottom 0.3s ease-out; }
+    .copied-toast {
+        animation: fadeIn 0.15s ease-out;
+    }
+    .copied-toast.hiding {
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+    }
+</style>
+
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Programs</h1>
+        <p class="text-gray-500 mt-1">Your training programs</p>
+    </div>
     <a href="/programs/new"
-       class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
-        Generate New Program
+       class="inline-flex items-center space-x-2 bg-indigo-600 text-white py-2.5 px-5 rounded-lg hover:bg-indigo-700 transition shadow-sm hover:shadow">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Generate New Program</span>
     </a>
 </div>
 
 {% if not programs %}
-<div class="bg-white shadow rounded-lg p-8 text-center">
-    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+<div class="bg-white shadow rounded-2xl p-12 text-center card-animate">
+    <svg class="mx-auto h-32 w-32 text-indigo-100" fill="none" viewBox="0 0 128 128">
+        <rect x="20" y="30" width="88" height="78" rx="8" stroke="currentColor" stroke-width="3" fill="none" class="text-indigo-200"/>
+        <line x1="36" y1="52" x2="72" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-indigo-300"/>
+        <line x1="36" y1="64" x2="88" y2="64" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-indigo-200"/>
+        <line x1="36" y1="76" x2="80" y2="76" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-indigo-200"/>
+        <line x1="36" y1="88" x2="60" y2="88" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-indigo-100"/>
+        <circle cx="96" cy="40" r="18" fill="none" stroke="currentColor" stroke-width="3" class="text-indigo-300"/>
+        <path d="M96 32v16M88 40h16" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-indigo-400"/>
     </svg>
-    <h3 class="mt-2 text-lg font-medium text-gray-900">No programs yet</h3>
-    <p class="mt-1 text-gray-500">Get started by generating your first program.</p>
-    <div class="mt-6">
+    <h3 class="mt-6 text-xl font-semibold text-gray-900">No programs yet</h3>
+    <p class="mt-2 text-gray-500 max-w-md mx-auto">
+        Create your first AI-generated training program. Our specialist coaches will design a personalized plan just for you.
+    </p>
+    <div class="mt-8">
         <a href="/programs/new"
-           class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
-            Generate Program
+           class="inline-flex items-center space-x-2 bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition shadow-sm hover:shadow text-lg font-medium">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span>Generate Your First Program</span>
         </a>
     </div>
 </div>
 {% else %}
-<div class="grid gap-4">
+<div class="grid gap-5 md:grid-cols-2">
     {% for item in programs %}
-    <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
-        <div class="flex justify-between items-start">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-900">
-                    <a href="/programs/{{ item.program.id }}" class="hover:text-indigo-600">
-                        {{ item.program.name }}
-                    </a>
-                </h2>
-                <p class="text-gray-600 mt-1">{{ item.program.description[:100] }}{% if item.program.description|length > 100 %}...{% endif %}</p>
-                <div class="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                    <span>{{ item.program.total_weeks }} weeks</span>
-                    <span>{{ item.program.days_per_week }} days/week</span>
+    {% set status = item.progress.status.value if item.progress else 'not_started' %}
+    <div class="bg-white shadow rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 card-animate"
+         style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        <div class="flex">
+            <!-- Colored left border strip -->
+            <div class="w-1.5 {{ 'bg-green-500' if status == 'active' else ('bg-blue-500' if status == 'completed' else 'bg-gray-300') }} flex-shrink-0"></div>
+            <div class="flex-1 p-5">
+                <!-- Header -->
+                <div class="flex justify-between items-start mb-3">
+                    <h2 class="text-lg font-semibold text-gray-900 leading-tight">
+                        <a href="/programs/{{ item.program.id }}" class="hover:text-indigo-600 transition-colors">
+                            {{ item.program.name }}
+                        </a>
+                    </h2>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ml-2
+                                 {{ 'bg-green-100 text-green-800' if status == 'active' else ('bg-blue-100 text-blue-800' if status == 'completed' else 'bg-gray-100 text-gray-600') }}">
+                        {% if item.progress %}
+                        {{ item.progress.get_status_display() }}
+                        {% else %}
+                        Not Started
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- Description -->
+                <p class="text-gray-500 text-sm mb-3">{{ item.program.description[:120] }}{% if item.program.description|length > 120 %}...{% endif %}</p>
+
+                <!-- Meta badges -->
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="inline-flex items-center text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        {{ item.program.total_weeks }}w
+                    </span>
+                    <span class="inline-flex items-center text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {{ item.program.days_per_week }}d/wk
+                    </span>
+                    {% if item.program.weeks and item.program.weeks[0].days %}
+                    {% set ex_count = namespace(total=0) %}
+                    {% for day in item.program.weeks[0].days %}
+                        {% set ex_count.total = ex_count.total + day.exercises|length %}
+                    {% endfor %}
+                    <span class="inline-flex items-center text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md font-medium">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        {{ ex_count.total }} exercises
+                    </span>
+                    {% endif %}
                     {% if item.program.created_at %}
-                    <span>Created {{ item.program.created_at.strftime('%Y-%m-%d') }}</span>
+                    <span class="text-xs text-gray-400">{{ item.program.created_at.strftime('%b %d, %Y') }}</span>
                     {% endif %}
                 </div>
-            </div>
-            <div class="flex flex-col items-end space-y-2">
-                {% if item.progress %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {{ item.progress.get_status_display() }}
-                </span>
-                <span class="text-sm text-gray-500">{{ item.progress.get_position_display() }}</span>
-                {% else %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    Not Started
-                </span>
-                {% endif %}
-            </div>
-        </div>
 
-        <div class="mt-4 flex space-x-2">
-            <a href="/programs/{{ item.program.id }}"
-               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                View
-            </a>
-            <span class="text-gray-300">|</span>
-            <a href="/progress/{{ item.program.id }}"
-               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                Progress
-            </a>
-            <span class="text-gray-300">|</span>
-            <button onclick="copyLiftoscript({{ item.program.id }})"
-                    class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                Copy Liftoscript
-            </button>
-            <span class="text-gray-300">|</span>
-            <button onclick="deleteProgram({{ item.program.id }}, '{{ item.program.name|e }}')"
-                    class="text-red-600 hover:text-red-800 text-sm font-medium">
-                Delete
-            </button>
+                <!-- Mini progress bar for active programs -->
+                {% if item.progress and status == 'active' %}
+                {% set total_workouts = item.program.total_weeks * item.program.days_per_week %}
+                {% set completed = (item.progress.current_week - 1) * item.program.days_per_week + (item.progress.current_day - 1) %}
+                {% set pct = (completed / total_workouts * 100) | int if total_workouts > 0 else 0 %}
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs text-gray-400 mb-1">
+                        <span>{{ item.progress.get_position_display() }}</span>
+                        <span>{{ pct }}%</span>
+                    </div>
+                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Actions -->
+                <div class="flex items-center gap-1 pt-2 border-t border-gray-100">
+                    <a href="/programs/{{ item.program.id }}"
+                       class="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-2.5 py-1.5 rounded-md transition">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        View
+                    </a>
+                    <a href="/progress/{{ item.program.id }}"
+                       class="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-2.5 py-1.5 rounded-md transition">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Progress
+                    </a>
+                    <div class="relative">
+                        <button onclick="copyLiftoscript({{ item.program.id }}, this)"
+                                class="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-2.5 py-1.5 rounded-md transition">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                            <span class="copy-label">Copy</span>
+                        </button>
+                    </div>
+                    <button onclick="showDeleteModal({{ item.program.id }}, '{{ item.program.name|e }}')"
+                            class="inline-flex items-center text-sm text-gray-400 hover:text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-md transition ml-auto">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     {% endfor %}
 </div>
 {% endif %}
 
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/40 modal-backdrop" onclick="closeDeleteModal()"></div>
+    <div class="absolute bottom-0 left-0 right-0 sm:relative sm:flex sm:items-end sm:justify-center sm:min-h-screen sm:p-4">
+        <div class="modal-content bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md sm:mb-auto sm:mt-auto overflow-hidden">
+            <div class="p-6">
+                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 text-center">Delete Program</h3>
+                <p class="text-gray-500 text-center mt-2 text-sm">
+                    Are you sure you want to delete "<span id="delete-program-name" class="font-medium text-gray-700"></span>"? This action cannot be undone.
+                </p>
+            </div>
+            <div class="border-t px-6 py-4 flex space-x-3">
+                <button onclick="closeDeleteModal()"
+                        class="flex-1 py-2.5 px-4 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button id="confirm-delete-btn" onclick="confirmDelete()"
+                        class="flex-1 py-2.5 px-4 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-async function copyLiftoscript(programId) {
-    try {
-        const response = await fetch(`/programs/${programId}/liftoscript`);
-        const data = await response.json();
-        await navigator.clipboard.writeText(data.liftoscript);
-        alert('Liftoscript copied to clipboard!');
-    } catch (err) {
-        alert('Failed to copy: ' + err.message);
-    }
+let deleteProgramId = null;
+
+function showDeleteModal(programId, programName) {
+    deleteProgramId = programId;
+    document.getElementById('delete-program-name').textContent = programName;
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
-async function deleteProgram(programId, programName) {
-    if (!confirm(`Are you sure you want to delete "${programName}"? This cannot be undone.`)) {
-        return;
-    }
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+    deleteProgramId = null;
+}
+
+async function confirmDelete() {
+    if (!deleteProgramId) return;
+    const btn = document.getElementById('confirm-delete-btn');
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
     try {
-        const response = await fetch(`/programs/${programId}`, {
-            method: 'DELETE'
-        });
+        const response = await fetch(`/programs/${deleteProgramId}`, { method: 'DELETE' });
         if (response.ok) {
             window.location.reload();
         } else {
             const data = await response.json();
-            alert('Failed to delete: ' + (data.detail || 'Unknown error'));
+            closeDeleteModal();
+            showToast('Failed to delete: ' + (data.detail || 'Unknown error'), 'error');
         }
     } catch (err) {
-        alert('Failed to delete: ' + err.message);
+        closeDeleteModal();
+        showToast('Failed to delete: ' + err.message, 'error');
     }
 }
+
+async function copyLiftoscript(programId, buttonEl) {
+    const label = buttonEl.querySelector('.copy-label');
+    try {
+        const response = await fetch(`/programs/${programId}/liftoscript`);
+        const data = await response.json();
+        await navigator.clipboard.writeText(data.liftoscript);
+        label.textContent = 'Copied!';
+        label.classList.add('text-green-600');
+        setTimeout(() => {
+            label.textContent = 'Copy';
+            label.classList.remove('text-green-600');
+        }, 2000);
+    } catch (err) {
+        label.textContent = 'Failed';
+        label.classList.add('text-red-600');
+        setTimeout(() => {
+            label.textContent = 'Copy';
+            label.classList.remove('text-red-600');
+        }, 2000);
+    }
+}
+
+// Close delete modal on Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDeleteModal();
+});
 </script>
 {% endblock %}

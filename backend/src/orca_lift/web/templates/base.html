@@ -8,30 +8,137 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
     <style>
+        :root {
+            --color-primary: #4f46e5;
+            --color-primary-dark: #4338ca;
+            --color-accent: #7c3aed;
+            --color-accent-dark: #6d28d9;
+            --color-surface: #f9fafb;
+            --color-surface-raised: #ffffff;
+            --color-text: #111827;
+            --color-text-muted: #6b7280;
+            --color-success: #059669;
+            --color-error: #dc2626;
+            --color-info: #2563eb;
+        }
+
         [x-cloak] { display: none !important; }
         .htmx-indicator { display: none; }
         .htmx-request .htmx-indicator { display: inline-block; }
         .htmx-request.htmx-indicator { display: inline-block; }
+
+        /* Global loading bar */
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #818cf8, #a78bfa, #c084fc);
+            width: 0;
+            z-index: 9999;
+            transition: width 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+        #global-loader.loading {
+            animation: loader-progress 1.5s ease-in-out infinite;
+        }
+        @keyframes loader-progress {
+            0% { width: 0; }
+            50% { width: 70%; }
+            100% { width: 90%; }
+        }
+        #global-loader.done {
+            width: 100% !important;
+            animation: none;
+            transition: width 0.2s ease, opacity 0.3s ease 0.2s;
+            opacity: 0;
+        }
+
+        /* Page fade-in */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-content {
+            animation: fadeInUp 0.35s ease-out;
+        }
+
+        /* Toast animations */
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastSlideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .toast-enter { animation: toastSlideIn 0.3s ease-out forwards; }
+        .toast-exit { animation: toastSlideOut 0.3s ease-in forwards; }
+
+        /* Mobile drawer */
+        .mobile-drawer {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-drawer.open {
+            transform: translateX(0);
+        }
+        .drawer-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <nav class="bg-indigo-600 text-white shadow-lg">
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Global loading bar (htmx integration) -->
+    <div id="global-loader"></div>
+
+    <!-- Toast notification container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <nav class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white shadow-lg relative z-40">
         <div class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
-                <a href="/" class="text-xl font-bold">orca-lift</a>
-                <div class="flex items-center space-x-4">
-                    <a href="/programs" class="hover:text-indigo-200">Programs</a>
-                    <a href="/equipment" class="hover:text-indigo-200">Equipment</a>
-                    <a href="/profile" class="hover:text-indigo-200">Profile</a>
+                <!-- Brand -->
+                <a href="/" class="flex items-center space-x-2 text-xl font-bold group">
+                    <svg class="w-7 h-7 text-indigo-200 group-hover:text-white transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="10" width="3" height="4" rx="0.5"/>
+                        <rect x="19" y="10" width="3" height="4" rx="0.5"/>
+                        <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5"/>
+                        <rect x="6" y="9" width="2.5" height="6" rx="0.5"/>
+                        <rect x="15.5" y="9" width="2.5" height="6" rx="0.5"/>
+                    </svg>
+                    <span>orca-lift</span>
+                </a>
+
+                <!-- Desktop nav links -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="/programs"
+                       class="px-3 py-1.5 rounded-full text-sm font-medium transition hover:bg-white/15 {% block nav_programs %}{% endblock %}">
+                        Programs
+                    </a>
+                    <a href="/equipment"
+                       class="px-3 py-1.5 rounded-full text-sm font-medium transition hover:bg-white/15 {% block nav_equipment %}{% endblock %}">
+                        Equipment
+                    </a>
+                    <a href="/profile"
+                       class="px-3 py-1.5 rounded-full text-sm font-medium transition hover:bg-white/15 {% block nav_profile %}{% endblock %}">
+                        Profile
+                    </a>
                     {% if request.state.current_profile is defined and request.state.current_profile %}
-                    <span class="text-indigo-300">|</span>
+                    <span class="text-indigo-300 mx-1">|</span>
                     <div class="flex items-center space-x-2">
-                        <div class="w-7 h-7 rounded-full bg-indigo-400 flex items-center justify-center text-sm font-bold">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-300 to-purple-400 flex items-center justify-center text-sm font-bold shadow-inner">
                             {{ request.state.current_profile.name[0]|upper }}
                         </div>
                         <span class="text-sm font-medium">{{ request.state.current_profile.name }}</span>
                     </div>
-                    <a href="/users" class="text-indigo-200 hover:text-white text-sm" title="Switch User">
+                    <a href="/users" class="text-indigo-200 hover:text-white transition p-1 rounded-full hover:bg-white/15" title="Switch User">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
@@ -39,19 +146,148 @@
                     </a>
                     {% endif %}
                 </div>
+
+                <!-- Mobile hamburger button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-white/15 transition" aria-label="Open menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container mx-auto px-4 py-8">
+    <!-- Mobile drawer overlay -->
+    <div id="drawer-overlay" class="drawer-overlay fixed inset-0 bg-black/40 z-40"></div>
+
+    <!-- Mobile slide-out drawer -->
+    <div id="mobile-drawer" class="mobile-drawer fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-indigo-700 to-purple-800 text-white z-50 shadow-xl">
+        <div class="flex items-center justify-between px-4 py-4 border-b border-white/10">
+            <span class="text-lg font-bold">orca-lift</span>
+            <button id="drawer-close-btn" class="p-1 rounded hover:bg-white/15 transition" aria-label="Close menu">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="flex flex-col py-4">
+            <a href="/programs" class="px-6 py-3 text-sm font-medium hover:bg-white/10 transition {% block nav_programs_mobile %}{% endblock %}">Programs</a>
+            <a href="/equipment" class="px-6 py-3 text-sm font-medium hover:bg-white/10 transition {% block nav_equipment_mobile %}{% endblock %}">Equipment</a>
+            <a href="/profile" class="px-6 py-3 text-sm font-medium hover:bg-white/10 transition {% block nav_profile_mobile %}{% endblock %}">Profile</a>
+            {% if request.state.current_profile is defined and request.state.current_profile %}
+            <div class="border-t border-white/10 mt-4 pt-4 px-6">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-300 to-purple-400 flex items-center justify-center text-sm font-bold">
+                        {{ request.state.current_profile.name[0]|upper }}
+                    </div>
+                    <span class="text-sm font-medium">{{ request.state.current_profile.name }}</span>
+                </div>
+                <a href="/users" class="text-indigo-200 hover:text-white text-sm flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                    </svg>
+                    <span>Switch User</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8 flex-1 page-content">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-gray-100 border-t mt-auto py-4">
-        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
-            orca-lift - AI-Powered Liftosaur Program Generator
+    <footer class="bg-gray-100 border-t mt-auto py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="10" width="3" height="4" rx="0.5"/>
+                        <rect x="19" y="10" width="3" height="4" rx="0.5"/>
+                        <line x1="5" y1="12" x2="19" y2="12" stroke-width="2.5"/>
+                    </svg>
+                    <span class="text-gray-600 font-medium">orca-lift</span>
+                    <span class="text-gray-300">|</span>
+                    <span>AI-Powered Training, Simplified</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="https://www.liftosaur.com" target="_blank" rel="noopener noreferrer"
+                       class="text-gray-500 hover:text-indigo-600 transition">
+                        Powered by Liftosaur
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile drawer
+        (function() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            const closeBtn = document.getElementById('drawer-close-btn');
+
+            function openDrawer() {
+                drawer.classList.add('open');
+                overlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeDrawer() {
+                drawer.classList.remove('open');
+                overlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+            btn?.addEventListener('click', openDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+            overlay?.addEventListener('click', closeDrawer);
+        })();
+
+        // Toast notification system
+        window.showToast = function(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const colors = {
+                success: 'bg-emerald-600',
+                error: 'bg-red-600',
+                info: 'bg-blue-600'
+            };
+            const icons = {
+                success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>',
+                error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>',
+                info: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>'
+            };
+
+            toast.className = `pointer-events-auto flex items-center space-x-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium toast-enter ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${icons[type] || icons.info}
+                </svg>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                toast.addEventListener('animationend', () => toast.remove());
+            }, duration);
+        };
+
+        // htmx loading bar integration
+        (function() {
+            const loader = document.getElementById('global-loader');
+            document.body.addEventListener('htmx:beforeRequest', function() {
+                loader.className = 'loading';
+            });
+            document.body.addEventListener('htmx:afterRequest', function() {
+                loader.className = 'done';
+                setTimeout(() => { loader.className = ''; }, 500);
+            });
+        })();
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

@@ -272,17 +272,6 @@ async function copyLiftoscript(programId, buttonEl) {
     }
 }
 
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50 copied-toast ${type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-800 text-white'}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-        toast.classList.add('hiding');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
 // Close delete modal on Escape
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDeleteModal();

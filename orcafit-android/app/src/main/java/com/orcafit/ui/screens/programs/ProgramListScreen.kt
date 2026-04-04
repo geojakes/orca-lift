@@ -119,7 +119,7 @@ fun ProgramListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProgramCard(
-    program: com.orcafit.data.model.ProgramSummaryDto,
+    program: com.orcafit.data.api.models.ProgramSummaryDto,
     onClick: () -> Unit,
 ) {
     Card(

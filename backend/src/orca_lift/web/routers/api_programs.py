@@ -34,34 +34,30 @@ async def generate_program(
     user: User = Depends(get_current_user),
 ):
     """Start async program generation. Poll /generate/{job_id}/status for result."""
-    job_id = _job_tracker.create_job(metadata={"user_id": user.id, "goals": req.goals})
-    
+    job = await _job_tracker.create_job(goals=req.goals, weeks=req.weeks)
+
     # In a full implementation, this would kick off the congregation pipeline
     # For now, we create a placeholder
     async def _generate():
         try:
-            _job_tracker.update_job(job_id, status="running")
+            await _job_tracker.start_job(job.id)
             # TODO: Wire up actual ProgramGenerator from agents/executor.py
             # For now, mark as completed with a note
-            _job_tracker.update_job(
-                job_id,
-                status="completed",
-                result={"message": "Generation pipeline ready to be wired up"},
-            )
+            await _job_tracker.complete_job(job.id, program_id=0, name="placeholder")
         except Exception as e:
-            _job_tracker.update_job(job_id, status="failed", error=str(e))
-    
+            await _job_tracker.fail_job(job.id, error=str(e))
+
     background_tasks.add_task(_generate)
-    return GenerateResponse(job_id=job_id)
+    return GenerateResponse(job_id=job.id)
 
 
 @router.get("/generate/{job_id}/status")
 async def generation_status(job_id: str, user: User = Depends(get_current_user)):
     """Check program generation status."""
-    job = _job_tracker.get_job(job_id)
+    job = await _job_tracker.get_job(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    return job
+    return job.to_dict()
 
 
 @router.get("")

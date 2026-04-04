@@ -444,7 +444,7 @@ wheels = [
 [[package]]
 name = "orca"
 version = "0.2.0"
-source = { git = "ssh://git@github.com/geojakes/orca#cae785ca49feeff13f7a287b50266d4f8d325099" }
+source = { git = "ssh://git@github.com/geojakes/orca#4fab0bd5b4f7f5b00af9b7902ccd1445343fbe9a" }
 dependencies = [
     { name = "claude-agent-sdk" },
     { name = "networkx" },

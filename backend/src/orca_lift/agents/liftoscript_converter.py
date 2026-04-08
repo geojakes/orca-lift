@@ -39,8 +39,8 @@ Generate professional-quality Liftoscript following these patterns:
 ### Reusable Templates
 - Define custom progression/update templates at the TOP of Week 1 using `/ used: none`
 - Name them descriptively: `progression`, `dropsets`, `myoreps`
-- Include state variables and full Liftoscript logic in `{~ ~}` blocks
-- Reference templates from exercises: `progress: custom() { ...progression }`, `update: custom() { ...dropsets }`
+- Include state variables and full Liftoscript logic in `{{~ ~}}` blocks
+- Reference templates from exercises: `progress: custom() {{ ...progression }}`, `update: custom() {{ ...dropsets }}`
 - Most exercises should share the same progression template — define it once, reuse everywhere
 
 ### Rich Comments

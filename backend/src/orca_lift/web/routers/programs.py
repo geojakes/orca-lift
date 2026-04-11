@@ -156,6 +156,8 @@ async def stream_job(job_id: str):
                         yield f"data: {json.dumps({'type': 'specialist', 'name': message, 'preview': data.get('preview', '') if data else '', 'full': data.get('full', '') if data else '', 'aligned': data.get('aligned') if data else None})}\n\n"
                     elif event_type == "info_request":
                         yield f"data: {json.dumps({'type': 'info_request', 'name': message, 'functions': data.get('functions', []) if data else []})}\n\n"
+                    elif event_type == "peer_message":
+                        yield f"data: {json.dumps({'type': 'peer_message', 'from': message, 'to': data.get('to', '') if data else '', 'content': data.get('content', '') if data else ''})}\n\n"
                     else:
                         yield f"data: {json.dumps({'type': 'status', 'message': message})}\n\n"
                 except asyncio.TimeoutError:
@@ -248,7 +250,7 @@ async def generate_program(
                 )
 
             # Create executor with progress callback
-            executor = ProgramExecutor(verbose=False)
+            executor = ProgramExecutor(verbose=request.app.state.verbose)
 
             # Execute program generation
             result = await executor.execute(
@@ -302,6 +304,8 @@ async def generate_program(
                     yield f"data: {json.dumps({'type': 'specialist', 'name': message, 'preview': data.get('preview', '') if data else '', 'full': data.get('full', '') if data else '', 'aligned': data.get('aligned') if data else None})}\n\n"
                 elif event_type == "info_request":
                     yield f"data: {json.dumps({'type': 'info_request', 'name': message, 'functions': data.get('functions', []) if data else []})}\n\n"
+                elif event_type == "peer_message":
+                    yield f"data: {json.dumps({'type': 'peer_message', 'from': message, 'to': data.get('to', '') if data else '', 'content': data.get('content', '') if data else ''})}\n\n"
                 elif event_type == "human_question":
                     yield f"data: {json.dumps({'type': 'human_question', 'name': message, 'question_id': data.get('question_id', '') if data else '', 'question': data.get('question', '') if data else ''})}\n\n"
                 else:
@@ -441,7 +445,7 @@ async def chat_refine(
 
             # Get or create refinement service for conversation continuity
             if program_id not in _refinement_services:
-                _refinement_services[program_id] = RefinementService()
+                _refinement_services[program_id] = RefinementService(verbose=request.app.state.verbose)
             service = _refinement_services[program_id]
 
             # Refine with full congregation

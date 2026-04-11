@@ -49,11 +49,12 @@ class RefinementService:
     5. Syntax validation with Python fallback
     """
 
-    def __init__(self):
+    def __init__(self, verbose: bool = False):
+        self.verbose = verbose
         self.generator = LiftoscriptGenerator()
         self.converter = LiftoscriptConverter(
             liftoscript_spec=LIFTOSCRIPT_FULL_SPEC,
-            verbose=False,
+            verbose=verbose,
         )
         self.conversation_history: list[dict] = []
 
@@ -129,7 +130,7 @@ Keep everything else the same. Return the COMPLETE updated program structure."""
             congregation_result = await run_congregation(
                 user_summary=user_summary,
                 program_framework=framework,
-                verbose=False,
+                verbose=self.verbose,
                 equipment_constraints=equipment_constraints,
                 profile_id=user_profile.id if user_profile else None,
                 constraint_checklist=constraint_checklist,

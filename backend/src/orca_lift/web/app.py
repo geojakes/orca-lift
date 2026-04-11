@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI):
     # Shutdown: cleanup if needed
 
 
-def create_app() -> FastAPI:
+def create_app(verbose: bool = False) -> FastAPI:
     """Create and configure the FastAPI application."""
     app = FastAPI(
         title="OrcaFit",
@@ -93,8 +93,9 @@ def create_app() -> FastAPI:
     # Setup templates
     templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-    # Store templates in app state for use in routers
+    # Store templates and settings in app state for use in routers
     app.state.templates = templates
+    app.state.verbose = verbose
 
     # Include web UI routers
     app.include_router(users.router)

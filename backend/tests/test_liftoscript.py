@@ -82,7 +82,8 @@ class TestLiftoscriptGenerator:
 
     def test_generate_basic_program(self, sample_program):
         """Test basic program generation."""
-        generator = LiftoscriptGenerator()
+        config = GeneratorConfig(include_comments=True)
+        generator = LiftoscriptGenerator(config)
         result = generator.generate(sample_program)
 
         assert "Test Program" in result

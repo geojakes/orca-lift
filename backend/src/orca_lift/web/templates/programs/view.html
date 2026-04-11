@@ -406,6 +406,17 @@ function handleStreamEvent(data) {
             }
             break;
 
+        case 'peer_message':
+            if (responsesEl) {
+                const pmMeta = getSpecialistMeta(data.from);
+                const pmTo = data.to === 'all' ? 'everyone' : data.to;
+                const pmDiv = document.createElement('div');
+                pmDiv.className = 'text-[11px] text-gray-400 pl-9 italic';
+                pmDiv.innerHTML = `<span class="${pmMeta.color.split(' ')[1]}">${data.from}</span> → ${pmTo}: ${data.content}`;
+                responsesEl.appendChild(pmDiv);
+            }
+            break;
+
         case 'complete':
             document.getElementById('specialist-panel')?.remove();
             addChatMessage(`

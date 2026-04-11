@@ -68,9 +68,9 @@ class TestExercise:
 
         # Check some key exercises exist
         names = [e.name for e in COMMON_EXERCISES]
-        assert "Bench Press" in names
-        assert "Squat" in names
-        assert "Deadlift" in names
+        assert "Bench Press, Barbell" in names
+        assert "Squat, Barbell" in names
+        assert "Deadlift, Barbell" in names
 
 
 class TestUserProfile:

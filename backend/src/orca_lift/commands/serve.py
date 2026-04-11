@@ -9,8 +9,9 @@ from .base import ensure_initialized
 @click.option("--host", default="127.0.0.1", help="Host to bind to (default: 127.0.0.1)")
 @click.option("--port", "-p", default=8000, type=int, help="Port to bind to (default: 8000)")
 @click.option("--reload", is_flag=True, help="Enable auto-reload for development")
+@click.option("--verbose", "-v", is_flag=True, help="Print generation progress to terminal")
 @click.pass_context
-def serve(ctx: click.Context, host: str, port: int, reload: bool):
+def serve(ctx: click.Context, host: str, port: int, reload: bool, verbose: bool):
     """Start the web server.
 
     Launches the orca-lift web interface on the specified host and port.
@@ -53,7 +54,7 @@ def serve(ctx: click.Context, host: str, port: int, reload: bool):
     click.echo()
 
     # Create app
-    app = create_app()
+    app = create_app(verbose=verbose)
 
     # Run server
     uvicorn.run(

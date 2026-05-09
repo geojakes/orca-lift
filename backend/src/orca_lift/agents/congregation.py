@@ -146,11 +146,17 @@ def create_congregation(
     )
 
 
-def _build_topic(user_summary: str, program_framework: dict) -> str:
+def _build_topic(
+    user_summary: str,
+    program_framework: dict,
+    num_weeks: int = 4,
+) -> str:
     """Build the deliberation topic string."""
     return f"""Design a complete training program for the following user:
 
 {user_summary}
+
+HARD REQUIREMENT — Program length: EXACTLY {num_weeks} weeks. The mediator's final `weeks` array MUST contain {num_weeks} week entries (week_number 1 through {num_weeks}). Specialists must scope their recommendations (phases, deload placement, RPE ramps) to fit inside {num_weeks} weeks.
 
 Proposed Framework:
 - Split: {program_framework.get('split_type', 'TBD')}
@@ -164,14 +170,14 @@ Each specialist should provide their recommendations for:
 2. Sets and rep ranges with per-set RPE targets (e.g., set 1 @9, set 2 @10)
 3. Rest periods per exercise in seconds (60s isolation, 120s compounds, 180s heavy compounds)
 4. Progression schemes (lp = linear, dp = double progression, sum = total reps, custom = custom script)
-5. Periodization phases with names (Introduction, Accumulation, Deload, Intensification)
-6. Deload week placement and structure
+5. Periodization phases with names (Introduction, Accumulation, Deload, Intensification) — fit within {num_weeks} weeks
+6. Deload week placement and structure (must land somewhere inside the {num_weeks}-week window)
 7. Intensification techniques per phase (dropsets, myo-reps, lengthened partials)
 8. Exercise substitutions and coaching notes
 9. Reusable progression templates for exercises sharing the same progression logic
 10. Any concerns or modifications needed
 
-The mediator should synthesize all recommendations into a complete program structure with descriptive day names (e.g., Full Body, Upper, Lower, Arms/Delts)."""
+The mediator should synthesize all recommendations into a complete program structure with descriptive day names (e.g., Full Body, Upper, Lower, Arms/Delts) and EXACTLY {num_weeks} weeks."""
 
 
 async def run_congregation_stream(
@@ -180,6 +186,7 @@ async def run_congregation_stream(
     equipment_constraints: str | None = None,
     profile_id: int | None = None,
     constraint_checklist: str = "",
+    num_weeks: int = 4,
 ) -> AsyncGenerator[CongregationEvent, None]:
     """Run the congregation with streaming events.
 
@@ -192,6 +199,7 @@ async def run_congregation_stream(
         equipment_constraints: Formatted equipment constraints string
         profile_id: User profile ID for info request tools
         constraint_checklist: Formatted constraint checklist for the mediator
+        num_weeks: Required program length in weeks
 
     Yields:
         CongregationEvent objects for each significant event
@@ -206,7 +214,7 @@ async def run_congregation_stream(
         constraint_checklist=constraint_checklist,
     )
 
-    topic = _build_topic(user_summary, program_framework)
+    topic = _build_topic(user_summary, program_framework, num_weeks=num_weeks)
 
     async for event in congregation.deliberate_stream(topic):
         yield event
@@ -219,6 +227,7 @@ async def run_congregation(
     equipment_constraints: str | None = None,
     profile_id: int | None = None,
     constraint_checklist: str = "",
+    num_weeks: int = 4,
 ) -> CongregationResult:
     """Run the congregation to design a program.
 
@@ -243,7 +252,7 @@ async def run_congregation(
         constraint_checklist=constraint_checklist,
     )
 
-    topic = _build_topic(user_summary, program_framework)
+    topic = _build_topic(user_summary, program_framework, num_weeks=num_weeks)
 
     # Run deliberation
     result = await congregation.deliberate(topic)

@@ -231,6 +231,31 @@ _week_spec = OutputSpec(
     ],
 )
 
+# Per-exercise enrichment output (form notes + demo video)
+exercise_enrichment_specs = [
+    OutputSpec(
+        name="posture",
+        type="string",
+        description="One concise sentence on setup posture and starting stance (e.g., grip, foot placement, spinal alignment, breath bracing).",
+    ),
+    OutputSpec(
+        name="position",
+        type="string",
+        description="One concise sentence on body positioning through the working range (joint angles, bar/handle path, what to keep stacked or stable).",
+    ),
+    OutputSpec(
+        name="cues",
+        type="list[string]",
+        description="3-5 short execution cues a lifter can rehearse mid-set (e.g., 'spread the floor', 'crush the bar', 'rib cage down').",
+    ),
+    OutputSpec(
+        name="video_url",
+        type="string",
+        description="A single YouTube demonstration URL found via WebSearch. Prefer reputable coaching channels (Squat University, Jeff Nippard, Athlean-X, Renaissance Periodization, Alan Thrall, etc.). Must be a real youtube.com or youtu.be link verified via search results — do NOT fabricate. If no good link is found, return an empty string.",
+    ),
+]
+
+
 # Final program structure output (for mediator)
 final_program_specs = [
     OutputSpec(

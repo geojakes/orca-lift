@@ -194,6 +194,8 @@ async def generate_program(
     goals: str = Form(...),
     weeks: int = Form(4),
 ):
+    # Clamp requested length to the supported 1-8 week range.
+    weeks = max(1, min(8, weeks))
     """Generate a new program with streaming progress.
 
     Returns Server-Sent Events for real-time progress updates.

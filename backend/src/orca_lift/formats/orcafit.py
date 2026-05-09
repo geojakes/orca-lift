@@ -121,7 +121,7 @@ class OrcaFitFormat:
             exercise.progression, "double"
         )
         
-        return {
+        result = {
             "exercise_id": _slugify(exercise.name),
             "exercise_name": exercise.name,
             "order": order,
@@ -136,6 +136,20 @@ class OrcaFitFormat:
             "superset_group": exercise.superset_with,
             "notes": exercise.notes,
         }
+
+        form = {}
+        if exercise.posture:
+            form["posture"] = exercise.posture
+        if exercise.position:
+            form["position"] = exercise.position
+        if exercise.cues:
+            form["cues"] = list(exercise.cues)
+        if exercise.video_url:
+            form["video_url"] = exercise.video_url
+        if form:
+            result["form"] = form
+
+        return result
     
     def _generate_set(self, set_scheme: SetScheme, set_number: int) -> dict:
         set_type = "warmup" if set_scheme.is_warmup else ("amrap" if set_scheme.is_amrap else "working")
@@ -309,6 +323,10 @@ class OrcaFitFormat:
                         prog_type, ProgressionScheme.DOUBLE
                     )
                     
+                    form = ex_data.get("form", {}) or {}
+                    cues_raw = form.get("cues", [])
+                    cues = [str(c) for c in cues_raw] if isinstance(cues_raw, list) else []
+
                     exercises.append(ProgramExercise(
                         name=ex_data.get("exercise_name", ex_data.get("exercise_id", "")),
                         sets=sets,
@@ -316,6 +334,10 @@ class OrcaFitFormat:
                         progression_params=prog_data.get("params", {}),
                         notes=ex_data.get("notes", ""),
                         superset_with=ex_data.get("superset_group"),
+                        posture=form.get("posture", "") or "",
+                        position=form.get("position", "") or "",
+                        cues=cues,
+                        video_url=form.get("video_url", "") or "",
                     ))
                 
                 days.append(ProgramDay(

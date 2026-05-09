@@ -258,13 +258,15 @@ Equipment Assessment:
 
 User's Request: {user_goals}
 
+HARD REQUIREMENT — Program length: EXACTLY {num_weeks} weeks. Do not propose more or fewer weeks. Your periodization, deload placement, and phase boundaries MUST fit within {num_weeks} weeks total.
+
 Design:
 1. The optimal training split for their schedule ({days_per_week} days/week)
 2. The focus of each training day
 3. Primary movements for each day
-4. Periodization approach
+4. Periodization approach scoped to {num_weeks} weeks (e.g., where the deload lands, how many phases fit)
 5. Progression philosophy
-6. Deload strategy"""
+6. Deload strategy that fits inside {num_weeks} weeks"""
 
 SPECIALIST_RECOMMENDATION_PROMPT = """As a {specialist_role}, review the proposed program framework and provide your expert recommendations:
 
@@ -308,6 +310,7 @@ For each constraint, provide:
 def format_constraint_checklist(
     user_profile: UserProfile,
     extracted_constraints: list[dict] | None = None,
+    num_weeks: int | None = None,
 ) -> str:
     """Format all constraints as an explicit checklist for the mediator.
 
@@ -315,6 +318,13 @@ def format_constraint_checklist(
     into a single checklist the mediator must verify before finalizing.
     """
     lines: list[str] = []
+
+    # Program length
+    if num_weeks is not None:
+        lines.append(
+            f"[ ] PROGRAM LENGTH: The `weeks` array MUST contain EXACTLY {num_weeks} entries "
+            f"(week_number 1 through {num_weeks}). Do NOT output more or fewer weeks."
+        )
 
     # Equipment
     eq_list = ", ".join(eq.value for eq in user_profile.available_equipment)
@@ -353,6 +363,21 @@ def format_constraint_checklist(
                 lines.append(f"[ ] USER REQUEST: {rule}{violation_examples}")
 
     return "\n".join(lines)
+
+
+EXERCISE_ENRICHMENT_PROMPT = """You are a strength coach annotating one exercise with execution form notes and a demo video.
+
+Exercise: {exercise_name}
+Day focus: {day_focus}
+Existing coach notes (may be empty): {existing_notes}
+
+Your job:
+1. Use WebSearch to find a high-quality YouTube demonstration of "{exercise_name}". Prefer reputable coaching channels (Squat University, Jeff Nippard, Athlean-X, Renaissance Periodization, Alan Thrall, Stronger By Science, Mark Rippetoe / Starting Strength). The link MUST appear in your search results — do not invent URLs. If you cannot verify a good link, return an empty string for video_url rather than guessing.
+2. Write a one-sentence "posture" note covering setup and starting stance (grip width, foot placement, spinal/scapular alignment, bracing).
+3. Write a one-sentence "position" note covering body positioning through the working range (joint angles, bar/handle path, what stays stacked or stable, common drift to avoid).
+4. Write 3-5 short "cues" — terse, repeatable phrases a lifter can rehearse between reps.
+
+Keep everything specific to {exercise_name}. Do not restate the existing coach notes; complement them. If the day focus is provided, frame cues so they fit that movement context."""
 
 
 MEDIATOR_SYNTHESIS_PROMPT = """Synthesize the following specialist recommendations into a complete training program:

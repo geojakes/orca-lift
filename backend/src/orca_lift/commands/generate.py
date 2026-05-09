@@ -25,9 +25,9 @@ from .base import async_command, echo_error, echo_info, echo_success, ensure_ini
 @click.option(
     "--weeks",
     "-w",
-    type=click.IntRange(1, 6),
+    type=click.IntRange(1, 8),
     default=4,
-    help="Program length in weeks (1-6, default: 4)",
+    help="Program length in weeks (1-8, default: 4)",
 )
 @click.option(
     "--verbose/--quiet",

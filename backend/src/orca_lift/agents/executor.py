@@ -22,7 +22,7 @@ from orca import CongregationEvent, CongregationEventType
 from .congregation import CongregationResult, run_congregation, run_congregation_stream
 from .liftoscript_converter import LiftoscriptConverter
 from .liftoscript_spec import LIFTOSCRIPT_FULL_SPEC
-from .plan_builder import PlanContext, build_generation_plan
+from .plan_builder import PlanContext, build_enrichment_plan, build_generation_plan
 from .prompts import format_constraint_checklist
 from .tools import set_current_specialist, set_question_callback
 
@@ -82,9 +82,12 @@ class ProgramGenerator:
             if on_progress:
                 await on_progress(event_type, message, data)
 
-        # Add weeks to goals for context
-        if num_weeks != 4:
-            goals = f"{goals}. Generate a {num_weeks}-week program."
+        # Clamp to supported range so prompts and validators stay consistent.
+        num_weeks = max(1, min(8, int(num_weeks)))
+
+        # Echo the explicit length into goals so it shows up everywhere goals
+        # is referenced (specialists, framework prompt, retry prompts).
+        goals = f"{goals}. Program length: exactly {num_weeks} weeks."
 
         # Build context
         context = PlanContext(
@@ -93,6 +96,7 @@ class ProgramGenerator:
             user_goals=goals,
             equipment_list=[eq.value for eq in user_profile.available_equipment],
             days_per_week=user_profile.schedule_days,
+            num_weeks=num_weeks,
         )
 
         if self.verbose:
@@ -127,7 +131,7 @@ class ProgramGenerator:
         if not isinstance(extracted_constraints, list):
             extracted_constraints = []
         constraint_checklist = format_constraint_checklist(
-            user_profile, extracted_constraints
+            user_profile, extracted_constraints, num_weeks=num_weeks
         )
 
         if self.verbose:
@@ -178,6 +182,7 @@ class ProgramGenerator:
                     equipment_constraints=equipment_constraints,
                     profile_id=user_profile.id,
                     constraint_checklist=constraint_checklist,
+                    num_weeks=num_weeks,
                 ):
                     if event.type == CongregationEventType.CLIENT_START:
                         # Track which specialist is currently active
@@ -310,6 +315,7 @@ class ProgramGenerator:
                 equipment_constraints=equipment_constraints,
                 profile_id=user_profile.id,
                 constraint_checklist=constraint_checklist,
+                num_weeks=num_weeks,
             )
 
             # Stream specialist contributions after the fact (for backward compat)
@@ -327,6 +333,12 @@ class ProgramGenerator:
                         "full": content,
                         "aligned": aligned,
                     })
+
+        # Enforce the requested program length: truncate if too long, pad by
+        # cloning the last non-deload week (with re-numbering) if too short.
+        self._enforce_program_length(
+            congregation_result.final_program, num_weeks
+        )
 
         phase_outputs["congregation"] = {
             "final_program": congregation_result.final_program,
@@ -383,7 +395,17 @@ class ProgramGenerator:
             )
 
         if self.verbose:
-            print("\n=== Phase 4: Generating Liftoscript ===\n")
+            print("\n=== Phase 4: Enriching exercises with form notes + videos ===\n")
+
+        await notify("phase", "Looking up form notes and demo videos...")
+
+        await self._enrich_exercises(
+            congregation_result.final_program,
+            on_progress=on_progress,
+        )
+
+        if self.verbose:
+            print("\n=== Phase 5: Generating Liftoscript ===\n")
 
         await notify("phase", "Converting to Liftoscript...")
 
@@ -397,11 +419,11 @@ class ProgramGenerator:
         )
 
         # Step 2: AI-powered Liftoscript conversion
-        effective_weeks = len(program.weeks) or num_weeks
+        # Use the requested length so Liftoscript output matches what the user asked for.
         conversion_result = await self.converter.convert(
             final_program=congregation_result.final_program,
             final_thesis=congregation_result.final_thesis or "",
-            num_weeks=effective_weeks,
+            num_weeks=num_weeks,
         )
         liftoscript = conversion_result.liftoscript
 
@@ -433,6 +455,170 @@ class ProgramGenerator:
             congregation_result=congregation_result,
             liftoscript=liftoscript,
         )
+
+    def _enforce_program_length(
+        self,
+        program_data: dict,
+        num_weeks: int,
+    ) -> None:
+        """Force `program_data["weeks"]` to have exactly `num_weeks` entries.
+
+        - Trims trailing weeks if the agents produced too many.
+        - Pads by cloning the last non-deload week (re-numbered) if too few.
+        - Re-numbers `week_number` 1..num_weeks so downstream code matches.
+
+        Mutates `program_data` in place.
+        """
+        import copy
+
+        if not isinstance(program_data, dict):
+            return
+
+        weeks = program_data.get("weeks")
+        if not isinstance(weeks, list):
+            program_data["weeks"] = []
+            weeks = program_data["weeks"]
+
+        if num_weeks < 1:
+            return
+
+        actual = len(weeks)
+
+        if actual > num_weeks:
+            if self.verbose:
+                print(
+                    f"  Program had {actual} weeks but {num_weeks} were requested — "
+                    f"trimming trailing weeks."
+                )
+            weeks[:] = weeks[:num_weeks]
+        elif actual < num_weeks:
+            if actual == 0:
+                if self.verbose:
+                    print(
+                        f"  Program had 0 weeks but {num_weeks} were requested — "
+                        f"cannot pad without a template week."
+                    )
+                return
+
+            template_source = next(
+                (w for w in reversed(weeks) if isinstance(w, dict) and not w.get("is_deload")),
+                weeks[-1] if isinstance(weeks[-1], dict) else None,
+            )
+            if not isinstance(template_source, dict):
+                return
+
+            if self.verbose:
+                print(
+                    f"  Program had {actual} weeks but {num_weeks} were requested — "
+                    f"padding by cloning the last non-deload week."
+                )
+            while len(weeks) < num_weeks:
+                clone = copy.deepcopy(template_source)
+                clone["is_deload"] = False
+                weeks.append(clone)
+
+        # Re-number weeks 1..N regardless of what the agents produced.
+        for idx, week in enumerate(weeks):
+            if isinstance(week, dict):
+                week["week_number"] = idx + 1
+
+    async def _enrich_exercises(
+        self,
+        program_data: dict,
+        on_progress: ProgressCallback | None = None,
+    ) -> None:
+        """Run a parallel DAG that fetches form notes + a YouTube demo per exercise.
+
+        Mutates `program_data` in place: each exercise dict gains `posture`,
+        `position`, `cues`, and `video_url` keys derived from its enrichment node.
+        Exercises sharing a name share enrichment results.
+        """
+        if not isinstance(program_data, dict):
+            return
+
+        # Collect unique exercises and remember every (week, day, exercise) slot
+        # they appear in, so we can fan results back out.
+        unique: dict[str, dict] = {}
+        slots: dict[str, list[dict]] = {}
+
+        for week in program_data.get("weeks", []) or []:
+            if not isinstance(week, dict):
+                continue
+            for day in week.get("days", []) or []:
+                if not isinstance(day, dict):
+                    continue
+                day_focus = day.get("focus", "") or day.get("name", "")
+                for ex in day.get("exercises", []) or []:
+                    if not isinstance(ex, dict):
+                        continue
+                    name = (ex.get("name") or "").strip()
+                    if not name:
+                        continue
+                    if name not in unique:
+                        unique[name] = {
+                            "name": name,
+                            "day_focus": day_focus,
+                            "notes": ex.get("notes", "") or "",
+                        }
+                    slots.setdefault(name, []).append(ex)
+
+        if not unique:
+            if self.verbose:
+                print("  No exercises to enrich.")
+            return
+
+        plan, name_map = build_enrichment_plan(list(unique.values()))
+
+        if self.verbose:
+            print(f"  Enriching {len(unique)} unique exercise(s) in parallel...")
+
+        executor = PlanExecutor.from_plan(
+            plan,
+            verbose=self.verbose,
+            permission_mode=PermissionMode.DEFAULT,
+        )
+
+        try:
+            plan_result = await executor.execute(plan)
+        except Exception as e:
+            if self.verbose:
+                print(f"  Enrichment phase failed: {e}")
+            return
+
+        async def notify(event_type: str, message: str, data: dict | None = None):
+            if on_progress:
+                await on_progress(event_type, message, data)
+
+        for ex_name, node_name in name_map.items():
+            result = plan_result.get(node_name) or {}
+            if not isinstance(result, dict):
+                continue
+
+            posture = (result.get("posture") or "").strip()
+            position = (result.get("position") or "").strip()
+            video_url = (result.get("video_url") or "").strip()
+            cues_raw = result.get("cues", [])
+            cues = [str(c).strip() for c in cues_raw if c] if isinstance(cues_raw, list) else []
+
+            if not (posture or position or video_url or cues):
+                continue
+
+            for ex in slots.get(ex_name, []):
+                ex["posture"] = posture
+                ex["position"] = position
+                ex["cues"] = cues
+                ex["video_url"] = video_url
+
+            if self.verbose:
+                video_label = video_url if video_url else "no video"
+                print(f"  [{ex_name}] {video_label}")
+
+            await notify("exercise_enrichment", ex_name, {
+                "posture": posture,
+                "position": position,
+                "cues": cues,
+                "video_url": video_url,
+            })
 
     def _build_program(
         self,
@@ -556,6 +742,10 @@ class ProgramGenerator:
                     if not isinstance(techniques, list):
                         techniques = []
 
+                    cues = ex_data.get("cues", [])
+                    if not isinstance(cues, list):
+                        cues = []
+
                     exercises.append(
                         ProgramExercise(
                             name=ex_data.get("name", "Unknown"),
@@ -567,6 +757,10 @@ class ProgramGenerator:
                             notes=ex_data.get("notes", ""),
                             substitutions=substitutions,
                             techniques=techniques,
+                            posture=ex_data.get("posture", "") or "",
+                            position=ex_data.get("position", "") or "",
+                            cues=[str(c) for c in cues if c],
+                            video_url=ex_data.get("video_url", "") or "",
                         )
                     )
 

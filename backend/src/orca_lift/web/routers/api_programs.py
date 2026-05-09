@@ -1,7 +1,7 @@
 """Program management API endpoints."""
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ...db.repositories import ActiveProgramRepository, ProgramRepository
 from ...formats import LiftoscriptFormat, OrcaFitFormat
@@ -17,8 +17,8 @@ _job_tracker = JobTracker()
 
 class GenerateRequest(BaseModel):
     goals: str
-    days_per_week: int = 4
-    weeks: int = 4
+    days_per_week: int = Field(default=4, ge=1, le=7)
+    weeks: int = Field(default=4, ge=1, le=8)
     format: str = "orcafit"  # "orcafit" or "liftoscript"
 
 

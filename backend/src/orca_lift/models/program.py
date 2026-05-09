@@ -40,6 +40,10 @@ class ProgramExercise:
     superset_with: str | None = None  # Name of exercise to superset with
     substitutions: list[str] = field(default_factory=list)  # Alternative exercises
     techniques: list[str] = field(default_factory=list)  # e.g., ["dropset", "myorep", "lengthened_partial"]
+    posture: str = ""  # Setup posture / starting stance
+    position: str = ""  # Body positioning during the lift
+    cues: list[str] = field(default_factory=list)  # Short execution cues
+    video_url: str = ""  # YouTube demonstration video
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -62,6 +66,10 @@ class ProgramExercise:
             "superset_with": self.superset_with,
             "substitutions": self.substitutions,
             "techniques": self.techniques,
+            "posture": self.posture,
+            "position": self.position,
+            "cues": self.cues,
+            "video_url": self.video_url,
         }
 
     @classmethod
@@ -86,6 +94,10 @@ class ProgramExercise:
             superset_with=data.get("superset_with"),
             substitutions=data.get("substitutions", []),
             techniques=data.get("techniques", []),
+            posture=data.get("posture", ""),
+            position=data.get("position", ""),
+            cues=data.get("cues", []),
+            video_url=data.get("video_url", ""),
         )
 
 

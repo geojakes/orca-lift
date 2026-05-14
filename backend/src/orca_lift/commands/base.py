@@ -1,6 +1,7 @@
 """Shared CLI utilities."""
 
 import asyncio
+import os
 from functools import wraps
 from pathlib import Path
 
@@ -21,6 +22,9 @@ def async_command(f):
 
 def get_data_dir() -> Path:
     """Get the data directory path."""
+    env = os.environ.get("ORCA_LIFT_DATA_DIR")
+    if env:
+        return Path(env)
     return Path(__file__).parent.parent.parent.parent / "data"
 
 

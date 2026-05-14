@@ -1,18 +1,26 @@
 """Database engine setup and initialization."""
 
 import json
+import os
 from pathlib import Path
 
 import aiosqlite
 
-# Default data directory
-DATA_DIR = Path(__file__).parent.parent.parent.parent / "data"
+
+def _default_data_dir() -> Path:
+    env = os.environ.get("ORCA_LIFT_DATA_DIR")
+    if env:
+        return Path(env)
+    return Path(__file__).parent.parent.parent.parent / "data"
+
+
+DATA_DIR = _default_data_dir()
 
 
 def get_db_path(data_dir: Path | None = None) -> Path:
     """Get the database file path."""
     if data_dir is None:
-        data_dir = DATA_DIR
+        data_dir = _default_data_dir()
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir / "orca_lift.db"
 

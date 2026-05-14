@@ -1,0 +1,35 @@
+# Build artifacts and caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.venv/
+backend/.venv/
+backend/.pytest_cache/
+.pytest_cache/
+
+# Local DB lives in backend/data/ but liftosaur_exercises.json (asset) is also
+# there and is needed at runtime. Exclude the directory contents, then
+# re-include the asset.
+backend/data/*
+!backend/data/liftosaur_exercises.json
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Git / claude
+.git/
+.gitignore
+.claude/
+
+# Android — irrelevant to the backend image
+orcafit-android/
+
+# Long-form docs not needed in the image
+backend/*.md
+
+# Don't leak host env or compose state
+.env
+.env.*

@@ -376,6 +376,52 @@ Squat / 1x5 @8 75% 120s, 3x8 @9 60s \
 - `increment(weight)`, `decrement(weight)` - equipment-based weight change
 - `sets(fromIndex, toIndex, minReps, maxReps, isAmrap, weight, timer, rpe, shouldLogRpe)` - set builder (update only)
 
+> NOTE: The names `minReps`, `maxReps`, `isAmrap`, `weight`, `timer`, `rpe`, `shouldLogRpe` in the `sets(...)` signature above are POSITIONAL PARAMETER NAMES of the `sets()` function — they are **not** read-only variables you can reference standalone elsewhere in a script. Do not write `if (completedReps >= maxReps)` — `maxReps` is undefined as an identifier and the parser will reject it. See the next section for the canonical read-only variables.
+
+
+## Read-only variables (valid identifiers inside `progress: custom() {~ ~}` blocks)
+
+Use ONLY these identifiers in `progress: custom()` scripts. Anything outside this list (including `maxReps`) is a parse error.
+
+- `completedReps[n]` / `cr[n]` — reps the user actually completed for set N (1-indexed)
+- `reps[n]` / `r[n]` — currently-prescribed reps for set N
+- `minReps[n]` / `mr[n]` — the LOWER bound of the prescribed rep range for set N (e.g., for `1x6-8`, `minReps[1] == 6`). There is **no** `maxReps` variable — see below for how to detect "hit the top of the range".
+- `weights[n]` / `w[n]` — initial weight (after rounding) for set N
+- `originalWeights[n]` — initial weight before rounding for set N
+- `completedWeights[n]` / `cw[n]` — weight the user actually lifted on set N
+- `amraps[n]`, `logrpes[n]`, `askweights[n]` — per-set flags
+- `numberOfSets` / `ns` — total sets currently in the exercise
+- `programNumberOfSets` — sets originally prescribed by the program
+- `week`, `day`, `dayInWeek` — current week / overall day / day within the week (1-indexed)
+- `rm1` — user's 1 Rep Max for this exercise
+- `bodyweight` — user's current bodyweight
+- `setVariationIndex`, `descriptionIndex` — current variation/description index
+- `state.<name>` — state variables declared in the `custom(<name>: <default>, ...)` signature
+- `var.<name>` — local variables you assign within the script
+
+> NOTE: `setIndex` is valid ONLY inside `update: custom()` scripts. Do NOT reference `setIndex` inside `progress: custom()`.
+
+### Detecting the top of a rep range without `maxReps`
+
+The rep range upper bound is NOT exposed as a variable. Two correct idioms for "the user hit the top of the range":
+
+1. **Hardcode the numeric upper bound** in the template (works when all exercises share the same range):
+   `if (min(completedReps) >= 12)` — increase weight, reset to `minReps[ns]`.
+
+2. **Walk the reps up by 1 each session and reset on overflow** (works for variable ranges; the program seeds `reps[]` at `minReps[]` and `reps[]` itself acts as the moving target):
+   ```
+   if (min(completedReps) >= reps[ns]) {
+     if (reps[ns] >= 12) {                 // numeric upper bound for this exercise
+       weights = completedWeights[ns] + state.incr
+       reps = minReps[ns]                  // reset to lower bound
+     } else {
+       reps = reps[ns] + 1                 // climb within the range
+     }
+   }
+   ```
+
+If you need a single shared `progression` template across exercises with different rep ranges, prefer idiom (2) and use a per-exercise `state.topReps` parameter (declared via `custom(topReps: 12)`) instead of a literal — that keeps the template reusable.
+
 
 # List of all the built-in exercises
 
@@ -1038,7 +1084,7 @@ Key patterns in this example:
 2. **Template reuse** via `progress: custom() { ...progression }` and `update: custom() { ...dropsets }`
 3. **Per-set RPE** without "RPE" prefix: `1x6-8 @9, 1x6-8 @10`
 4. **Rest times** as a section: `/ 60s`, `/ 120s`, `/ 180s`
-5. **Rich comments** with OG exercise names, substitutions, and coaching notes
+5. **Rich comments** with OG exercise names, substitutions, and the congregation's intention/rationale ("**Why**") for each exercise
 6. **Week ranges** `[2-6]` and `[8-12]` for repeating exercises — empty weeks filled by ranges
 7. **Deload week** (Week 7) with `progress: none` on all exercises
 8. **Set labels** in parentheses: `(Full ROM)`, `(Partial)`, `(Dropset)`

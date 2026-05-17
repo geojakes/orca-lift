@@ -167,7 +167,16 @@ _exercise_spec = OutputSpec(
         OutputSpec(
             name="notes",
             type="string",
-            description="Coaching cues and exercise execution notes",
+            description=(
+                "Congregation's intention for including this exercise: a 1-2 sentence "
+                "rationale capturing WHY this exercise is in the program — the role it "
+                "plays in the user's plan (primary strength driver, hypertrophy stimulus "
+                "for a specific muscle group, posterior-chain balance, prehab for a "
+                "limitation, etc.), which specialist's argument drove its inclusion, and "
+                "how it ties to the user's stated goals. This is NOT a form/execution "
+                "note — posture, position, and execution cues live in the dedicated "
+                "`posture`, `position`, and `cues` fields populated later by enrichment."
+            ),
         ),
         OutputSpec(
             name="substitutions",

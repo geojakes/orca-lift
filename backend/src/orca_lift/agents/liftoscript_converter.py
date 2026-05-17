@@ -23,6 +23,12 @@ E.g. 2 sets of 60 second planks would be: Plank / 2x60
 
 Return ONLY the valid Liftoscript code, don't add any other non-Liftoscript text, or ``` symbols or anything like that. The raw output you return will be passed into the Liftoscript parser.
 
+### Common parser traps — read before writing any `custom()` block
+
+- `maxReps` is **NOT** a read-only variable. It only appears as a positional parameter name inside the `sets(fromIndex, toIndex, minReps, maxReps, ...)` function signature. Writing `if (completedReps >= maxReps)` will be rejected with `maxReps is not a valid variable`. To detect "hit the top of the rep range" in a `progress: custom()` block, hardcode the numeric upper bound (e.g., `if (min(completedReps) >= 12)`) or pass it via a state variable (`custom(topReps: 12)` then `if (... >= state.topReps)`). `minReps[n]` IS valid.
+- `setIndex` is valid ONLY inside `update: custom()` blocks. Do NOT reference it inside `progress: custom()`.
+- Only use identifiers from the "Read-only variables" section of the specification above. Anything else (including `maxReps`, `minWeight`, `targetReps`, `programReps`, etc.) will fail to parse.
+
 ## Advanced Output Requirements
 
 Generate professional-quality Liftoscript following these patterns:
@@ -46,7 +52,7 @@ Generate professional-quality Liftoscript following these patterns:
 ### Rich Comments
 - Add comments ABOVE each exercise (at least in Week 1) with:
   - `// **OG**: Original Exercise Name > Subs: Alternative 1, Alternative 2`
-  - `// **Note**: Coaching cues for proper execution`
+  - `// **Why**: The congregation's intention/rationale for including this exercise (from the `notes` field — explains the role it plays in this user's plan)
 
 ### Week Ranges & Repetition
 - Use `[2-6]` week ranges for exercises that repeat across weeks
@@ -94,7 +100,7 @@ CONVERSION_USER_PROMPT = """Convert the following training program into professi
 For each exercise in the program JSON:
 - Use `rpe_per_set` for individual per-set RPE notation (e.g., [9, 10] → `1x6-8 @9, 1x6-8 @10`)
 - Use `rest_seconds` as a rest time section (e.g., 60 → `/ 60s`)
-- Use `notes` and `substitutions` for rich comments above the exercise
+- Use `notes` (the congregation's intention — the "why") and `substitutions` for rich comments above the exercise. Render `notes` as a `// **Why**:` comment, NOT as execution cues.
 - If `techniques` includes "dropset", add `update: custom() {{ ...dropsets }}` and include extra drop sets
 - If `techniques` includes "myorep", add `update: custom() {{ ...myoreps }}`
 - If `techniques` includes "lengthened_partial", add `(Full ROM)` and `(Partial)` set labels

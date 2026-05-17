@@ -173,7 +173,7 @@ Each specialist should provide their recommendations for:
 5. Periodization phases with names (Introduction, Accumulation, Deload, Intensification) — fit within {num_weeks} weeks
 6. Deload week placement and structure (must land somewhere inside the {num_weeks}-week window)
 7. Intensification techniques per phase (dropsets, myo-reps, lengthened partials)
-8. Exercise substitutions and coaching notes
+8. Exercise substitutions, and a per-exercise INTENTION NOTE (1-2 sentences) explaining WHY each exercise belongs in this user's program — the role it plays, which specialist's argument drives its inclusion, and how it ties to the user's goals or limitations. (Form/execution cues are handled separately by a later enrichment step; do not put technique cues here.)
 9. Reusable progression templates for exercises sharing the same progression logic
 10. Any concerns or modifications needed
 

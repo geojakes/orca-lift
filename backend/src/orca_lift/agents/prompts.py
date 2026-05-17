@@ -282,7 +282,7 @@ Provide your recommendations including:
    - Per-set RPE targets (use numeric values like 8, 9, 10 — each set can have different RPE)
    - Rest periods in seconds (e.g., 60s for isolation, 120s for compounds, 180s for heavy compounds)
    - Exercise substitutions (2-3 alternatives per exercise)
-   - Coaching notes for proper execution
+   - Your INTENT for each exercise — a 1-2 sentence rationale explaining WHY you're recommending it for THIS user: the role it plays in their plan, which of your specialty's principles drives its inclusion, and how it ties to their goals or limitations. (Form/execution cues are handled separately by enrichment — focus on purpose, not technique.)
    - Any intensification techniques (dropsets, myo-reps, lengthened partials) and when to introduce them
 3. Volume recommendations for relevant muscle groups
 4. How progression should be handled, including:
@@ -369,7 +369,7 @@ EXERCISE_ENRICHMENT_PROMPT = """You are a strength coach annotating one exercise
 
 Exercise: {exercise_name}
 Day focus: {day_focus}
-Existing coach notes (may be empty): {existing_notes}
+Congregation's intention for this exercise (rationale for WHY it's in the program — may be empty): {existing_notes}
 
 Your job:
 1. Use WebSearch to find a high-quality YouTube demonstration of "{exercise_name}". Prefer reputable coaching channels (Squat University, Jeff Nippard, Athlean-X, Renaissance Periodization, Alan Thrall, Stronger By Science, Mark Rippetoe / Starting Strength). The link MUST appear in your search results — do not invent URLs. If you cannot verify a good link, return an empty string for video_url rather than guessing.
@@ -377,7 +377,7 @@ Your job:
 3. Write a one-sentence "position" note covering body positioning through the working range (joint angles, bar/handle path, what stays stacked or stable, common drift to avoid).
 4. Write 3-5 short "cues" — terse, repeatable phrases a lifter can rehearse between reps.
 
-Keep everything specific to {exercise_name}. Do not restate the existing coach notes; complement them. If the day focus is provided, frame cues so they fit that movement context."""
+Keep everything specific to {exercise_name}. The congregation's intention (above) is the WHY for this exercise — do NOT restate it. Your output is the HOW (form/execution): posture, position, and cues should complement the intention by telling the lifter how to actually perform the movement. If the day focus is provided, frame cues so they fit that movement context."""
 
 
 MEDIATOR_SYNTHESIS_PROMPT = """Synthesize the following specialist recommendations into a complete training program:
@@ -401,7 +401,7 @@ Create a complete program that:
    - Individual RPE per set (e.g., set 1 @9, set 2 @10) — NOT a single uniform RPE
    - Rest time in seconds (60s for isolation, 120s for compounds, 180s for heavy compounds)
    - 2-3 substitution exercises
-   - Coaching notes for proper execution
+   - An INTENTION NOTE (1-2 sentences) in the `notes` field capturing the congregation's purpose for this exercise: WHY it's in the program (role in the plan, muscle groups or goals it serves, prehab/balance considerations), which specialist's argument was most influential, and how it ties to the user's stated goals or limitations. This is the rationale the user should see — NOT form cues. Form cues (posture, position, execution) are added later by enrichment and live in separate fields.
    - Applicable intensification techniques (dropsets, myo-reps, lengthened partials)
 7. Describes the progression strategy: which exercises share the same progression template, how RPE ramps across weeks, when intensification techniques activate
 8. Structures multi-week programs with named phases (Introduction, Accumulation, Deload, Intensification), placing deload weeks between phases
